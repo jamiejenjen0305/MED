@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禪修入門</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 設定字體與樣式 -->
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        /* 定義新的配色變數 */
+        :root {
+            --color-cyan: #3AC9D9;
+            --color-dark: #3E352D; /* 咖啡色/深棕色 */
+            --color-taupe: #ACA39C;
+            --color-off-white: #EDE9E9;
+        }
+        /* 註冊 Tailwind 顏色類別 */
+        .bg-cyan-custom { background-color: var(--color-cyan); }
+        .text-cyan-custom { color: var(--color-cyan); }
+        .border-cyan-custom { border-color: var(--color-cyan); }
+        .bg-dark-custom { background-color: var(--color-dark); }
+        .text-dark-custom { color: var(--color-dark); }
+        .border-dark-custom { border-color: var(--color-dark); }
+        .bg-taupe-custom { background-color: var(--color-taupe); }
+        .border-taupe-custom { border-color: var(--color-taupe); }
+
+        /* 確保模態框在最上層 */
+        .modal-overlay {
+            z-index: 50;
+        }
+        .modal-content {
+            z-index: 51;
+            max-height: 90vh; /* 限制內容最大高度 */
+        }
+        /* 橫幅圖片樣式 - 包含全幅圖片佔位符 */
+        .hero-banner {
+            height: 150px; /* 高度維持縮小 */
+            /* 設置純色背景為主題色 Cyan */
+            background-color: var(--color-cyan);
+            background-image: none; 
+            background-size: cover;
+            background-position: center;
+        }
+        /* 步驟圖片容器樣式 */
+        .step-icon-container {
+            width: 64px; /* 16 */
+            height: 64px; /* 16 */
+            flex-shrink: 0;
+            border-radius: 9999px; /* rounded-full */
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* 恢復陰影 */
+        }
+        .step-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-white text-dark-custom">
+
+    <!-- 頂部導航欄 (Header) - 白色背景與頁籤設計 -->
+    <header class="bg-white shadow-xl sticky top-0 z-10 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold text-cyan-custom tracking-widest">
+                禪修小站
+            </h1>
+            <!-- 導航頁籤 -->
+            <nav class="hidden md:flex space-x-6 text-dark-custom font-medium">
+                <a href="#intro" class="hover:text-cyan-custom transition duration-300">禪修介紹</a>
+                <a href="#benefits" class="hover:text-cyan-custom transition duration-300">禪修好處</a>
+                <a href="#steps" class="hover:text-cyan-custom transition duration-300">禪坐方法</a>
+                <a href="#breathing_methods" class="hover:text-cyan-custom transition duration-300">數息觀</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 長幅 Banner 圖片 (新加入) - Cyan 背景 -->
+   <div class="w-full hero-banner">
+    <div class="h-full flex items-center justify-center">
+        <h2 class="text-4xl sm:text-6xl font-extrabold text-white tracking-wider">
+            找回內心的平靜
+        </h2>
+    </div>
+</div>
+
+
+    <!-- 主要內容區域 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+
+        <!-- 禪修入門 (Introduction) -->
+        <section id="intro" class="bg-white p-10 rounded-2xl shadow-xl border-t-8 border-cyan-custom">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-cyan-custom mb-2">禪修介紹</h2>
+                <p class="text-xl text-gray-600">讓心靈休息一下，重新充滿能量！</p>
+                <div class="w-16 h-1 bg-dark-custom mx-auto rounded-full mt-4"></div>
+            </div>
+            
+            <div class="md:grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 flex justify-center">
+                    <!-- 圖片介紹：禪修入門 (右側圖片) -->
+                    <img src="https://jamiejenjen0305.github.io/MED/L2-4.jpeg" alt="禪修介紹" class="rounded-xl shadow-md w-full max-w-lg" onerror="this.src='https://jamiejenjen0305.github.io/MED/w2-1.jpg'">
+                </div>
+                <div class="order-1 mt-8 md:mt-0">
+                    <p class="text-xl mb-6 leading-relaxed text-dark-custom bg-white p-4 rounded-lg border-l-4 border-cyan-custom">
+                        禪修，不只是靜靜坐著喔！是訓練你的心，學會<b>專注、平靜和覺察</b>，目標是幫助你遠離煩惱和雜亂的思緒，讓心靈像一片湖水一樣清澈、平靜！
+                    </p>
+                    <p class="text-xl text-taupe-custom font-bold">
+                        最終目標：收攝心念，達到「定心、淨心、明心」的清淨境界。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 禪修功德 (Benefits) - **圖片在上方，文字在下方** -->
+        <section id="benefits" class="bg-white p-10 rounded-2xl shadow-xl border-t-8 border-taupe-custom">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-dark-custom mb-2">禪修好處：啟動內在覺醒</h2>
+                <p class="text-xl text-gray-600">身心安康、智慧滿滿</p>
+                <div class="w-16 h-1 bg-cyan-custom mx-auto rounded-full mt-4"></div>
+            </div>
+            
+            <!-- 圖片區塊 (置於上方) -->
+            <div class="flex justify-center mb-10">
+                <!-- 恢復圖片介紹：禪修功德 (單獨置於頂部) -->
+                <img src="https://jamiejenjen0305.github.io/MED/L2-2-1.jpeg" alt="禪修好處" class="rounded-xl shadow-md w-full max-w-4xl" onerror="this.src='https://placehold.co/800x300/ACA39C/fff?text=禪修功德'">
+            </div>
+
+            <!-- 文字內容區塊 (置於下方，單欄) -->
+            <div class="mt-8">
+                <ul class="space-y-4 text-lg p-6 bg-white rounded-xl shadow-md border border-taupe-custom">
+                    <li class="flex items-start">
+                        <span class="text-cyan-custom text-2xl mr-3"></span>
+                        <div>
+                            <strong class="font-semibold text-dark-custom">調治身心：</strong> 告別壓力!幫助你遠離妄想和昏沉，身心自然更健康、更有活力.
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-custom text-2xl mr-3"></span>
+                        <div>
+                            <strong class="font-semibold text-dark-custom">增長定慧：</strong> 專注力UP！讓你身心穩定和強化專注力，並透過不斷深入的思考和正知正見，增長智慧與判斷力。
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-custom text-2xl mr-3"></span>
+                        <div>
+                            <strong class="font-semibold text-dark-custom">心智清明：</strong> 擺脫混亂！讓你的心緒清晰，面對事情不再迷糊。
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-custom text-2xl mr-3"></span>
+                        <div>
+                            <strong class="font-semibold text-dark-custom">得大輕安：</strong> 像羽毛一樣輕！當進入禪定，你會感到身心輕盈、自在安樂。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 禪坐方法：步驟小卡片 (Steps) -->
+        <section id="steps" class="bg-white p-10 rounded-2xl shadow-xl border-t-8 border-cyan-custom">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-cyan-custom mb-2">禪坐方法：三調小幫手</h2>
+                <p class="text-xl text-gray-600">一起動手來試試「調身、調息、調心」！</p>
+                <div class="w-16 h-1 bg-dark-custom mx-auto rounded-full mt-4"></div>
+            </div>
+            
+            <!-- 禪坐方法整體圖片 (右側圖片) -->
+            <div class="flex justify-center mb-10">
+                <img src="https://jamiejenjen0305.github.io/MED/L2-3.jpeg" alt="禪坐方法+整體圖" class="rounded-xl shadow-md w-full max-w-4xl" onerror="this.src='https://placehold.co/800x250/3AC9D9/fff?text=禪坐方法+整體圖'">
+            </div>
+
+            <!-- 步驟小卡片網格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                
+                <!-- 步驟 1: 調身 - 移除文字後方的藍綠色邊界，並確保文字無額外背景 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-taupe-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
+                    <!-- 刪除 step-icon-container -->
+                    <div>
+                        <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">調身（調整姿勢）</strong>
+                        <p class="text-gray-700">保持背部挺直、頭頸不偏不倚，肩膀放鬆。雙手輕放結金剛印。找到最舒服但不癱軟的姿勢，讓身體像山一樣穩固。</p>
+                    </div>
+                </div>
+
+                <!-- 步驟 2: 調息 - 移除左側圖片 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-cyan-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
+                    <!-- 刪除 step-icon-container -->
+                    <div>
+                        <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">調息（調整氣息）</strong>
+                        <p class="text-gray-700">先深吸氣，再從口中緩緩吐出腹部濁氣，反覆 3 次。讓氣息變得<b>「通暢、無聲、微細、均勻」</b>，這是入定的重要基礎！</p>
+                    </div>
+                </div>
+
+                <!-- 步驟 3: 調心 - 移除左側圖片 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-taupe-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
+                    <!-- 刪除 step-icon-container -->
+                    <div>
+                        <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">調心（收攝心念）</strong>
+                        <p class="text-gray-700">心很容易跑掉！在身息調好後，將心念牢牢地安住在<b>呼吸</b>上。對於初學者，我們使用「數息觀」使心猿意馬漸漸收攝、歸於穩定！</p>
+                    </div>
+                </div>
+                
+                <!-- 步驟 4: 結束 - 移除左側圖片 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-cyan-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
+                    <!-- 刪除 step-icon-container -->
+                    <div>
+                        <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">結束（溫和出定）</strong>
+                        <p class="text-gray-700">出定前要溫柔！慢慢搓熱手掌，輕柔按摩臉部和肢體，再慢慢張開眼睛，避免身體不適。恭喜你完成了一次靜心旅程！</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 數息觀法門 (Breathing Detail) - 點擊卡片區塊 -->
+            <div id="breathing_methods" class="mt-16 p-8 rounded-2xl shadow-xl border-t-8 border-taupe-custom">
+                <div class="text-center mb-10">
+                    <h3 class="text-4xl font-extrabold text-dark-custom mb-2">調心法門：數息觀介紹</h3>
+                    <p class="text-lg text-gray-600">從訓練定力的數息，到培養慧力的觀息。<b>點擊卡片查看詳細步驟！</b></p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    
+                    <!-- 數息卡片 (Clickable) - 移除左側圖片 -->
+                    <div data-section="breathing_counting" class="clickable-card bg-white p-6 rounded-xl shadow-md border-b-4 border-cyan-custom cursor-pointer hover:scale-[1.03] transition duration-300 flex items-center space-x-4">
+                         <!-- 刪除 step-icon-container -->
+                        <div>
+                            <h4 class="text-2xl font-bold mb-1 text-cyan-custom">階段一：數息</h4>
+                            <p class="text-gray-600">訓練定力，將心念繫於數字上。</p>
+                        </div>
+                    </div>
+
+                    <!-- 觀息卡片 (Clickable) - 移除左側圖片 -->
+                    <div data-section="breathing_observing" class="clickable-card bg-white p-6 rounded-xl shadow-md border-b-4 border-taupe-custom cursor-pointer hover:scale-[1.03] transition duration-300 flex items-center space-x-4">
+                        <!-- 刪除 step-icon-container -->
+                        <div>
+                            <h4 class="text-2xl font-bold mb-1 text-taupe-custom">階段二：觀息</h4>
+                            <p class="text-gray-600">培養慧力，純粹地觀察呼吸細節。</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 總結 (retained) -->
+                <div class="mt-8 p-4 bg-cyan-custom rounded-xl text-white shadow-md text-center">
+                    <strong class="font-extrabold text-xl block mb-1">小提醒：</strong>
+                    <p class="text-lg">
+                        <b>修行中不執著、不取不捨、不憂不喜，堅定地將心念專注於正定上。</b>
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 頁腳 (Footer) - 恢復邊框 -->
+    <footer class="bg-white text-dark-custom p-8 mt-12 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto text-center">
+            <p>&copy; 2025 禪修小站 | 願心靈清淨，生活美好。 </p>
+        </div>
+    </footer>
+
+    <!-- 互動內容模態框 (Modal) - 恢復陰影 -->
+    <div id="section-modal" class="fixed inset-0 hidden modal-overlay bg-gray-900 bg-opacity-80 items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-8 modal-content overflow-y-auto transform scale-95 transition-all duration-300">
+            
+            <!-- 關閉按鈕 -->
+            <button id="close-modal" class="absolute top-4 right-4 text-gray-500 hover:text-dark-custom transition duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
+
+            <!-- 模態框標題 - 恢復底部邊框 -->
+            <h3 id="modal-title" class="text-4xl font-extrabold text-cyan-custom mb-6 border-b-2 border-taupe-custom pb-2"></h3>
+            
+            <!-- 模態框內容 (動態載入) -->
+            <div id="modal-content-body" class="space-y-6 text-lg leading-relaxed">
+                <!-- 內容將由 JavaScript 插入 -->
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // -----------------------------------------------------------
+        // 核心 JavaScript 邏輯：處理卡片點擊與模態框顯示
+        // -----------------------------------------------------------
+
+        const sectionContents = {
+            breathing_counting: {
+                title: "階段一：數息（訓練定力）",
+                icon: "數數", // 圖片已在主頁替換，此處數據結構僅用於模態框標題
+                htmlContent: `
+                    <div class="flex flex-col items-center">
+                        <!-- 模態框上方圖片 -->
+                        <div class="mb-6 w-full max-w-md">
+                            <img src="https://jamiejenjen0305.github.io/MED/L2-5.jpeg" alt="數息圖片" class="rounded-xl shadow-md w-full">
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-xl text-dark-custom mb-4">數息是將心念繫於氣息與數字上，是止息妄念、收攝散亂心念最直接的方法。給你的心一個專注的「錨點」！</p>
+                            <div class="p-4 bg-white rounded-lg border-l-4 border-cyan-custom">
+                                <strong class="text-xl text-cyan-custom font-bold block mb-2">💡 具體實踐步驟：</strong>
+                                <ul class="list-disc list-inside ml-4 space-y-2 text-base text-gray-600">
+                                    <li><b>數出或數入：</b>不可出入息同時並數。</li>
+                                    <li><b>循環數數：</b> 隨著出息默數「一、二、三...」至「十」為止，然後重新回到「一」。</li>
+                                    <li><b>綿密不亂：</b> 數字需綿綿相續、清楚明白。若因走神或數錯，必須溫和地從「一」重新開始。</li>
+                                    <li><b>降伏妄想：</b> 若妄想紛雜難收攝，可嘗試從「十、九、八...」<b>倒數</b>至「一」，能有效幫助降伏妄想。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            breathing_observing: {
+                title: "階段二：觀息（培養慧力）",
+                icon: "觀察", // 圖片已在主頁替換，此處數據結構僅用於模態框標題
+                htmlContent: `
+                    <div class="flex flex-col items-center">
+                        <!-- 模態框上方圖片 -->
+                        <div class="mb-6 w-full max-w-md">
+                            <img src="https://jamiejenjen0305.github.io/MED/L2-6.jpeg" alt="觀息圖片" class="rounded-xl shadow-md w-full">
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-xl text-dark-custom mb-4">當數息純熟，心念趨於安定後，即可放下數字的輔助，轉而專注於純粹的「觀息」。這將培養你的覺察力。</p>
+                            <div class="p-4 bg-white rounded-lg border-l-4 border-taupe-custom">
+                                <strong class="text-xl text-dark-custom font-bold block mb-2">💡 具體實踐步驟：</strong>
+                                <ul class="list-disc list-inside ml-4 space-y-2 text-base text-gray-600">
+                                    <li><b>知出知入：</b>只是清楚地「知道」現在是吸氣（入）還是吐氣（出），不做任何評價或控制。</li>
+                                    <li><b>覺察微細：</b>將全部注意力放在氣息在鼻孔或上唇處的觸覺變化。感受氣息的<b>長短、冷熱、粗細</b>等微細之處。</li>
+                                    <li><b>保持自然：</b> 呼吸必須保持自然發生，你不是呼吸的控制者，而是安靜的觀察者。</li>
+                                    <li><b>止觀雙運：</b> 數息為「止」（安定），觀息為「觀」（覺察），兩者純熟，即可止觀雙運。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        const modal = document.getElementById('section-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContentBody = document.getElementById('modal-content-body');
+        const closeModalButton = document.getElementById('close-modal');
+        const clickableCards = document.querySelectorAll('.clickable-card');
+
+        // 顯示模態框
+        function showModal(sectionId) {
+            const content = sectionContents[sectionId];
+            
+            if (!content) return;
+
+            // 設置標題 (純文字標題)
+            modalTitle.innerHTML = content.title;
+            
+            // 設置內容
+            modalContentBody.innerHTML = content.htmlContent;
+            
+            // 顯示模態框並調整樣式
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // 防止背景滾動
+
+            // 啟用過渡效果
+            setTimeout(() => {
+                const modalInner = modal.querySelector('.modal-content');
+                // 恢復模態框的陰影
+                modalInner.classList.add('shadow-2xl'); 
+                modalInner.classList.remove('scale-95');
+                modalInner.classList.add('scale-100');
+            }, 10);
+        }
+
+        // 隱藏模態框
+        function hideModal() {
+            // 禁用過渡效果
+            const modalInner = modal.querySelector('.modal-content');
+            modalInner.classList.remove('scale-100');
+            modalInner.classList.add('scale-95');
+
+            // 隱藏模態框並恢復背景滾動
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }, 300); // 延遲以配合 CSS 過渡時間
+        }
+
+        // 為所有可點擊卡片添加點擊事件監聽器
+        clickableCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const sectionId = card.getAttribute('data-section');
+                showModal(sectionId);
+            });
+        });
+
+        // 關閉按鈕事件
+        closeModalButton.addEventListener('click', hideModal);
+
+        // 點擊背景關閉模態框
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
+    </script>
+
+</body>
+</html>
