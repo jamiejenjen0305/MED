@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禪修小測驗</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #5c67f2;
+            border-bottom: 2px solid #5c67f2;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .question-card {
+            background-color: #e8eaf6;
+            border: 1px solid #c5cae9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .question-card h3 {
+            margin-top: 0;
+            color: #3f51b5;
+        }
+        .options label {
+            display: block;
+            background: #fdfdff;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid #ddd;
+        }
+        .options label:hover {
+            background-color: #e0e0e0;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .correct {
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .incorrect {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        #score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border: 3px dashed #5c67f2;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #5c67f2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #4a54e6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>🧘 禪修複習小測驗 (滿分 100 分)</h1>
+    
+    <form id="quiz-form">
+        </form>
+
+    <button onclick="calculateScore()">提交並查看分數</button>
+
+    <div id="score-section">
+        <h2>測驗結果</h2>
+        <p id="score-display"></p>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "禪修是訓練你的「心」學會哪三種核心能力？",
+            options: [
+                "樂觀、自愛、社交",
+                "專注、平靜、覺察", // 正確答案
+                "飲食、睡眠、語言",
+                "打坐、跪拜、行香"
+            ],
+            answer: 1, // 0-based index
+            rationale: "禪修的目標是訓練心靈學會專注、平靜和覺察，以幫助遠離煩惱。"
+        },
+        {
+            question: "以下哪一項「不是」本網站提到的禪修三調方法之一",
+            options: [
+                "定心",
+                "煩心",
+                "淨心",
+                "明心"
+            ],
+            answer: 1,
+            rationale: "禪修的最終目標是收攝心念，達到「定心、淨心、明心」的清淨境界。"
+        },
+        {
+            question: "「數息」在禪修中主要用來訓練什麼？",
+            options: [
+                "肌肉耐力",
+                "身體柔軟度",
+                "呼吸量",
+                "定力（集中力）"
+            ],
+            answer: 3,
+            rationale: "透過專注在每一次呼吸的計數上，心念不斷被帶回同一個目標，能有效收攝散亂的心，使專注力逐漸穩定、集中。"
+        },
+        {
+            question: "禪坐方法的核心是「三調」，請問三調指的是哪三種調整？",
+            options: [
+                "調身、調息、調心",
+                "調食、調睡、調語",
+                "調氣、調脈、調身",
+                "調意、調境、調身"
+            ],
+            answer: 0,
+            rationale: "禪坐方法的標題即為「三調小幫手」，明確指出是調整姿勢（調身）、氣息（調息）與心念（調心）。"
+        },
+        {
+            question: "在禪坐的「調身」過程中，關於姿勢的關鍵要求，下列哪一項敘述是正確的？",
+            options: [
+                "肩膀盡量向前傾，隨意擺動",
+                "頭部可稍微向一側傾斜，以便放鬆頸部",
+                "保持背部挺直、頭頸不偏不倚，讓身體像山一樣穩固",
+                "身體可以稍微放鬆癱軟，以達到最舒服的狀態"
+            ],
+            answer: 2,
+            rationale: "背部保持挺直，找到舒服但不癱軟的姿勢，讓身體像山一樣穩固。"
+        },
+        {
+            question: "調整氣息（調息）時，建議在開始時先做什麼動作？",
+            options: [
+                "輕輕深吸三口氣，從鼻子緩緩吐出",
+                "先深吸氣，再從口中緩緩吐出腹部濁氣，反覆 3 次",
+                "不做任何調整，讓氣息自然進出",
+                "連續做 10 次短促的快速呼吸，清空肺部"
+            ],
+            answer: 1,
+            rationale: "調息的第一步是先深吸氣，然後從口中緩緩吐出腹部濁氣，重複 3 次。"
+        },
+        {
+            question: "調整氣息（調息）的目標是讓氣息達到哪個標準？",
+            options: [
+                "快速、淺短",
+                "通暢、無聲、微細、均勻",
+                "深吸、然後快速吐氣",
+                "閉氣、屏息、深吸"
+            ],
+            answer: 1,
+            rationale: "入定的重要基礎，需讓氣息達到「通暢、無聲、微細、均勻」這四個標準。"
+        },
+        {
+            question: "完成禪坐後，出定前應該怎麼做？",
+            options: [
+                "立刻張開眼睛，離開座位",
+                "用力伸懶腰、拍手",
+                "慢慢搓熱手掌、按摩臉部和肢體，再慢慢張開眼睛",
+                "馬上喝水、吃東西"
+            ],
+            answer: 2,
+            rationale: "出定前先讓身體慢慢從靜止狀態回到日常狀態，透過搓熱手掌、輕柔按摩臉部與四肢，讓氣血流動，避免突然起身造成頭暈或不適，並以平穩的方式結束禪坐。"
+        },
+        {
+            question: "對於初學者而言，在「調心」階段將心念安住在呼吸上，並使用哪種法門來收攝心念？",
+            options: [
+                "觀察光影",
+                "聽外界聲音",
+                "數息觀",
+                "持咒"
+            ],
+            answer: 2,
+            rationale: "建議初學者使用「數息觀」將心念繫於數字上，使心念漸漸收攝、歸於穩定。"
+        },
+        {
+            question: "調心法門的「數息」與「觀息」兩個階段，分別主要訓練或培養哪兩種能力？",
+            options: [
+                "數息培養慧力，觀息訓練定力",
+                "數息訓練定力，觀息培養慧力",
+                "在禪坐中一邊觀景色、一邊隨意放空",
+                "隨呼吸變化自由想像畫面或故事"
+            ],
+            answer: 1,
+            rationale: "「數息」是訓練定力，而「觀息」是培養慧力。"
+        }
+    ];
+
+    const quizForm = document.getElementById('quiz-form');
+    const scoreSection = document.getElementById('score-section');
+    const scoreDisplay = document.getElementById('score-display');
+    const totalQuestions = quizData.length;
+    const pointsPerQuestion = 100 / totalQuestions;
+
+    // 1. 動態生成測驗題目
+    function generateQuiz() {
+        quizData.forEach((q, index) => {
+            const questionNumber = index + 1;
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `q-${questionNumber}`;
+
+            card.innerHTML = `
+                <h3>${questionNumber}. ${q.question} (${pointsPerQuestion} 分)</h3>
+                <div class="options">
+                    ${q.options.map((option, optIndex) => `
+                        <label>
+                            <input type="radio" name="question${questionNumber}" value="${optIndex}" onclick="showFeedback(${questionNumber})">
+                            ${option}
+                        </label>
+                    `).join('')}
+                </div>
+                <div class="feedback" id="feedback${questionNumber}"></div>
+            `;
+            quizForm.appendChild(card);
+        });
+    }
+
+    // 2. 顯示即時回饋 (點擊選項後觸發)
+    function showFeedback(qNum) {
+        const selectedValue = document.querySelector(`input[name="question${qNum}"]:checked`).value;
+        const feedbackDiv = document.getElementById(`feedback${qNum}`);
+        const questionData = quizData[qNum - 1];
+        const correctIndex = questionData.answer;
+        const rationale = questionData.rationale;
+        const correctOption = questionData.options[correctIndex];
+
+        feedbackDiv.style.display = 'block';
+
+        if (parseInt(selectedValue) === correctIndex) {
+            feedbackDiv.className = 'feedback correct';
+            feedbackDiv.innerHTML = `✅ **答對了！**`;
+        } else {
+            feedbackDiv.className = 'feedback incorrect';
+            feedbackDiv.innerHTML = `❌ **答錯了！** <br> **正確答案：** ${correctOption} <br> **說明：** ${rationale}`;
+        }
+    }
+    
+    // 3. 計算總分 (點擊按鈕後觸發)
+    function calculateScore() {
+        let score = 0;
+        let unanswered = 0;
+
+        quizData.forEach((q, index) => {
+            const questionNumber = index + 1;
+            const selectedInput = document.querySelector(`input[name="question${questionNumber}"]:checked`);
+            
+            // 確保所有題目的回饋都已顯示
+            showFeedback(questionNumber);
+
+            if (selectedInput) {
+                const selectedValue = parseInt(selectedInput.value);
+                if (selectedValue === q.answer) {
+                    score += pointsPerQuestion;
+                }
+            } else {
+                unanswered++;
+            }
+        });
+
+        scoreSection.style.display = 'block';
+        scoreDisplay.innerHTML = `
+            總分：<span style="font-size: 2em; color: #f44336;">${Math.round(score)}</span> 分 / 100 分<br>
+            您答對了 ${Math.round(score / pointsPerQuestion)} 題。<br>
+            ${unanswered > 0 ? `<span style="color: #ff9800;">(您有 ${unanswered} 題未作答，不計分)</span>` : ''}
+        `;
+
+        // 將頁面捲動到分數區
+        scoreSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 初始化測驗
+    generateQuiz();
+</script>
+
+</body>
+</html>
