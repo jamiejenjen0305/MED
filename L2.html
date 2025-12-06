@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>禪修-專注、平靜、覺察</title>
+    <title>禪修入門</title>
     <!-- 載入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 設定字體與樣式 -->
@@ -59,6 +59,29 @@
             height: 100%;
             object-fit: cover;
         }
+        /* 針對嵌入的 quiz 樣式調整，確保配色協調 */
+        .quiz-container {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--color-dark);
+        }
+        .quiz-container h3, .quiz-container h4 {
+            color: var(--color-dark);
+        }
+        /* 連結按鈕樣式 */
+        .quiz-link-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-weight: bold;
+            border-radius: 9999px;
+            background-color: var(--color-dark);
+            color: white;
+            transition: background-color 0.3s, transform 0.15s;
+            text-decoration: none; /* 確保連結沒有底線 */
+        }
+        .quiz-link-btn:hover {
+            background-color: #554a43; /* slightly lighter dark */
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="bg-white text-dark-custom">
@@ -69,12 +92,13 @@
             <h1 class="text-3xl font-extrabold text-cyan-custom tracking-widest">
                 禪修小站
             </h1>
-            <!-- 導航頁籤 -->
+            <!-- 導航頁籤 (已新增測驗連結) -->
             <nav class="hidden md:flex space-x-6 text-dark-custom font-medium">
                 <a href="#intro" class="hover:text-cyan-custom transition duration-300">禪修介紹</a>
                 <a href="#benefits" class="hover:text-cyan-custom transition duration-300">禪修好處</a>
                 <a href="#steps" class="hover:text-cyan-custom transition duration-300">禪坐方法</a>
                 <a href="#breathing_methods" class="hover:text-cyan-custom transition duration-300">數息觀</a>
+                <a href="#quiz" class="hover:text-cyan-custom transition duration-300 font-bold">小測驗</a>
             </nav>
         </div>
     </header>
@@ -92,7 +116,7 @@
     <!-- 主要內容區域 -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
 
-        <!-- 禪修-專注、平靜、覺察 (Introduction) -->
+        <!-- 禪修入門 (Introduction) -->
         <section id="intro" class="bg-white p-10 rounded-2xl shadow-xl border-t-8 border-cyan-custom">
             <div class="text-center mb-10">
                 <h2 class="text-4xl sm:text-5xl font-extrabold text-cyan-custom mb-2">禪修介紹</h2>
@@ -102,12 +126,12 @@
             
             <div class="md:grid md:grid-cols-2 gap-12 items-center">
                 <div class="order-2 flex justify-center">
-                    <!-- 圖片介紹：禪修 (右側圖片) -->
+                    <!-- 圖片介紹：禪修入門 (右側圖片) -->
                     <img src="https://jamiejenjen0305.github.io/MED/L2-4.jpeg" alt="禪修介紹" class="rounded-xl shadow-md w-full max-w-lg" onerror="this.src='https://jamiejenjen0305.github.io/MED/w2-1.jpg'">
                 </div>
                 <div class="order-1 mt-8 md:mt-0">
                     <p class="text-xl mb-6 leading-relaxed text-dark-custom bg-white p-4 rounded-lg border-l-4 border-cyan-custom">
-                        禪修，不只是靜靜坐著喔！是訓練你的心，學會<b>專注、平靜和覺察</b>，目標是幫助你遠離煩惱和雜亂的思緒，讓心靈像一片湖水一樣清澈、平靜！
+                        禪修，不只是靜靜坐著喔！它是訓練你的心，讓它學會<b>專注、平靜和覺察</b>，目標是幫助你遠離煩惱和雜亂的思緒，讓心靈像一片湖水一樣清澈、平靜！
                     </p>
                     <p class="text-xl text-taupe-custom font-bold">
                         最終目標：收攝心念，達到「定心、淨心、明心」的清淨境界。
@@ -136,7 +160,7 @@
                     <li class="flex items-start">
                         <span class="text-cyan-custom text-2xl mr-3"></span>
                         <div>
-                            <strong class="font-semibold text-dark-custom">調治身心：</strong> 告別壓力!幫助你遠離妄想和昏沉，身心自然更健康、更有活力.
+                            <strong class="font-semibold text-dark-custom">調治身心：</strong> 告別壓力!幫助你遠離妄想和昏沉，身心自然更健康、更有活力。
                         </div>
                     </li>
                     <li class="flex items-start">
@@ -177,9 +201,8 @@
             <!-- 步驟小卡片網格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
                 
-                <!-- 步驟 1: 調身 - 移除文字後方的藍綠色邊界，並確保文字無額外背景 -->
+                <!-- 步驟 1: 調身 - 確保文字無額外背景 -->
                 <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-taupe-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
-                    <!-- 刪除 step-icon-container -->
                     <div>
                         <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">調身（調整姿勢）</strong>
                         <p class="text-gray-700">保持背部挺直、頭頸不偏不倚，肩膀放鬆。雙手輕放結金剛印。找到最舒服但不癱軟的姿勢，讓身體像山一樣穩固。</p>
@@ -188,25 +211,22 @@
 
                 <!-- 步驟 2: 調息 - 移除左側圖片 -->
                 <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-cyan-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
-                    <!-- 刪除 step-icon-container -->
                     <div>
                         <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">調息（調整氣息）</strong>
-                        <p class="text-gray-700">先深吸氣，再從口中緩緩吐出腹部濁氣，反覆 3 次。讓氣息變得<b>「通暢、無聲、微細、均勻」</b>，這是入定的重要基礎！</p>
+                        <p class="text-gray-700">先深吸氣，再從口中緩緩吐出腹部濁氣，反覆 3 次。讓氣息變得<b>通暢、無聲、微細、均勻</b>，這是入定的重要基礎！</p>
                     </div>
                 </div>
 
                 <!-- 步驟 3: 調心 - 移除左側圖片 -->
                 <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-taupe-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
-                    <!-- 刪除 step-icon-container -->
                     <div>
                         <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">調心（收攝心念）</strong>
-                        <p class="text-gray-700">心很容易跑掉！在身息調好後，將心念牢牢地安住在<b>呼吸</b>上。對於初學者，我們使用「數息觀」使心猿意馬漸漸收攝、歸於穩定！</p>
+                        <p class="text-gray-700">心很容易跑掉！在身息調好後，將心念牢牢地安住在<b>呼吸</b>上。對於初學者，我們使用「數息觀」來訓練心猿意馬的猴子！</p>
                     </div>
                 </div>
                 
                 <!-- 步驟 4: 結束 - 移除左側圖片 -->
                 <div class="bg-white p-6 rounded-xl shadow-md border-l-8 border-cyan-custom flex items-start space-x-4 transform hover:scale-[1.02] transition duration-300">
-                    <!-- 刪除 step-icon-container -->
                     <div>
                         <strong class="text-2xl text-dark-custom font-bold mb-1 block bg-white">結束（溫和出定）</strong>
                         <p class="text-gray-700">出定前要溫柔！慢慢搓熱手掌，輕柔按摩臉部和肢體，再慢慢張開眼睛，避免身體不適。恭喜你完成了一次靜心旅程！</p>
@@ -217,8 +237,8 @@
             <!-- 數息觀法門 (Breathing Detail) - 點擊卡片區塊 -->
             <div id="breathing_methods" class="mt-16 p-8 rounded-2xl shadow-xl border-t-8 border-taupe-custom">
                 <div class="text-center mb-10">
-                    <h3 class="text-4xl font-extrabold text-dark-custom mb-2">調心法門：數息觀介紹</h3>
-                    <p class="text-lg text-gray-600">從訓練定力的數息，到培養慧力的觀息。<b>點擊卡片查看詳細步驟！</b></p>
+                    <h3 class="text-4xl font-extrabold text-dark-custom mb-2">調心法門：數息觀詳解</h3>
+                    <p class="text-lg text-gray-600">從訓練定力的數息，到培養慧力的觀息。**點擊卡片查看詳細步驟！**</p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
@@ -247,11 +267,27 @@
                 <div class="mt-8 p-4 bg-cyan-custom rounded-xl text-white shadow-md text-center">
                     <strong class="font-extrabold text-xl block mb-1">小提醒：</strong>
                     <p class="text-lg">
-                        <b>修行中不執著、不取不捨、不憂不喜，堅定地將心念專注於正定上。</b>
+                        修行中若見到任何境界，都不可執著！不取不捨、不憂不喜，堅定地將心念專注於呼吸的正定上。
                     </p>
                 </div>
             </div>
 
+        </section>
+        
+        <!-- 禪修入門與數息觀測驗 (新區塊) -->
+        <section id="quiz" class="bg-white p-10 rounded-2xl shadow-xl border-t-8 border-dark-custom quiz-container">
+            <div class="text-center mb-10">
+                <h3 class="text-4xl sm:text-5xl font-extrabold text-dark-custom mb-2">禪修知識測驗</h3>
+                <p class="text-xl text-gray-600">共 10 題，每題 10 分，滿分 100 分。</p>
+                <div class="w-16 h-1 bg-cyan-custom mx-auto rounded-full mt-4"></div>
+            </div>  
+            <!-- 新增連結按鈕 -->
+            <div class="mt-10 text-center">
+                <a href="https://jamiejenjen0305.github.io/MED/L2_test.html" target="_blank" class="quiz-link-btn">
+                    開始小測驗
+                </a>
+            
+            </div>
         </section>
 
     </main>
@@ -305,7 +341,7 @@
                             <div class="p-4 bg-white rounded-lg border-l-4 border-cyan-custom">
                                 <strong class="text-xl text-cyan-custom font-bold block mb-2">💡 具體實踐步驟：</strong>
                                 <ul class="list-disc list-inside ml-4 space-y-2 text-base text-gray-600">
-                                    <li><b>數出或數入：</b>不可出入息同時並數。</li>
+                                    <li><b>數出或數入：</b> 應數<b>出息</b>（吐氣）或<b>入息</b>（吸氣）皆可；不可出入息同時並數。</li>
                                     <li><b>循環數數：</b> 隨著出息默數「一、二、三...」至「十」為止，然後重新回到「一」。</li>
                                     <li><b>綿密不亂：</b> 數字需綿綿相續、清楚明白。若因走神或數錯，必須溫和地從「一」重新開始。</li>
                                     <li><b>降伏妄想：</b> 若妄想紛雜難收攝，可嘗試從「十、九、八...」<b>倒數</b>至「一」，能有效幫助降伏妄想。</li>
@@ -329,8 +365,8 @@
                             <div class="p-4 bg-white rounded-lg border-l-4 border-taupe-custom">
                                 <strong class="text-xl text-dark-custom font-bold block mb-2">💡 具體實踐步驟：</strong>
                                 <ul class="list-disc list-inside ml-4 space-y-2 text-base text-gray-600">
-                                    <li><b>知出知入：</b>只是清楚地「知道」現在是吸氣（入）還是吐氣（出），不做任何評價或控制。</li>
-                                    <li><b>覺察微細：</b>將全部注意力放在氣息在鼻孔或上唇處的觸覺變化。感受氣息的<b>長短、冷熱、粗細</b>等微細之處。</li>
+                                    <li><b>知出知入：</b> 只是清楚地「知道」現在是吸氣（入）還是吐氣（出），不做任何評價或控制。</li>
+                                    <li><b>覺察微細：</b> 將全部注意力放在氣息在鼻孔或上唇處的觸覺變化。感受氣息的<b>長短、冷熱、粗細</b>等微細之處。</li>
                                     <li><b>保持自然：</b> 呼吸必須保持自然發生，你不是呼吸的控制者，而是安靜的觀察者。</li>
                                     <li><b>止觀雙運：</b> 數息為「止」（安定），觀息為「觀」（覺察），兩者純熟，即可止觀雙運。</li>
                                 </ul>
