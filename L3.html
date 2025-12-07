@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>心息小屋 Breath Cabin</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(145deg, #ffe6ec, #f7f0ff, #e4f5ff);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --primary: #ff9fb3;
+      --primary-soft: #ffd1dc;
+      --accent: #a6c8ff;
+      --accent-soft: #d7ecff;
+      --text-main: #54425a;
+      --text-soft: #8c7c95;
+      --gold: #f5d38a;
+      --shadow-soft: 0 14px 30px rgba(180, 150, 200, 0.35);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-pill: 999px;
+      --transition-fast: 0.22s ease-out;
+      --transition-slow: 0.4s ease-in-out;
+      --font-main: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background-image: var(--bg-gradient);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      color: var(--text-main);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1040px;
+      padding: 20px 16px 32px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .title-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 18px rgba(200, 160, 220, 0.25);
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+    }
+
+    .title-badge-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #ffe8a3, #ff9fb3);
+      box-shadow: 0 0 12px rgba(255, 182, 193, 0.9);
+    }
+
+    h1 {
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      margin: 4px 0 8px;
+      color: #4b3a59;
+    }
+
+    h1 span.en {
+      font-size: 16px;
+      font-weight: 500;
+      margin-left: 6px;
+      color: var(--text-soft);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .subtitle.small {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr);
+      gap: 16px;
+    }
+
+    .hero-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 244, 250, 0.96));
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 16px 20px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-visual {
+      position: relative;
+      height: 260px;
+      border-radius: 26px;
+      background: radial-gradient(circle at 20% 0%, #fff7d1, transparent 45%),
+                  radial-gradient(circle at 80% 0%, #ffe2ff, transparent 46%),
+                  linear-gradient(180deg, #fef7ff, #fde8f3 50%, #f1f6ff 100%);
+      overflow: hidden;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 8px 10px 16px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
+                  linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+      opacity: 0.9;
+    }
+
+    .breath-circle {
+      position: absolute;
+      inset: 30px 40px 36px;
+      margin: auto;
+      border-radius: 40%;
+      background: radial-gradient(circle at 30% 15%, #fffbe0, #ffd1e1 40%, #f7e3ff 65%, #f3f6ff 95%);
+      box-shadow: 0 0 30px rgba(255, 188, 213, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--transition-slow), box-shadow var(--transition-slow),
+                  background var(--transition-slow);
+      z-index: 2;
+    }
+
+    .breath-circle.inhale {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(255, 214, 165, 0.9);
+      background: radial-gradient(circle at 30% 15%, #fff8d1, #ffdcd2 40%, #f3d6ff 70%, #f0f7ff 100%);
+    }
+
+    .breath-circle.exhale {
+      transform: scale(0.98);
+      box-shadow: 0 0 22px rgba(207, 184, 255, 0.7);
+    }
+
+    .character-wrap {
+      position: relative;
+      width: 200px;
+      height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .floating-decor {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .float-item {
+      position: absolute;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #fff7d6, #ffd1e6);
+      box-shadow: 0 0 16px rgba(255, 202, 222, 0.9);
+      opacity: 0.9;
+      animation: floatY 5s ease-in-out infinite alternate;
+    }
+
+    .float-item.star {
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 30% 30%, #fff9e0, #f5d38a);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      box-shadow: 0 0 14px rgba(245, 211, 138, 0.9);
+    }
+
+    .float-1 { top: 22px; left: 24px; animation-delay: 0s; }
+    .float-2 { top: 18px; right: 30px; width: 18px; height: 18px; animation-delay: 0.8s; }
+    .float-3 { bottom: 22px; right: 30px; width: 22px; height: 22px; animation-delay: 1.4s; }
+    .float-4 { bottom: 18px; left: 26px; width: 16px; height: 16px; animation-delay: 2s; }
+
+    @keyframes floatY {
+      0% { transform: translateY(0px); opacity: 0.85; }
+      100% { transform: translateY(-10px); opacity: 1; }
+    }
+
+    .hero-info {
+      padding: 6px 4px 0;
+    }
+
+    .hero-info h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 210, 225, 0.65);
+      font-size: 11px;
+      color: #b35973;
+    }
+
+    .hero-tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #fff, #ff8da6);
+      box-shadow: 0 0 8px rgba(255, 182, 193, 0.8);
+    }
+
+    .hero-info p {
+      margin: 4px 0;
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .hero-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+
+    .metric-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(228, 245, 255, 0.85);
+      color: #567293;
+    }
+
+    .metric-pill span {
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.05fr);
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .panel-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      padding: 16px 16px 18px;
+      box-shadow: 0 10px 24px rgba(190, 160, 210, 0.25);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 245, 200, 0.9), transparent 70%);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-title-emoji {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff7db, #ffc9d7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      box-shadow: 0 0 10px rgba(255, 193, 203, 0.8);
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-top: 2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill-label {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(215, 236, 255, 0.9);
+      color: #567293;
+    }
+
+    .card-body {
+      position: relative;
+      z-index: 1;
+      margin-top: 8px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .chip {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(245, 240, 255, 0.9);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-family: var(--font-main);
+      font-size: 13px;
+    }
+
+    .btn {
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, #ff9fb3, #ffb6c6);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(255, 143, 178, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transform: translateY(0);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, #e3efff, #c1daff);
+      color: #52688c;
+      box-shadow: 0 8px 18px rgba(154, 183, 228, 0.6);
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-soft);
+      box-shadow: 0 8px 16px rgba(190, 160, 210, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(255, 149, 187, 0.7);
+      filter: brightness(1.02);
+    }
+
+    .btn.secondary:hover:not(:disabled) {
+      box-shadow: 0 12px 24px rgba(144, 176, 235, 0.7);
+    }
+
+    .btn.ghost:hover:not(:disabled) {
+      box-shadow: 0 10px 20px rgba(190, 160, 210, 0.6);
+    }
+
+    .btn-icon {
+      font-size: 14px;
+    }
+
+    .breath-message {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #b1657a;
+      background: rgba(255, 223, 235, 0.8);
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity var(--transition-slow), transform var(--transition-slow);
+    }
+
+    .breath-message.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .breath-message-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff5f3, #ff9fb3);
+      box-shadow: 0 0 10px rgba(255, 159, 179, 0.9);
+    }
+
+    .pond-layout {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 10px;
+    }
+
+    .pond-input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .pond-input-row small {
+      font-size: 11px;
+      color: #b08676;
+    }
+
+    textarea {
+      width: 100%;
+      resize: none;
+      min-height: 70px;
+      border-radius: 14px;
+      border: 1px solid rgba(220, 193, 214, 0.7);
+      padding: 8px 10px;
+      font-family: var(--font-main);
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 6px 14px rgba(210, 180, 220, 0.3);
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    textarea:focus {
+      border-color: #f198b6;
+      box-shadow: 0 0 0 1px rgba(241, 152, 182, 0.6),
+                  0 6px 18px rgba(210, 180, 220, 0.5);
+    }
+
+    .pond {
+      position: relative;
+      height: 150px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ecfbff, #c6f1ff 45%, #a6e0f3 70%, #8ec9df 100%);
+      box-shadow: 0 14px 26px rgba(126, 178, 201, 0.6);
+      overflow: hidden;
+    }
+
+    .pond::before {
+      content: "";
+      position: absolute;
+      inset: 12px 16px 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.9), transparent 70%),
+                  radial-gradient(circle at 70% 100%, rgba(255, 255, 255, 0.4), transparent 80%);
+      opacity: 0.9;
+    }
+
+    .pond-inner {
+      position: absolute;
+      inset: 12px 20px 26px;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .pond-ripple {
+      position: absolute;
+      inset: 14px 40px 40px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      opacity: 0.8;
+      animation: rippleExpand 5s ease-out infinite;
+    }
+
+    .pond-ripple:nth-child(2) {
+      inset: 26px 60px 52px;
+      opacity: 0.7;
+      animation-delay: 1.4s;
+    }
+
+    .pond-ripple:nth-child(3) {
+      inset: 36px 74px 62px;
+      opacity: 0.6;
+      animation-delay: 2.4s;
+    }
+
+    @keyframes rippleExpand {
+      0% { transform: scale(1); opacity: 0.75; }
+      100% { transform: scale(1.12); opacity: 0.05; }
+    }
+
+    .leaf {
+      position: absolute;
+      width: 38px;
+      height: 24px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #e6ffd6, #9ad37f);
+      box-shadow: 0 6px 12px rgba(90, 152, 100, 0.6);
+      transform-origin: center;
+      animation: leafFloat 7s ease-in-out infinite alternate;
+    }
+
+    .leaf::before {
+      content: "";
+      position: absolute;
+      inset: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(70, 122, 80, 0.7);
+      border-top-color: transparent;
+      opacity: 0.8;
+    }
+
+    .leaf-1 { bottom: 26px; left: 18%; animation-delay: 0.4s; }
+    .leaf-2 { top: 20px; right: 18%; animation-delay: 1.2s; }
+    .leaf-3 { bottom: 12px; right: 24%; width: 32px; animation-delay: 2s; }
+
+    @keyframes leafFloat {
+      0% { transform: translateY(0) rotate(-4deg); }
+      100% { transform: translateY(-8px) rotate(4deg); }
+    }
+
+    .bubble {
+      position: absolute;
+      min-width: 70px;
+      max-width: 200px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.96), rgba(215, 242, 255, 0.98));
+      box-shadow: 0 8px 18px rgba(70, 140, 170, 0.35);
+      font-size: 11px;
+      color: #4a6678;
+      text-align: center;
+      word-break: break-word;
+      opacity: 0;
+      transform: translate(-50%, 10px) scale(0.9);
+      animation: bubbleRise 7s ease-out forwards;
+    }
+
+    @keyframes bubbleRise {
+      0% {
+        transform: translate(-50%, 14px) scale(0.85);
+        opacity: 0;
+      }
+      8% {
+        opacity: 0.95;
+      }
+      80% {
+        transform: translate(-50%, -72px) scale(1.04);
+        opacity: 0.96;
+      }
+      100% {
+        transform: translate(-50%, -96px) scale(1.02);
+        opacity: 0;
+      }
+    }
+
+    .pond-tip {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6b6b7e;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 6px 14px rgba(160, 184, 205, 0.35);
+    }
+
+    .pond-tip-icon {
+      font-size: 14px;
+    }
+
+    .steps-layout {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 10px;
+    }
+
+    .steps-current {
+      background: linear-gradient(135deg, rgba(255, 243, 249, 0.98), rgba(235, 244, 255, 0.98));
+      border-radius: 18px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 18px rgba(188, 160, 210, 0.35);
+    }
+
+    .steps-indicator {
+      font-size: 12px;
+      color: #aa6f7b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .step-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 209, 220, 0.7);
+    }
+
+    .step-dot.active {
+      width: 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff9fb3, #ffb6d0);
+      box-shadow: 0 0 10px rgba(255, 170, 195, 0.9);
+    }
+
+    .step-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #6a476c;
+    }
+
+    .step-text {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.7;
+    }
+
+    .steps-buttons {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .timer-box {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 18px rgba(175, 176, 210, 0.35);
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .timer-box {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .timer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    select {
+      border-radius: 999px;
+      border: 1px solid rgba(211, 186, 226, 0.9);
+      padding: 5px 10px;
+      font-family: var(--font-main);
+      font-size: 12px;
+      background: rgba(252, 248, 255, 0.96);
+      box-shadow: 0 6px 12px rgba(190, 160, 210, 0.4);
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    select:focus {
+      border-color: #b982f6;
+      box-shadow: 0 0 0 1px rgba(185, 130, 246, 0.7), 0 6px 16px rgba(190, 160, 210, 0.5);
+    }
+
+    .timer-display {
+      text-align: right;
+      font-size: 18px;
+      font-weight: 600;
+      color: #6b4f98;
+      letter-spacing: 0.06em;
+    }
+
+    .timer-label {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(49, 26, 65, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-slow);
+    }
+
+    .modal-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: min(340px, 90vw);
+      background: radial-gradient(circle at 0% 0%, #fff4da, #ffe0f0 45%, #f0e9ff 80%);
+      border-radius: 26px;
+      padding: 18px 18px 16px;
+      box-shadow: 0 18px 38px rgba(88, 58, 112, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-card::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fffbe0, #ffd3aa);
+      opacity: 0.65;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #6e4868;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-text {
+      font-size: 13px;
+      color: #856484;
+      margin-bottom: 10px;
+      line-height: 1.7;
+    }
+
+    .modal-btn-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 10px;
+      color: rgba(110, 92, 130, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-badge">
+        <div class="title-badge-dot"></div>
+        <span>可愛版靜心角落 · 線上禪修小空間</span>
+      </div>
+      <h1>心息小屋<span class="en">Breath Cabin</span></h1>
+      <p class="subtitle">深吸一口氣，把今天的忙碌先放在門外。這裡，是專屬於你的可愛小禪修角落。</p>
+      <p class="subtitle small">不用做到完美，只要願意陪自己呼吸幾下，就已經很了不起。</p>
+    </header>
+
+    <main>
+      <section class="hero-card" aria-label="靜坐主視覺與數息練習區">
+        <div class="hero-layout">
+          <div class="hero-visual" aria-hidden="true">
+            <div class="breath-circle exhale" id="breathCircle">
+              <div class="character-wrap">
+                <img src="cute_monk.png" alt="可愛小和尚" style="width:160px;height:160px;object-fit:contain;animation: floatY 4s ease-in-out infinite;" />
+              </div>
+            </div>
+
+            <div class="floating-decor">
+              <div class="float-item float-1"></div>
+              <div class="float-item star float-2"></div>
+              <div class="float-item float-3"></div>
+              <div class="float-item star float-4"></div>
+            </div>
+          </div>
+
+          <div class="hero-info">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+              <h2>
+                <span class="hero-tag">
+                  <span class="hero-tag-dot"></span>
+                  <span>小和尚陪你一起靜靜數呼吸</span>
+                </span>
+              </h2>
+            </div>
+            <p>當心很吵的時候，就讓它跟著呼吸，慢慢變得柔軟一點點。你只要坐著，小屋會溫柔地帶著你往裡面走。</p>
+            <p>跟著光圈的節奏：吸一口、吐一口，像在跟自己說「我在這裡，安安穩穩的」。</p>
+
+            <div class="hero-metrics">
+              <div class="metric-pill">目前呼吸圈數<span id="breathCount">0</span></div>
+              <div class="metric-pill">狀態：<span id="breathPhaseText">準備中，找到舒服的坐姿</span></div>
+            </div>
+
+            <div class="chip-row">
+              <div class="chip">建議節奏：4 秒吸氣 · 4 秒呼氣</div>
+              <div class="chip">跟著光圈大小變化，身體自然放鬆</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn" id="breathStartBtn">
+                <span class="btn-icon">▶️</span>
+                <span>開始練習</span>
+              </button>
+              <button class="btn secondary" id="breathPauseBtn">
+                <span class="btn-icon">⏸</span>
+                <span>暫停</span>
+              </button>
+              <button class="btn ghost" id="breathResetBtn">
+                <span class="btn-icon">🔄</span>
+                <span>重置</span>
+              </button>
+            </div>
+
+            <div class="breath-message" id="breathMessage">
+              <div class="breath-message-dot"></div>
+              <span id="breathMessageText">好棒，你的心正在慢慢安靜下來。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="panel-grid">
+        <section class="card" aria-label="雜念放下池">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <div class="card-title-emoji">💭</div>
+                <span>雜念放下池</span>
+              </div>
+              <div class="card-subtitle">把你現在的煩惱打一行，讓它變成小泡泡在水面上輕輕飄走。</div>
+            </div>
+            <div class="pill-label">看見它，然後學會放它走</div>
+          </div>
+
+          <div class="card-body">
+            <div class="pond-layout">
+              <div class="pond-input-row">
+                <span>此刻心裡最吵的一句話是什麼？可以是壓力、擔心、或只是「好累喔」。</span>
+                <small>在這裡不需要解決它，只是誠實地寫下，然後交給小池塘照顧。</small>
+                <textarea id="thoughtInput" placeholder="例：我好怕自己做得不夠好。"></textarea>
+                <div class="btn-row" style="justify-content:flex-end;margin-top:4px;">
+                  <button class="btn secondary" id="releaseBtn">
+                    <span class="btn-icon">🌊</span>
+                    <span>放到水面上</span>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div class="pond" aria-hidden="true">
+                  <div class="pond-inner" id="pondInner">
+                    <div class="pond-ripple"></div>
+                    <div class="pond-ripple"></div>
+                    <div class="pond-ripple"></div>
+                    <img src="leaf1.jpg" class="leaf leaf-1" alt="leaf" />
+                    <img src="leaf2.jpg" class="leaf leaf-2" alt="leaf" />
+                    <img src="leaf3.jpg" class="leaf leaf-3" alt="leaf" />
+                  </div>
+                </div>
+                <div class="pond-tip">
+                  <span class="pond-tip-icon">🫧</span>
+                  <span>看見它，對它點點頭，然後讓它慢慢飄走。</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-label="三階段禪修引導與計時器">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <div class="card-title-emoji">🕊️</div>
+                <span>三步驟小禪修</span>
+              </div>
+              <div class="card-subtitle">不急著一次走很遠，只要一小步一小步，心就會悄悄跟上來。</div>
+            </div>
+            <div class="pill-label">可搭配左側數息區一起使用</div>
+          </div>
+
+          <div class="card-body">
+            <div class="steps-layout">
+              <div class="steps-current">
+                <div class="steps-indicator">
+                  <div>目前階段：<span id="stepIndicator">第 1 步 · 調身</span></div>
+                  <div class="step-dots">
+                    <div class="step-dot active" data-step-dot="0"></div>
+                    <div class="step-dot" data-step-dot="1"></div>
+                    <div class="step-dot" data-step-dot="2"></div>
+                  </div>
+                </div>
+                <div class="step-title" id="stepTitle">第 1 步：調身 · 讓身體先坐穩</div>
+                <div class="step-text" id="stepText">
+                  輕輕把肩膀往上聳，再慢慢放下，像一口小小地嘆息。背不需要打直到很緊，只要像一棵柔軟的小樹，穩穩站著就好。雙手輕輕疊在腿上，讓身體知道：現在可以先休息了。
+                </div>
+                <div class="steps-buttons">
+                  <button class="btn ghost" id="prevStepBtn" disabled>
+                    <span class="btn-icon">⬅️</span>
+                    <span>上一階段</span>
+                  </button>
+                  <button class="btn secondary" id="nextStepBtn">
+                    <span class="btn-icon">➡️</span>
+                    <span>下一階段</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="timer-box" aria-label="禪修小計時器">
+                <div class="timer-left">
+                  <div>
+                    <div class="timer-label">選擇這一輪想陪自己多久：</div>
+                    <select id="durationSelect">
+                      <option value="1">1 分鐘 · 像眨眼的短暫休息</option>
+                      <option value="3" selected>3 分鐘 · 給自己一小段安靜時間</option>
+                      <option value="5">5 分鐘 · 好好陪自己待一下</option>
+                    </select>
+                  </div>
+                  <button class="btn" id="timerStartBtn">
+                    <span class="btn-icon">⏱️</span>
+                    <span>開始計時</span>
+                  </button>
+                </div>
+                <div>
+                  <div class="timer-label">本輪剩餘時間</div>
+                  <div class="timer-display" id="timerDisplay">00:00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      心有點累的時候，記得你還有一間小小的心息小屋，可以隨時回來坐一會兒。
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="completionModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+      <div class="modal-title" id="modalTitle">
+        <span>做得太好了 ✨</span>
+      </div>
+      <div class="modal-text" id="modalText">
+        你已經願意停下來，陪自己安穩地呼吸一段時間，這本身就是一件很溫柔、也很勇敢的事。<br />
+        可以輕輕伸伸懶腰，對自己笑一下，然後把這份安定帶到接下來的時間裡。
+      </div>
+      <div class="modal-btn-row">
+        <button class="btn secondary" id="modalCloseBtn">
+          <span class="btn-icon">🙂</span>
+          <span>收下這份安定</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const breathCircle = document.getElementById("breathCircle");
+      const breathStartBtn = document.getElementById("breathStartBtn");
+      const breathPauseBtn = document.getElementById("breathPauseBtn");
+      const breathResetBtn = document.getElementById("breathResetBtn");
+      const breathCountSpan = document.getElementById("breathCount");
+      const breathPhaseText = document.getElementById("breathPhaseText");
+      const breathMessage = document.getElementById("breathMessage");
+      const breathMessageText = document.getElementById("breathMessageText");
+
+      const messages = [
+        "好棒，你的心正在慢慢安靜下來。",
+        "就這樣，一口一口，把自己帶回來。",
+        "每一口呼吸，都是在對自己說：我值得這份安定。",
+        "今天辛苦的地方，可以先放在一旁，先把呼吸照顧好。",
+        "你不需要立刻變得很好，只要願意多陪自己一點點就夠了。"
+      ];
+
+      let isInhale = false;
+      let isRunning = false;
+      let breathInterval = null;
+      let breathCount = 0;
+
+      function setPhaseText() {
+        if (!isRunning) {
+          breathPhaseText.textContent = "準備中，找到舒服的坐姿";
+          return;
+        }
+        breathPhaseText.textContent = isInhale
+          ? "現在：吸氣 · 感覺胸口慢慢被光填滿"
+          : "現在：呼氣 · 把緊張和疲憊慢慢吐出去";
+      }
+
+      function togglePhase() {
+        if (!isRunning) return;
+        isInhale = !isInhale;
+        breathCircle.classList.toggle("inhale", isInhale);
+        breathCircle.classList.toggle("exhale", !isInhale);
+
+        if (!isInhale) {
+          breathCount += 1;
+          breathCountSpan.textContent = String(breathCount);
+          if (breathCount > 0 && breathCount % 10 === 0) {
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            breathMessageText.textContent = msg;
+            breathMessage.classList.add("visible");
+          }
+        }
+        setPhaseText();
+      }
+
+      function startBreath() {
+        if (isRunning) return;
+        isRunning = true;
+        isInhale = true;
+        breathCircle.classList.add("inhale");
+        breathCircle.classList.remove("exhale");
+        setPhaseText();
+        breathMessage.classList.remove("visible");
+        if (breathInterval) clearInterval(breathInterval);
+        breathInterval = setInterval(togglePhase, 4000);
+      }
+
+      function pauseBreath() {
+        if (!isRunning) return;
+        isRunning = false;
+        if (breathInterval) {
+          clearInterval(breathInterval);
+          breathInterval = null;
+        }
+        setPhaseText();
+      }
+
+      function resetBreath() {
+        isRunning = false;
+        isInhale = false;
+        breathCount = 0;
+        breathCountSpan.textContent = "0";
+        if (breathInterval) {
+          clearInterval(breathInterval);
+          breathInterval = null;
+        }
+        breathCircle.classList.remove("inhale");
+        breathCircle.classList.add("exhale");
+        breathPhaseText.textContent = "準備中，找到舒服的坐姿";
+        breathMessage.classList.remove("visible");
+      }
+
+      breathStartBtn.addEventListener("click", startBreath);
+      breathPauseBtn.addEventListener("click", pauseBreath);
+      breathResetBtn.addEventListener("click", resetBreath);
+
+      const thoughtInput = document.getElementById("thoughtInput");
+      const releaseBtn = document.getElementById("releaseBtn");
+      const pondInner = document.getElementById("pondInner");
+
+      function releaseThought() {
+        const text = thoughtInput.value.trim();
+        if (!text) return;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        const span = document.createElement("span");
+        span.textContent = text;
+        bubble.appendChild(span);
+
+        const minPercent = 25;
+        const maxPercent = 75;
+        const randomLeft = minPercent + Math.random() * (maxPercent - minPercent);
+        bubble.style.left = randomLeft + "%";
+        bubble.style.bottom = "-4px";
+
+        pondInner.appendChild(bubble);
+        thoughtInput.value = "";
+
+        setTimeout(() => {
+          bubble.remove();
+        }, 7200);
+      }
+
+      releaseBtn.addEventListener("click", releaseThought);
+      thoughtInput.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "enter") {
+          e.preventDefault();
+          releaseThought();
+        }
+      });
+
+      const steps = [
+        {
+          indicator: "第 1 步 · 調身",
+          title: "第 1 步：調身 · 讓身體先坐穩",
+          text:
+            "輕輕把肩膀往上聳，再慢慢放下，像一口小小地嘆息。背不需要打直到很緊，只要像一棵柔軟的小樹，穩穩站著就好。雙手輕輕疊在腿上，讓身體知道：現在可以先休息了。",
+        },
+        {
+          indicator: "第 2 步 · 調息",
+          title: "第 2 步：調息 · 跟呼吸變成好朋友",
+          text:
+            "把注意力放在鼻尖或胸口，感覺空氣進來、出去。可以在心裡默念「吸氣 1、呼氣 1」，慢慢數到 10，再從 1 開始。當心跑掉也沒關係，只要溫柔地說：我們回到呼吸這裡。",
+        },
+        {
+          indicator: "第 3 步 · 調心",
+          title: "第 3 步：調心 · 對自己友善一點點",
+          text:
+            "在每一次呼氣的同時，默默地對自己說一句溫柔的話，例如「辛苦了，謝謝你撐到這裡」。不評價自己做得好不好，只是承認：此刻的你，已經很努力、也值得被好好擁抱。",
+        },
+      ];
+
+      const stepIndicator = document.getElementById("stepIndicator");
+      const stepTitle = document.getElementById("stepTitle");
+      const stepText = document.getElementById("stepText");
+      const prevStepBtn = document.getElementById("prevStepBtn");
+      const nextStepBtn = document.getElementById("nextStepBtn");
+      const stepDots = Array.from(document.querySelectorAll("[data-step-dot]"));
+
+      let currentStepIndex = 0;
+
+      function renderStep() {
+        const step = steps[currentStepIndex];
+        stepIndicator.textContent = step.indicator;
+        stepTitle.textContent = step.title;
+        stepText.textContent = step.text;
+
+        prevStepBtn.disabled = currentStepIndex === 0;
+        nextStepBtn.disabled = currentStepIndex === steps.length - 1;
+
+        stepDots.forEach((dot, idx) => {
+          dot.classList.toggle("active", idx === currentStepIndex);
+        });
+      }
+
+      prevStepBtn.addEventListener("click", () => {
+        if (currentStepIndex > 0) {
+          currentStepIndex -= 1;
+          renderStep();
+        }
+      });
+
+      nextStepBtn.addEventListener("click", () => {
+        if (currentStepIndex < steps.length - 1) {
+          currentStepIndex += 1;
+          renderStep();
+        }
+      });
+
+      renderStep();
+
+      const durationSelect = document.getElementById("durationSelect");
+      const timerStartBtn = document.getElementById("timerStartBtn");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const completionModal = document.getElementById("completionModal");
+      const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+      let timerInterval = null;
+      let remainingSeconds = 0;
+
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60)
+          .toString()
+          .padStart(2, "0");
+        const s = (sec % 60).toString().padStart(2, "0");
+        return m + ":" + s;
+      }
+
+      function updateTimerDisplay() {
+        timerDisplay.textContent = formatTime(remainingSeconds);
+      }
+
+      function stopTimer() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+
+      function startTimer() {
+        const minutes = parseInt(durationSelect.value, 10) || 0;
+        if (minutes <= 0) return;
+        remainingSeconds = minutes * 60;
+        stopTimer();
+        updateTimerDisplay();
+        timerStartBtn.disabled = true;
+
+        timerInterval = setInterval(() => {
+          remainingSeconds -= 1;
+          if (remainingSeconds <= 0) {
+            remainingSeconds = 0;
+            updateTimerDisplay();
+            stopTimer();
+            timerStartBtn.disabled = false;
+            openModal();
+          } else {
+            updateTimerDisplay();
+          }
+        }, 1000);
+      }
+
+      function openModal() {
+        completionModal.classList.add("visible");
+        completionModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeModal() {
+        completionModal.classList.remove("visible");
+        completionModal.setAttribute("aria-hidden", "true");
+      }
+
+      timerStartBtn.addEventListener("click", startTimer);
+      modalCloseBtn.addEventListener("click", closeModal);
+      completionModal.addEventListener("click", (e) => {
+        if (e.target === completionModal) {
+          closeModal();
+        }
+      });
+
+      remainingSeconds = 0;
+      updateTimerDisplay();
+    })();
+  </script>
+</body>
+</html>
