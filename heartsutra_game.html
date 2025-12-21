@@ -643,6 +643,9 @@ function App() {
                     <span>🧩</span> 經文重組 <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">排排看</span>
                 </button>
             </div>
+            <div className="absolute bottom-4 text-xs text-amber-800 opacity-60">
+                Copyright © 2025 JamieJen 
+            </div>
         </div>
     );
 
@@ -810,7 +813,7 @@ function App() {
                 </div>
             )}
             
-            {gameState === 'win' && (
+            {gameState === 'win' && 
                 <div className="absolute inset-0 bg-yellow-100 flex flex-col items-center justify-center z-50 p-6 text-center">
                     <div className="text-6xl mb-4 animate-bounce">🏆</div>
                     <h2 className="text-4xl font-bold mb-2 text-amber-800">功德圓滿</h2>
