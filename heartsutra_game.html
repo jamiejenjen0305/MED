@@ -61,7 +61,7 @@
         }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        /* 攻擊特效位置修正 - 提高位置 */
+        /* 攻擊特效位置修正 */
         @keyframes shoot-beam {
             0% { left: 20%; opacity: 0; transform: scale(0.5) rotate(0deg); }
             10% { opacity: 1; transform: scale(1.5) rotate(180deg); }
@@ -70,12 +70,52 @@
         }
         .beam-attack {
             position: absolute;
+            left: 20%;
             bottom: 60%; 
             font-size: 3rem;
             color: #FFD700;
             text-shadow: 0 0 20px #FF8C00;
             z-index: 30;
             animation: shoot-beam 0.6s ease-in forwards;
+        }
+
+        /* 佛號大招特效 */
+        @keyframes mantra-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .mantra-effect {
+            position: absolute;
+            left: 15%; 
+            bottom: 65%; 
+            font-size: 4rem;
+            color: #FFD700;
+            font-weight: 900;
+            text-shadow: 0 0 30px #FFD700, 0 0 10px #FFFFFF;
+            z-index: 40;
+            animation: mantra-pop 1s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* 時間到文字特效 */
+        @keyframes timeout-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .timeout-text {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 900;
+            color: #EF4444;
+            text-shadow: 2px 2px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+            z-index: 60;
+            animation: timeout-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            white-space: nowrap;
         }
 
         @keyframes shake-heavy {
@@ -255,7 +295,7 @@ function App() {
     const [orderCurrent, setOrderCurrent] = React.useState([]); 
     const [orderProgress, setOrderProgress] = React.useState(0); 
     
-    const [feedback, setFeedback] = React.useState(null);
+    const [feedback, setFeedback] = React.useState(null); // 'correct', 'wrong', 'timeout', null
     const [shakeScreen, setShakeScreen] = React.useState(false);
     const [flashScreen, setFlashScreen] = React.useState(false);
     const [combo, setCombo] = React.useState(0);
@@ -263,6 +303,7 @@ function App() {
     const [particles, setParticles] = React.useState([]);
     const [timer, setTimer] = React.useState(100);
     const [projectile, setProjectile] = React.useState(null); // 攻擊特效字
+    const [mantraText, setMantraText] = React.useState(null); // 大招佛號文字
 
     // 音效模擬
     const playSound = (type) => {
@@ -348,7 +389,7 @@ function App() {
             interval = setInterval(() => {
                 setTimer(prev => {
                     if (prev <= 0) {
-                        handleTimeOut();
+                        handleTimeOut(); // 觸發時間到邏輯
                         return 0;
                     }
                     return prev - 0.4;
@@ -392,18 +433,12 @@ function App() {
         let q = null;
         let currentDeck = fillDeck[currentLevelKey];
 
-        // 嘗試從牌堆中抽取「未見過 key」的題目 (盡量避免跨難度重複)
-        // 但如果牌堆快空了，就只保證不重複抽同一張卡
+        // 嘗試從牌堆中抽取「未見過 key」的題目
         if (currentDeck && currentDeck.length > 0) {
-            // 優先找沒見過 key 的
             const uniqueIndex = currentDeck.findIndex(item => !seenKeys.has(item.key.split('_')[0])); 
-            // 這裡簡單用 split('_')[0] 來模糊比對 (例如 avalokita 和 avalokita_3 算同一句意)
-            // 如果沒找到，就直接拿第一張 (避免卡死)
             const targetIndex = uniqueIndex >= 0 ? uniqueIndex : 0;
-            
             q = currentDeck[targetIndex];
             
-            // 從牌堆移除
             const remainingDeck = [...currentDeck];
             remainingDeck.splice(targetIndex, 1);
             
@@ -411,11 +446,8 @@ function App() {
                 ...prev,
                 [currentLevelKey]: remainingDeck
             }));
-            
-            // 記錄這題已出過
             setSeenKeys(prev => new Set(prev).add(q.key.split('_')[0]));
         } else {
-            // 萬一真的沒牌了 (備用方案，隨機取)
             const dataset = FILL_DATA[currentLevelKey];
             q = dataset[Math.floor(Math.random() * dataset.length)];
         }
@@ -438,18 +470,19 @@ function App() {
     const handleTimeOut = () => {
         playSound('error'); // 時間到播放錯誤音效
         triggerShake();
-        setFeedback('wrong');
-        setCombo(0);
+        setFeedback('timeout'); // 標記為時間到
+        setCombo(0); // 連擊歸零
         const damage = 15;
         setPlayerHP(prev => prev - damage);
         
         if (playerHP - damage <= 0) {
             setTimeout(() => setGameState('gameover'), 1000);
         } else {
+            // 時間到算一題，重置時間繼續
             setTimeout(() => {
                 setFeedback(null);
                 setTimer(100);
-            }, 1000);
+            }, 1500); // 稍微延長展示時間
         }
     };
 
@@ -485,7 +518,7 @@ function App() {
         }
     };
 
-    const handleSuccess = () => {
+    const handleSuccess = (isUlt = false) => {
         setFeedback('correct');
         // Update Combo and Score together to ensure consistency
         setCombo(prevCombo => {
@@ -493,8 +526,10 @@ function App() {
             setScore(prevScore => prevScore + 100 + (newCombo * 20));
             return newCombo;
         });
-        // Update MP
-        setUltMeter(prevMp => Math.min(100, prevMp + 25));
+        // Update MP (只有非大招觸發時才增加 MP)
+        if (!isUlt) {
+            setUltMeter(prevMp => Math.min(100, prevMp + 25));
+        }
         // Visuals
         spawnParticles('80%', '40%', 30, '#FFD700');
         
@@ -505,6 +540,7 @@ function App() {
                 setGameState('win');
             } else {
                 setProjectile(null);
+                setMantraText(null); // 清除大招字
                 setProgress(nextProgress);
                 setGameState('walking');
             }
@@ -526,10 +562,10 @@ function App() {
     const activateUlt = () => {
         if (ultMeter < 100) return;
         triggerFlash();
-        setUltMeter(0);
-        setProjectile('卍');
+        setUltMeter(0); // 消耗 MP，歸零
+        setMantraText('卍'); // 設定大招文字
         playSound('correct'); // 大招也播放正確音效
-        handleSuccess(); 
+        handleSuccess(true); // 傳入 true 標記為大招，不重複增加 MP
     };
 
     // --- Renders ---
@@ -575,12 +611,13 @@ function App() {
                     {combo > 1 && <div className="text-red-500 font-bold italic animate-pulse">Combo x{combo}</div>}
                 </div>
             </div>
-            <div className="w-full h-1.5 bg-gray-300 rounded-full mt-1">
-                <div className="h-full bg-blue-500 transition-all duration-1000 rounded-full" style={{width: `${progress}%`}}></div>
+            {/* Boss HP Bar */}
+            <div className="w-full h-3 bg-gray-800 rounded-full mt-1 border border-gray-600 relative overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-purple-600 to-red-600 transition-all duration-1000" style={{width: `${100 - progress}%`}}></div>
             </div>
             <div className="flex justify-between text-xs font-bold text-gray-500 mt-1 px-1">
                 <span>{gameMode === 'fill' ? `難度 Lv.${level}` : `經文段落 ${level}/10`}</span>
-                <span>靈山進度 {progress}%</span>
+                <span className="text-red-800 font-black">心魔 HP {100 - progress}%</span>
             </div>
         </div>
     );
@@ -672,6 +709,12 @@ function App() {
                         {projectile && (
                             <div className="beam-attack font-serif font-black">{projectile}</div>
                         )}
+                        {mantraText && (
+                            <div className="mantra-effect">{mantraText}</div>
+                        )}
+                        {feedback === 'timeout' && (
+                            <div className="timeout-text">時間到！</div>
+                        )}
                     </div>
                     {gameState === 'walking' && <div className="absolute bottom-20 w-full text-center z-20"><span className="bg-black/60 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm animate-pulse">前往下一關...</span></div>}
 
@@ -679,7 +722,7 @@ function App() {
                     {gameState === 'battle' && gameMode === 'order' && renderOrderGame()}
                     
                     {ultMeter >= 100 && gameState === 'battle' && (
-                         <button onClick={activateUlt} className="absolute top-20 right-4 z-50 bg-yellow-400 text-amber-900 rounded-full w-20 h-20 flex items-center justify-center shadow-lg border-4 border-yellow-200 ult-ready active:scale-90 font-black text-2xl">卍</button>
+                         <button onClick={activateUlt} className="absolute left-[12%] bottom-[55%] z-50 bg-yellow-400 text-amber-900 rounded-full w-12 h-12 flex items-center justify-center shadow-lg border-2 border-yellow-200 ult-ready active:scale-90 font-black text-lg animate-bounce">卍</button>
                     )}
                 </>
             )}
