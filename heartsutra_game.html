@@ -61,6 +61,23 @@
         }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
+        /* 攻擊特效位置修正 */
+        @keyframes shoot-beam {
+            0% { left: 20%; opacity: 0; transform: scale(0.5) rotate(0deg); }
+            10% { opacity: 1; transform: scale(1.5) rotate(180deg); }
+            80% { left: 70%; opacity: 1; transform: scale(1) rotate(720deg); }
+            100% { left: 80%; opacity: 0; transform: scale(2); }
+        }
+        .beam-attack {
+            position: absolute;
+            bottom: 60%;
+            font-size: 3rem;
+            color: #FFD700;
+            text-shadow: 0 0 20px #FF8C00;
+            z-index: 30;
+            animation: shoot-beam 0.6s ease-in forwards;
+        }
+
         @keyframes shake-heavy {
             0% { transform: translate(0, 0) rotate(0); }
             10% { transform: translate(-5px, -5px) rotate(-2deg); }
@@ -115,24 +132,24 @@
 // --- 資源 ---
 const ASSETS = {
     player: "https://jamiejenjen0305.github.io/MED/littlemonk_1.png",
-    enemy_purple: "https://api.dicebear.com/9.x/bottts/png?seed=Abby&backgroundColor=c0aede&size=256",
-    enemy_green: "https://api.dicebear.com/9.x/bottts/png?seed=Buster&backgroundColor=b6e3f4&size=256",
-    enemy_red: "https://api.dicebear.com/9.x/bottts/png?seed=Cookie&backgroundColor=ffccbc&size=256",
+    enemy_purple: "https://jamiejenjen0305.github.io/MED/monster_p.png",
+    enemy_green: "https://jamiejenjen0305.github.io/MED/monster_green.png",
+    enemy_red: "https://jamiejenjen0305.github.io/MED/monster_red.png",
     boss: "https://api.dicebear.com/9.x/bottts/png?seed=Willow&backgroundColor=ffab91&size=256"
 };
 
-// --- 資料庫 (超級擴充版) ---
-// key 用於辨識句意，避免同一局內重複出現同一句經文
+// --- 資料庫 (全面修正版) ---
+// 修正重點：確保所有題目都是完整的經文句子，上下文通順
 
 const FILL_DATA = {
     level1: [ // 填1字
-        { key: 'avalokita', q: "觀自在菩薩，行深般若波羅蜜多__", a: "時", options: ["時", "實", "史", "使"] },
+        { key: 'avalokita', q: "__自在菩薩，行深般若波羅蜜多時", a: "觀", options: ["觀", "關", "官", "光"] },
         { key: 'skandhas', q: "照見五蘊皆__，度一切苦厄", a: "空", options: ["空", "凶", "孔", "控"] },
         { key: 'sariputra', q: "舍利子，是諸法__相", a: "空", options: ["空", "恐", "公", "攻"] },
         { key: 'form_void', q: "色不異空，空不異__", a: "色", options: ["色", "澀", "射", "設"] },
         { key: 'form_is_void_1', q: "色即是空，空即是__", a: "色", options: ["色", "受", "想", "識"] },
         { key: 'feeling', q: "受想行識，亦復如__", a: "是", options: ["是", "事", "世", "式"] },
-        { key: 'no_birth', q: "不生不滅，不垢不__", a: "淨", options: ["淨", "進", "近", "敬"] },
+        { key: 'no_birth', q: "不生不滅，不垢不__，不增不減", a: "淨", options: ["淨", "進", "近", "敬"] }, // 修正：補全後句
         { key: 'no_eyes_1', q: "無眼界，乃至無__識界", a: "意", options: ["意", "異", "義", "憶"] },
         { key: 'four_truths_1', q: "無苦集滅__", a: "道", options: ["道", "到", "導", "盜"] },
         { key: 'no_wisdom_1', q: "無智亦無__", a: "得", options: ["得", "德", "的", "地"] },
@@ -151,14 +168,14 @@ const FILL_DATA = {
         { key: 'sariputra_2', q: "舍利子，是諸法__", a: "空相", options: ["空相", "實相", "法相", "無相"] },
         { key: 'form_void_2', q: "色即是空，空即__", a: "是色", options: ["是色", "是空", "是受", "是想"] },
         { key: 'feeling_2', q: "受想行識，亦復__", a: "如是", options: ["如是", "如此", "如幻", "如夢"] },
-        { key: 'no_birth_2', q: "不生不滅，不垢__", a: "不淨", options: ["不淨", "不減", "不增", "不生"] },
-        { key: 'senses_2', q: "無眼耳__，無色聲", a: "鼻舌", options: ["鼻舌", "身意", "手足", "口鼻"] },
-        { key: 'senses_2b', q: "無色聲__，無眼界", a: "香味", options: ["香味", "觸法", "聲香", "味觸"] },
-        { key: 'ignorance_2', q: "無無明，亦無__", a: "無明", options: ["無明", "老死", "盡滅", "所得"] },
+        { key: 'no_birth_2', q: "不生不滅，不垢__，不增不減", a: "不淨", options: ["不淨", "不減", "不增", "不生"] }, // 修正：補全後句
+        { key: 'senses_2', q: "無眼耳__身意，無色聲香味觸法", a: "鼻舌", options: ["鼻舌", "身意", "手足", "口鼻"] }, // 修正：完整句子
+        { key: 'senses_2b', q: "無眼耳鼻舌身意，無色聲__觸法", a: "香味", options: ["香味", "觸法", "聲香", "味觸"] }, // 修正：完整句子
+        { key: 'ignorance_2', q: "無無明，亦無__盡", a: "無明", options: ["無明", "老死", "盡滅", "所得"] },
         { key: 'no_fear_2', q: "心無罣礙，無__故", a: "罣礙", options: ["罣礙", "恐怖", "夢想", "障礙"] },
         { key: 'no_fear_3', q: "心無罣礙，無罣__", a: "礙故", options: ["礙故", "礙苦", "礙空", "礙色"] },
         { key: 'dream_2', q: "遠離__，究竟涅槃", a: "顛倒", options: ["顛倒", "夢想", "恐怖", "罣礙"] },
-        { key: 'nirvana_2', q: "遠離顛倒，究竟__", a: "涅槃", options: ["涅槃", "解脫", "圓滿", "成佛"] },
+        { key: 'nirvana_2', q: "遠離顛倒夢想，究竟__", a: "涅槃", options: ["涅槃", "解脫", "圓滿", "成佛"] }, // 修正：補全前句
         { key: 'no_death_2', q: "乃至無老死，亦無__盡", a: "老死", options: ["老死", "病死", "生死", "苦死"] },
         { key: 'mantra_bright', q: "是大明咒，是__咒", a: "無上", options: ["無上", "無等", "神咒", "大明"] },
         { key: 'mantra_great_2', q: "故知__波羅蜜多", a: "般若", options: ["般若", "智慧", "功德", "慈悲"] },
@@ -174,19 +191,19 @@ const FILL_DATA = {
         { key: 'feeling_3', q: "__，亦復如是", a: "受想行識", options: ["受想行識", "色受想行", "眼耳鼻舌", "色聲香味"] },
         { key: 'sariputra_3', q: "是諸法空相，__", a: "不生不滅", options: ["不生不滅", "不垢不淨", "不增不減", "真實不虛"] },
         { key: 'no_increase_3', q: "不垢不淨，__", a: "不增不減", options: ["不增不減", "不生不滅", "不垢不淨", "是故空中"] },
-        { key: 'senses_3', q: "無受想行識，無__", a: "眼耳鼻舌", options: ["眼耳鼻舌", "身意無色", "色聲香味", "觸法無眼"] },
-        { key: 'no_ignorance_3', q: "__，亦無無明盡", a: "無無明亦", options: ["無無明亦", "亦無無明", "乃至無老", "亦無老死"] },
-        { key: 'no_death_3', q: "乃至無老死，__", a: "亦無老死", options: ["亦無老死", "無老死盡", "無苦集滅", "無智亦無"] },
-        { key: 'no_attainment_3', q: "無智亦無得，__", a: "以無所得", options: ["以無所得", "無所得故", "菩提薩埵", "依般若波"] },
+        { key: 'senses_3', q: "無受想行識，無__", a: "眼耳鼻舌", options: ["眼耳鼻舌", "身意無色", "色聲香味", "觸法無眼"] }, // 修正：無受想行識是前句，接無眼耳鼻舌身意是正確的
+        { key: 'no_eyes_3', q: "無眼界，乃至__", a: "無意識界", options: ["無意識界", "無無明盡", "無老死盡", "無智亦無"] },
+        { key: 'no_death_3', q: "乃至無老死，__盡", a: "亦無老死", options: ["亦無老死", "無老死盡", "無苦集滅", "無智亦無"] }, // 修正：補上'盡'
+        { key: 'no_attainment_3', q: "無智亦無得，__故", a: "以無所得", options: ["以無所得", "無所得故", "菩提薩埵", "依般若波"] }, // 修正：補上'故'
         { key: 'bodhisattva_3', q: "以無所得故，__", a: "菩提薩埵", options: ["菩提薩埵", "依般若波", "心無罣礙", "無罣礙故"] },
         { key: 'no_fear_3_long', q: "心無罣礙，__", a: "無罣礙故", options: ["無罣礙故", "無有恐怖", "遠離顛倒", "究竟涅槃"] },
         { key: 'dream_3', q: "遠離顛倒夢想，__", a: "究竟涅槃", options: ["究竟涅槃", "心無罣礙", "真實不虛", "即說咒曰"] },
-        { key: 'buddhas_3', q: "三世諸佛，依__", a: "般若波羅", options: ["般若波羅", "波羅蜜多", "菩提薩埵", "涅槃究竟"] },
+        { key: 'buddhas_3', q: "三世諸佛，依__蜜多故", a: "般若波羅", options: ["般若波羅", "波羅蜜多", "菩提薩埵", "涅槃究竟"] }, // 修正：補上'蜜多故'
         { key: 'mantra_3', q: "故知般若波羅蜜多，__", a: "是大神咒", options: ["是大神咒", "是大明咒", "是無上咒", "是無等咒"] },
         { key: 'truth_3', q: "能除一切苦，__", a: "真實不虛", options: ["真實不虛", "真實不空", "究竟涅槃", "是無上咒"] },
         { key: 'say_mantra_3', q: "故說般若波羅蜜多咒，__", a: "即說咒曰", options: ["即說咒曰", "揭諦揭諦", "波羅揭諦", "菩提薩婆"] },
         { key: 'gate_3', q: "__，波羅僧揭諦", a: "波羅揭諦", options: ["波羅揭諦", "揭諦揭諦", "菩提薩婆", "摩訶般若"] },
-        { key: 'svaha_3', q: "波羅僧揭諦，__", a: "菩提薩婆", options: ["菩提薩婆", "摩訶般若", "波羅蜜多", "揭諦揭諦"] }
+        { key: 'svaha_3', q: "波羅僧揭諦，__訶", a: "菩提薩婆", options: ["菩提薩婆", "摩訶般若", "波羅蜜多", "揭諦揭諦"] } // 修正：補上'訶'
     ]
 };
 
@@ -247,6 +264,7 @@ function App() {
     const [ultMeter, setUltMeter] = React.useState(0);
     const [particles, setParticles] = React.useState([]);
     const [timer, setTimer] = React.useState(100);
+    const [projectile, setProjectile] = React.useState(null); // 攻擊特效字
 
     // 音效模擬
     const triggerShake = () => { setShakeScreen(true); setTimeout(() => setShakeScreen(false), 500); };
@@ -421,8 +439,10 @@ function App() {
 
     const handleFillAnswer = (ans) => {
         if (!fillQuestion || feedback) return;
-        if (ans === fillQuestion.a) handleSuccess();
-        else handleFail();
+        if (ans === fillQuestion.a) {
+            setProjectile(ans); // 顯示攻擊字
+            handleSuccess();
+        } else handleFail();
     };
 
     const handleOrderClick = (text, index) => {
@@ -446,7 +466,7 @@ function App() {
         setCombo(c => c + 1);
         setUltMeter(m => Math.min(100, m + 20));
         setScore(s => s + 100 + (combo * 20));
-        spawnParticles('80%', '60%', 30, '#FFD700');
+        spawnParticles('80%', '40%', 30, '#FFD700');
         
         setTimeout(() => {
             const nextProgress = progress + 10;
@@ -454,6 +474,7 @@ function App() {
                 triggerFlash();
                 setGameState('win');
             } else {
+                setProjectile(null);
                 setProgress(nextProgress);
                 setGameState('walking');
             }
@@ -476,6 +497,7 @@ function App() {
         if (ultMeter < 100) return;
         triggerFlash();
         setUltMeter(0);
+        setProjectile('卍');
         handleSuccess(); 
     };
 
@@ -608,14 +630,17 @@ function App() {
                     <div className="flex-1 h-full flex items-center justify-center relative z-10">
                         <Particles items={particles} />
                         {enemy && gameState === 'battle' && (
-                            <div className="absolute right-[10%] bottom-[30%] w-32 h-32 flex flex-col items-center animate-float transition-all duration-500">
+                            <div className="absolute right-[10%] bottom-[60%] w-32 h-32 flex flex-col items-center animate-float transition-all duration-500">
                                 <img src={gameMode==='fill' ? ASSETS.enemy_purple : ASSETS.enemy_red} className="w-full h-full object-contain filter drop-shadow-xl" />
                             </div>
                         )}
-                        <div className={`absolute left-[10%] bottom-[25%] w-36 h-36 flex flex-col items-center z-20 ${gameState==='walking'?'animate-[walk_0.8s_infinite]':'animate-float'}`}>
+                        <div className={`absolute left-[10%] bottom-[50%] w-36 h-36 flex flex-col items-center z-20 ${gameState==='walking'?'animate-[walk_0.8s_infinite]':'animate-float'}`}>
                             {feedback === 'wrong' && <div className="text-red-600 text-4xl font-bold absolute -top-10 animate-bounce">-10</div>}
                             <img src={ASSETS.player} className="w-full h-full object-contain filter drop-shadow-2xl" />
                         </div>
+                        {projectile && (
+                            <div className="beam-attack font-serif font-black">{projectile}</div>
+                        )}
                     </div>
                     {gameState === 'walking' && <div className="absolute bottom-20 w-full text-center z-20"><span className="bg-black/60 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm animate-pulse">前往下一關...</span></div>}
 
