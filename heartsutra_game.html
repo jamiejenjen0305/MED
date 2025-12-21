@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小沙彌心經修練：心經降魔</title>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Zen+Maru+Gothic:wght@500;700&display=swap');
+
+        body {
+            font-family: 'Zen Maru Gothic', 'Noto Serif TC', serif;
+            background-color: #1a1a1a;
+            touch-action: manipulation;
+            overflow: hidden;
+            color: #4a3b2a;
+        }
+
+        .game-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            max-width: 500px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 50%, #FFF8E1 100%);
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* 背景動畫 */
+        .bg-layer {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background-repeat: repeat-x;
+            will-change: transform;
+        }
+        .scrolling .bg-cloud-1 { animation: scroll 25s linear infinite; }
+        .scrolling .bg-cloud-2 { animation: scroll 40s linear infinite; }
+        .scrolling .bg-mountain { animation: scroll 60s linear infinite; }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* 動畫類別 */
+        @keyframes walk {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(2deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-3px) rotate(-2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        @keyframes shake-heavy {
+            0% { transform: translate(0, 0) rotate(0); }
+            10% { transform: translate(-5px, -5px) rotate(-2deg); }
+            20% { transform: translate(5px, 5px) rotate(2deg); }
+            30% { transform: translate(-5px, 5px) rotate(-2deg); }
+            40% { transform: translate(5px, -5px) rotate(2deg); }
+            50% { transform: translate(0, 0) rotate(0); }
+        }
+        .shake-screen { animation: shake-heavy 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: particle-fly 0.8s ease-out forwards;
+            border-radius: 50%;
+        }
+        @keyframes particle-fly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        .ult-ready {
+            box-shadow: 0 0 20px #FFD700, inset 0 0 20px #FFD700;
+            animation: pulse-gold 1s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 10px #FFD700; }
+            50% { box-shadow: 0 0 30px #FFD700, 0 0 50px #FFA500; }
+            100% { box-shadow: 0 0 10px #FFD700; }
+        }
+        
+        @keyframes holy-light {
+            0% { background-color: rgba(255, 215, 0, 0); }
+            50% { background-color: rgba(255, 255, 255, 0.9); }
+            100% { background-color: rgba(255, 215, 0, 0); }
+        }
+        .flash-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+            animation: holy-light 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+// --- 資源 ---
+const ASSETS = {
+    player: "https://jamiejenjen0305.github.io/MED/littlemonk_1.png",
+    enemy_purple: "https://api.dicebear.com/9.x/bottts/png?seed=Abby&backgroundColor=c0aede&size=256",
+    enemy_green: "https://api.dicebear.com/9.x/bottts/png?seed=Buster&backgroundColor=b6e3f4&size=256",
+    enemy_red: "https://api.dicebear.com/9.x/bottts/png?seed=Cookie&backgroundColor=ffccbc&size=256",
+    boss: "https://api.dicebear.com/9.x/bottts/png?seed=Willow&backgroundColor=ffab91&size=256"
+};
+
+// --- 資料庫 (超級擴充版) ---
+// key 用於辨識句意，避免同一局內重複出現同一句經文
+
+const FILL_DATA = {
+    level1: [ // 填1字
+        { key: 'avalokita', q: "觀自在菩薩，行深般若波羅蜜多__", a: "時", options: ["時", "實", "史", "使"] },
+        { key: 'skandhas', q: "照見五蘊皆__，度一切苦厄", a: "空", options: ["空", "凶", "孔", "控"] },
+        { key: 'sariputra', q: "舍利子，是諸法__相", a: "空", options: ["空", "恐", "公", "攻"] },
+        { key: 'form_void', q: "色不異空，空不異__", a: "色", options: ["色", "澀", "射", "設"] },
+        { key: 'form_is_void_1', q: "色即是空，空即是__", a: "色", options: ["色", "受", "想", "識"] },
+        { key: 'feeling', q: "受想行識，亦復如__", a: "是", options: ["是", "事", "世", "式"] },
+        { key: 'no_birth', q: "不生不滅，不垢不__", a: "淨", options: ["淨", "進", "近", "敬"] },
+        { key: 'no_eyes_1', q: "無眼界，乃至無__識界", a: "意", options: ["意", "異", "義", "憶"] },
+        { key: 'four_truths_1', q: "無苦集滅__", a: "道", options: ["道", "到", "導", "盜"] },
+        { key: 'no_wisdom_1', q: "無智亦無__", a: "得", options: ["得", "德", "的", "地"] },
+        { key: 'no_attainment_1', q: "以無所__故", a: "得", options: ["得", "有", "求", "礙"] },
+        { key: 'dream_1', q: "遠離顛倒夢__", a: "想", options: ["想", "相", "向", "象"] },
+        { key: 'buddhas_1', q: "三世諸__", a: "佛", options: ["佛", "法", "僧", "天"] },
+        { key: 'mantra_great', q: "故知般若波羅蜜多，是大__咒", a: "神", options: ["神", "佛", "鬼", "人"] },
+        { key: 'unequalled_1', q: "是無等等__", a: "咒", options: ["咒", "法", "經", "論"] },
+        { key: 'remove_suffering', q: "能除一切__，真實不虛", a: "苦", options: ["苦", "難", "災", "厄"] },
+        { key: 'say_mantra_1', q: "即說咒__", a: "曰", options: ["曰", "日", "目", "白"] },
+        { key: 'gate', q: "揭諦揭諦，波羅__諦", a: "揭", options: ["揭", "接", "結", "解"] },
+        { key: 'svaha_1', q: "菩提薩婆__", a: "訶", options: ["訶", "呵", "河", "荷"] }
+    ],
+    level2: [ // 填2字
+        { key: 'skandhas_2', q: "照見五蘊__，度一切苦厄", a: "皆空", options: ["皆空", "皆色", "皆苦", "皆無"] },
+        { key: 'sariputra_2', q: "舍利子，是諸法__", a: "空相", options: ["空相", "實相", "法相", "無相"] },
+        { key: 'form_void_2', q: "色即是空，空即__", a: "是色", options: ["是色", "是空", "是受", "是想"] },
+        { key: 'feeling_2', q: "受想行識，亦復__", a: "如是", options: ["如是", "如此", "如幻", "如夢"] },
+        { key: 'no_birth_2', q: "不生不滅，不垢__", a: "不淨", options: ["不淨", "不減", "不增", "不生"] },
+        { key: 'senses_2', q: "無眼耳__，無色聲", a: "鼻舌", options: ["鼻舌", "身意", "手足", "口鼻"] },
+        { key: 'senses_2b', q: "無色聲__，無眼界", a: "香味", options: ["香味", "觸法", "聲香", "味觸"] },
+        { key: 'ignorance_2', q: "無無明，亦無__", a: "無明", options: ["無明", "老死", "盡滅", "所得"] },
+        { key: 'no_fear_2', q: "心無罣礙，無__故", a: "罣礙", options: ["罣礙", "恐怖", "夢想", "障礙"] },
+        { key: 'no_fear_3', q: "心無罣礙，無罣__", a: "礙故", options: ["礙故", "礙苦", "礙空", "礙色"] },
+        { key: 'dream_2', q: "遠離__，究竟涅槃", a: "顛倒", options: ["顛倒", "夢想", "恐怖", "罣礙"] },
+        { key: 'nirvana_2', q: "遠離顛倒，究竟__", a: "涅槃", options: ["涅槃", "解脫", "圓滿", "成佛"] },
+        { key: 'no_death_2', q: "乃至無老死，亦無__盡", a: "老死", options: ["老死", "病死", "生死", "苦死"] },
+        { key: 'mantra_bright', q: "是大明咒，是__咒", a: "無上", options: ["無上", "無等", "神咒", "大明"] },
+        { key: 'mantra_great_2', q: "故知__波羅蜜多", a: "般若", options: ["般若", "智慧", "功德", "慈悲"] },
+        { key: 'mantra_unequalled_2', q: "是無上咒，是無__咒", a: "等等", options: ["等等", "上上", "下下", "分別"] },
+        { key: 'bodhi_sattva', q: "菩提薩埵，依般若__故", a: "波羅", options: ["波羅", "蜜多", "般若", "智慧"] },
+        { key: 'gate_2', q: "揭諦揭諦，波羅__", a: "揭諦", options: ["揭諦", "僧揭", "摩訶", "般若"] }
+    ],
+    level3: [ // 填4字
+        { key: 'avalokita_3', q: "觀自在菩薩，行深__蜜多時", a: "般若波羅", options: ["般若波羅", "波羅蜜多", "菩提薩埵", "依般若波"] },
+        { key: 'skandhas_3', q: "__，度一切苦厄", a: "照見五蘊", options: ["照見五蘊", "五蘊皆空", "受想行識", "色即是空"] },
+        { key: 'form_void_3', q: "色不異空，__", a: "空不異色", options: ["空不異色", "色即是空", "空即是色", "受想行識"] },
+        { key: 'form_is_void_3', q: "色即是空，__", a: "空即是色", options: ["空即是色", "色不異空", "空不異色", "亦復如是"] },
+        { key: 'feeling_3', q: "__，亦復如是", a: "受想行識", options: ["受想行識", "色受想行", "眼耳鼻舌", "色聲香味"] },
+        { key: 'sariputra_3', q: "是諸法空相，__", a: "不生不滅", options: ["不生不滅", "不垢不淨", "不增不減", "真實不虛"] },
+        { key: 'no_increase_3', q: "不垢不淨，__", a: "不增不減", options: ["不增不減", "不生不滅", "不垢不淨", "是故空中"] },
+        { key: 'senses_3', q: "無受想行識，無__", a: "眼耳鼻舌", options: ["眼耳鼻舌", "身意無色", "色聲香味", "觸法無眼"] },
+        { key: 'no_ignorance_3', q: "__，亦無無明盡", a: "無無明亦", options: ["無無明亦", "亦無無明", "乃至無老", "亦無老死"] },
+        { key: 'no_death_3', q: "乃至無老死，__", a: "亦無老死", options: ["亦無老死", "無老死盡", "無苦集滅", "無智亦無"] },
+        { key: 'no_attainment_3', q: "無智亦無得，__", a: "以無所得", options: ["以無所得", "無所得故", "菩提薩埵", "依般若波"] },
+        { key: 'bodhisattva_3', q: "以無所得故，__", a: "菩提薩埵", options: ["菩提薩埵", "依般若波", "心無罣礙", "無罣礙故"] },
+        { key: 'no_fear_3_long', q: "心無罣礙，__", a: "無罣礙故", options: ["無罣礙故", "無有恐怖", "遠離顛倒", "究竟涅槃"] },
+        { key: 'dream_3', q: "遠離顛倒夢想，__", a: "究竟涅槃", options: ["究竟涅槃", "心無罣礙", "真實不虛", "即說咒曰"] },
+        { key: 'buddhas_3', q: "三世諸佛，依__", a: "般若波羅", options: ["般若波羅", "波羅蜜多", "菩提薩埵", "涅槃究竟"] },
+        { key: 'mantra_3', q: "故知般若波羅蜜多，__", a: "是大神咒", options: ["是大神咒", "是大明咒", "是無上咒", "是無等咒"] },
+        { key: 'truth_3', q: "能除一切苦，__", a: "真實不虛", options: ["真實不虛", "真實不空", "究竟涅槃", "是無上咒"] },
+        { key: 'say_mantra_3', q: "故說般若波羅蜜多咒，__", a: "即說咒曰", options: ["即說咒曰", "揭諦揭諦", "波羅揭諦", "菩提薩婆"] },
+        { key: 'gate_3', q: "__，波羅僧揭諦", a: "波羅揭諦", options: ["波羅揭諦", "揭諦揭諦", "菩提薩婆", "摩訶般若"] },
+        { key: 'svaha_3', q: "波羅僧揭諦，__", a: "菩提薩婆", options: ["菩提薩婆", "摩訶般若", "波羅蜜多", "揭諦揭諦"] }
+    ]
+};
+
+const ORDER_DATA = [
+    ["觀自在菩薩", "行深般若波羅蜜多時", "照見五蘊皆空", "度一切苦厄", "舍利子"],
+    ["色不異空", "空不異色", "色即是空", "空即是色", "受想行識亦復如是"],
+    ["是諸法空相", "不生不滅", "不垢不淨", "不增不減", "是故空中無色"],
+    ["無受想行識", "無眼耳鼻舌身意", "無色聲香味觸法", "無眼界乃至無意識界", "無無明亦無無明盡"],
+    ["乃至無老死", "亦無老死盡", "無苦集滅道", "無智亦無得", "以無所得故"],
+    ["菩提薩埵", "依般若波羅蜜多故", "心無罣礙", "無罣礙故", "無有恐怖"],
+    ["遠離顛倒夢想", "究竟涅槃", "三世諸佛", "依般若波羅蜜多故", "得阿耨多羅三藐三菩提"],
+    ["故知般若波羅蜜多", "是大神咒", "是大明咒", "是無上咒", "是無等等咒"],
+    ["能除一切苦", "真實不虛", "故說般若波羅蜜多咒", "即說咒曰", "揭諦揭諦"],
+    ["波羅揭諦", "波羅僧揭諦", "菩提薩婆訶", "摩訶般若波羅蜜多", "心經圓滿"]
+];
+
+// --- 粒子系統組件 ---
+const Particles = ({ items }) => (
+    <>
+        {items.map(p => (
+            <div
+                key={p.id}
+                className="particle"
+                style={{
+                    left: p.x, top: p.y, width: p.size, height: p.size,
+                    backgroundColor: p.color, '--tx': `${p.tx}px`, '--ty': `${p.ty}px`, zIndex: 40
+                }}
+            />
+        ))}
+    </>
+);
+
+// --- 主程式 ---
+function App() {
+    // 狀態
+    const [gameState, setGameState] = React.useState('menu'); 
+    const [gameMode, setGameMode] = React.useState(null); 
+    const [level, setLevel] = React.useState(1); 
+    const [fillDeck, setFillDeck] = React.useState({}); // 牌堆
+    const [seenKeys, setSeenKeys] = React.useState(new Set()); // 已出現過的句子 Key
+    
+    const [playerHP, setPlayerHP] = React.useState(100);
+    const [maxHP] = React.useState(100);
+    const [progress, setProgress] = React.useState(0); 
+    const [score, setScore] = React.useState(0);
+    const [enemy, setEnemy] = React.useState(null);
+    
+    // 戰鬥相關
+    const [fillQuestion, setFillQuestion] = React.useState(null); 
+    const [orderTarget, setOrderTarget] = React.useState([]); 
+    const [orderCurrent, setOrderCurrent] = React.useState([]); 
+    const [orderProgress, setOrderProgress] = React.useState(0); 
+    
+    const [feedback, setFeedback] = React.useState(null);
+    const [shakeScreen, setShakeScreen] = React.useState(false);
+    const [flashScreen, setFlashScreen] = React.useState(false);
+    const [combo, setCombo] = React.useState(0);
+    const [ultMeter, setUltMeter] = React.useState(0);
+    const [particles, setParticles] = React.useState([]);
+    const [timer, setTimer] = React.useState(100);
+
+    // 音效模擬
+    const triggerShake = () => { setShakeScreen(true); setTimeout(() => setShakeScreen(false), 500); };
+    const triggerFlash = () => { setFlashScreen(true); setTimeout(() => setFlashScreen(false), 500); };
+    
+    const spawnParticles = (x, y, count, color) => {
+        const newParticles = [];
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const v = Math.random() * 100 + 50;
+            newParticles.push({
+                id: Math.random(), x, y,
+                tx: Math.cos(angle) * v, ty: Math.sin(angle) * v,
+                size: Math.random() * 8 + 4, color
+            });
+        }
+        setParticles(prev => [...prev, ...newParticles]);
+        setTimeout(() => setParticles(prev => prev.slice(count)), 800);
+    };
+
+    const shuffleArray = (array) => {
+        const newArr = [...array];
+        for (let i = newArr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+        }
+        return newArr;
+    };
+
+    // --- 遊戲流程控制 ---
+
+    const initGame = (mode) => {
+        setGameMode(mode);
+        setGameState('walking');
+        setPlayerHP(100);
+        setScore(0);
+        setCombo(0);
+        setUltMeter(0);
+        setProgress(0);
+        setLevel(1);
+        setSeenKeys(new Set()); // 重置已見過的題目記錄
+
+        // 初始化填字遊戲牌堆 (洗牌)
+        if (mode === 'fill') {
+            setFillDeck({
+                level1: shuffleArray([...FILL_DATA.level1]),
+                level2: shuffleArray([...FILL_DATA.level2]),
+                level3: shuffleArray([...FILL_DATA.level3])
+            });
+        }
+    };
+
+    React.useEffect(() => {
+        let walkTimer;
+        if (gameState === 'walking') {
+            walkTimer = setTimeout(() => {
+                startBattle();
+            }, 2000);
+        }
+        return () => clearTimeout(walkTimer);
+    }, [gameState]);
+
+    React.useEffect(() => {
+        let interval;
+        if (gameState === 'battle' && timer > 0) {
+            interval = setInterval(() => {
+                setTimer(prev => {
+                    if (prev <= 0) {
+                        handleTimeOut();
+                        return 0;
+                    }
+                    return prev - 0.4;
+                });
+            }, 50);
+        }
+        return () => clearInterval(interval);
+    }, [gameState, timer]);
+
+    const startBattle = () => {
+        setGameState('battle');
+        setTimer(100);
+        setFeedback(null);
+        setOrderProgress(0);
+
+        const colors = ['purple', 'green', 'red'];
+        setEnemy({
+            name: "心魔",
+            type: "normal",
+            color: colors[Math.floor(Math.random() * 3)],
+            hp: 1,
+            maxHp: 1
+        });
+
+        if (gameMode === 'fill') {
+            generateFillQuestion();
+        } else {
+            generateOrderQuestion();
+        }
+    };
+
+    const generateFillQuestion = () => {
+        // 難度分級: 0-30: L1, 40-60: L2, 70-100: L3
+        let currentLevelKey = 'level1';
+        let currentLevelDisplay = 1;
+        if (progress > 30) { currentLevelKey = 'level2'; currentLevelDisplay = 2; }
+        if (progress > 60) { currentLevelKey = 'level3'; currentLevelDisplay = 3; }
+        
+        setLevel(currentLevelDisplay);
+
+        let q = null;
+        let currentDeck = fillDeck[currentLevelKey];
+
+        // 嘗試從牌堆中抽取「未見過 key」的題目 (盡量避免跨難度重複)
+        // 但如果牌堆快空了，就只保證不重複抽同一張卡
+        if (currentDeck && currentDeck.length > 0) {
+            // 優先找沒見過 key 的
+            const uniqueIndex = currentDeck.findIndex(item => !seenKeys.has(item.key.split('_')[0])); 
+            // 這裡簡單用 split('_')[0] 來模糊比對 (例如 avalokita 和 avalokita_3 算同一句意)
+            // 如果沒找到，就直接拿第一張 (避免卡死)
+            const targetIndex = uniqueIndex >= 0 ? uniqueIndex : 0;
+            
+            q = currentDeck[targetIndex];
+            
+            // 從牌堆移除
+            const remainingDeck = [...currentDeck];
+            remainingDeck.splice(targetIndex, 1);
+            
+            setFillDeck(prev => ({
+                ...prev,
+                [currentLevelKey]: remainingDeck
+            }));
+            
+            // 記錄這題已出過
+            setSeenKeys(prev => new Set(prev).add(q.key.split('_')[0]));
+        } else {
+            // 萬一真的沒牌了 (備用方案，隨機取)
+            const dataset = FILL_DATA[currentLevelKey];
+            q = dataset[Math.floor(Math.random() * dataset.length)];
+        }
+
+        const opts = shuffleArray(q.options);
+        setFillQuestion({ ...q, options: opts });
+    };
+
+    const generateOrderQuestion = () => {
+        const index = Math.min(Math.floor(progress / 10), ORDER_DATA.length - 1);
+        const targetSequence = ORDER_DATA[index];
+        const shuffled = shuffleArray(targetSequence);
+        
+        setOrderTarget(targetSequence);
+        setOrderCurrent(shuffled);
+        setOrderProgress(0);
+        setLevel(index + 1);
+    };
+
+    const handleTimeOut = () => {
+        triggerShake();
+        setFeedback('wrong');
+        setCombo(0);
+        const damage = 15;
+        setPlayerHP(prev => prev - damage);
+        
+        if (playerHP - damage <= 0) {
+            setTimeout(() => setGameState('gameover'), 1000);
+        } else {
+            setTimeout(() => {
+                setFeedback(null);
+                setTimer(100);
+            }, 1000);
+        }
+    };
+
+    const handleFillAnswer = (ans) => {
+        if (!fillQuestion || feedback) return;
+        if (ans === fillQuestion.a) handleSuccess();
+        else handleFail();
+    };
+
+    const handleOrderClick = (text, index) => {
+        if (feedback === 'wrong') return; 
+        const expectedText = orderTarget[orderProgress];
+        if (text === expectedText) {
+            setOrderProgress(prev => {
+                const newProg = prev + 1;
+                if (newProg >= 5) handleSuccess();
+                return newProg;
+            });
+            setOrderCurrent(prev => prev.map(item => item === text ? null : item));
+            spawnParticles('50%', '50%', 10, '#FFD700');
+        } else {
+            handleFail();
+        }
+    };
+
+    const handleSuccess = () => {
+        setFeedback('correct');
+        setCombo(c => c + 1);
+        setUltMeter(m => Math.min(100, m + 20));
+        setScore(s => s + 100 + (combo * 20));
+        spawnParticles('80%', '60%', 30, '#FFD700');
+        
+        setTimeout(() => {
+            const nextProgress = progress + 10;
+            if (nextProgress >= 100) {
+                triggerFlash();
+                setGameState('win');
+            } else {
+                setProgress(nextProgress);
+                setGameState('walking');
+            }
+        }, 1000);
+    };
+
+    const handleFail = () => {
+        triggerShake();
+        setFeedback('wrong');
+        setCombo(0);
+        setPlayerHP(prev => prev - 10);
+        if (playerHP - 10 <= 0) {
+            setTimeout(() => setGameState('gameover'), 1000);
+        } else {
+            setTimeout(() => setFeedback(null), 500);
+        }
+    };
+
+    const activateUlt = () => {
+        if (ultMeter < 100) return;
+        triggerFlash();
+        setUltMeter(0);
+        handleSuccess(); 
+    };
+
+    // --- Renders ---
+    
+    const getPlaceholder = (ans) => '？'.repeat(ans.length);
+
+    const renderMenu = () => (
+        <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-8 z-20 relative">
+            <h1 className="text-5xl font-black text-amber-800 tracking-widest drop-shadow-md">心經降魔</h1>
+            <div className="w-40 h-40 animate-bounce">
+                <img src={ASSETS.player} className="w-full h-full object-contain filter drop-shadow-xl" />
+            </div>
+            <div className="grid gap-4 w-full max-w-xs">
+                <button onClick={() => initGame('fill')} className="bg-amber-100 border-2 border-amber-400 text-amber-900 text-xl font-bold py-4 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+                    <span>✍️</span> 填字修行 <span className="text-xs bg-amber-600 text-white px-2 py-0.5 rounded-full">3 關卡</span>
+                </button>
+                <button onClick={() => initGame('order')} className="bg-blue-100 border-2 border-blue-400 text-blue-900 text-xl font-bold py-4 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+                    <span>🧩</span> 經文重組 <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">排排看</span>
+                </button>
+            </div>
+        </div>
+    );
+
+    const renderBattleUI = () => (
+        <div className="absolute top-0 left-0 w-full p-4 z-50 pointer-events-none">
+            <div className="flex justify-between items-start mb-2">
+                <div className="flex flex-col gap-1 w-1/2">
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-red-600 bg-white/80 px-1 rounded">HP</span>
+                        <div className="flex-1 h-3 bg-gray-800/30 rounded-full overflow-hidden border border-white/50">
+                            <div className={`h-full transition-all duration-300 ${playerHP<30?'bg-red-500':'bg-green-500'}`} style={{width: `${playerHP}%`}}></div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-yellow-600 bg-white/80 px-1 rounded">MP</span>
+                        <div className="flex-1 h-3 bg-gray-800/30 rounded-full overflow-hidden border border-white/50">
+                            <div className="h-full bg-yellow-400 transition-all duration-300" style={{width: `${ultMeter}%`}}></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <div className="text-amber-900 font-black text-xl">{score}</div>
+                    {combo > 1 && <div className="text-red-500 font-bold italic animate-pulse">Combo x{combo}</div>}
+                </div>
+            </div>
+            <div className="w-full h-1.5 bg-gray-300 rounded-full mt-1">
+                <div className="h-full bg-blue-500 transition-all duration-1000 rounded-full" style={{width: `${progress}%`}}></div>
+            </div>
+            <div className="flex justify-between text-xs font-bold text-gray-500 mt-1 px-1">
+                <span>{gameMode === 'fill' ? `難度 Lv.${level}` : `經文段落 ${level}/10`}</span>
+                <span>靈山進度 {progress}%</span>
+            </div>
+        </div>
+    );
+
+    const renderFillGame = () => (
+        <div className="bg-white/95 backdrop-blur-sm rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] p-6 z-30 border-t border-white/50 absolute bottom-0 w-full">
+            <div className="mb-6 text-center">
+                <div className="text-sm text-amber-600 font-bold mb-2 uppercase opacity-70">
+                    {level === 1 ? "填一字" : level === 2 ? "填二字" : "填四字"}
+                </div>
+                <div className="text-2xl font-serif text-gray-800 font-bold leading-relaxed">
+                    {fillQuestion.q.split('__').map((part, i, arr) => (
+                        <React.Fragment key={i}>
+                            {part}
+                            {i < arr.length - 1 && (
+                                <span className={`mx-1 inline-block border-b-2 border-amber-500 text-center font-mono ${feedback==='correct'?'text-green-600':'text-amber-300'}`}>
+                                    {feedback === 'correct' ? fillQuestion.a : getPlaceholder(fillQuestion.a)}
+                                </span>
+                            )}
+                        </React.Fragment>
+                    ))}
+                </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+                {fillQuestion.options.map((opt, idx) => (
+                    <button key={idx} onClick={() => handleFillAnswer(opt)} disabled={feedback !== null}
+                        className={`py-3 rounded-xl text-lg font-bold shadow-md border-b-4 active:scale-95 active:border-b-0 transition ${
+                            feedback==='correct'&&opt===fillQuestion.a ? 'bg-green-500 text-white border-green-700' :
+                            feedback==='wrong' ? 'bg-gray-200 text-gray-400' : 'bg-amber-100 text-amber-900 border-amber-300'
+                        }`}
+                    >
+                        {opt}
+                    </button>
+                ))}
+            </div>
+            <div className="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden"><div className={`h-full ${timer<30?'bg-red-500':'bg-amber-400'} transition-all linear`} style={{width:`${timer}%`}}></div></div>
+        </div>
+    );
+
+    const renderOrderGame = () => (
+        <div className="bg-white/95 backdrop-blur-sm rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] p-6 z-30 border-t border-white/50 absolute bottom-0 w-full">
+            <div className="mb-4">
+                <div className="text-sm text-blue-600 font-bold mb-2 text-center">依序點擊經文 (已完成: {orderProgress}/5)</div>
+                <div className="flex flex-wrap gap-2 justify-center mb-4 min-h-[3rem]">
+                    {orderTarget.slice(0, orderProgress).map((txt, i) => (
+                        <span key={i} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-bold animate-pulse">{txt}</span>
+                    ))}
+                    {orderProgress < 5 && <span className="border-2 border-dashed border-gray-300 px-4 py-1 rounded text-gray-300 text-sm">?</span>}
+                </div>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-center">
+                {orderCurrent.map((opt, idx) => (
+                    opt ? (
+                        <button key={idx} onClick={() => handleOrderClick(opt, idx)} className="bg-white border-2 border-amber-200 text-amber-900 px-3 py-2 rounded-lg shadow-sm font-medium text-lg active:scale-95 hover:bg-amber-50 transition">{opt}</button>
+                    ) : <div key={idx} className="w-20 h-10"></div>
+                ))}
+            </div>
+             <div className="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden"><div className={`h-full ${timer<30?'bg-red-500':'bg-blue-400'} transition-all linear`} style={{width:`${timer}%`}}></div></div>
+        </div>
+    );
+
+    return (
+        <div className={`game-wrapper ${shakeScreen ? 'shake-screen' : ''}`}>
+            {flashScreen && <div className="flash-screen"></div>}
+            
+            <div className={`absolute inset-0 pointer-events-none z-0 ${gameState === 'walking' ? 'scrolling' : ''}`}>
+                <div className="absolute inset-0 bg-gradient-to-b from-blue-200 via-purple-100 to-amber-50 opacity-50"></div>
+                <div className="bg-layer bg-cloud-2" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M10 50 Q 25 30 40 50 T 70 50 T 100 50\' stroke=\'white\' fill=\'none\' stroke-width=\'2\' opacity=\'0.5\'/%3E%3C/svg%3E")', top: '10%'}}></div>
+                <div className="bg-layer bg-cloud-1" style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'100\' viewBox=\'0 0 200 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 60 Q 50 20 100 60 T 200 60\' stroke=\'white\' fill=\'white\' opacity=\'0.3\'/%3E%3C/svg%3E")', top: '30%'}}></div>
+                <div className="bg-layer bg-mountain" style={{backgroundImage: 'linear-gradient(to bottom, transparent 60%, #c4b595 60%)', bottom: '0', opacity: 0.5}}></div>
+            </div>
+
+            {gameState === 'menu' && renderMenu()}
+            
+            {(gameState === 'walking' || gameState === 'battle') && (
+                <>
+                    {renderBattleUI()}
+                    <div className="flex-1 h-full flex items-center justify-center relative z-10">
+                        <Particles items={particles} />
+                        {enemy && gameState === 'battle' && (
+                            <div className="absolute right-[10%] bottom-[30%] w-32 h-32 flex flex-col items-center animate-float transition-all duration-500">
+                                <img src={gameMode==='fill' ? ASSETS.enemy_purple : ASSETS.enemy_red} className="w-full h-full object-contain filter drop-shadow-xl" />
+                            </div>
+                        )}
+                        <div className={`absolute left-[10%] bottom-[25%] w-36 h-36 flex flex-col items-center z-20 ${gameState==='walking'?'animate-[walk_0.8s_infinite]':'animate-float'}`}>
+                            {feedback === 'wrong' && <div className="text-red-600 text-4xl font-bold absolute -top-10 animate-bounce">-10</div>}
+                            <img src={ASSETS.player} className="w-full h-full object-contain filter drop-shadow-2xl" />
+                        </div>
+                    </div>
+                    {gameState === 'walking' && <div className="absolute bottom-20 w-full text-center z-20"><span className="bg-black/60 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm animate-pulse">前往下一關...</span></div>}
+
+                    {gameState === 'battle' && gameMode === 'fill' && fillQuestion && renderFillGame()}
+                    {gameState === 'battle' && gameMode === 'order' && renderOrderGame()}
+                    
+                    {ultMeter >= 100 && gameState === 'battle' && (
+                         <button onClick={activateUlt} className="absolute top-20 right-4 z-50 bg-yellow-400 text-amber-900 rounded-full w-20 h-20 flex items-center justify-center shadow-lg border-4 border-yellow-200 ult-ready active:scale-90 font-black text-2xl">卍</button>
+                    )}
+                </>
+            )}
+
+            {gameState === 'gameover' && (
+                <div className="absolute inset-0 bg-black/90 text-white flex flex-col items-center justify-center z-50 p-6 text-center">
+                    <div className="text-6xl mb-4 grayscale opacity-50">☠️</div>
+                    <h2 className="text-4xl font-bold mb-2 text-red-500">心魔未除</h2>
+                    <button onClick={() => setGameState('menu')} className="bg-white text-black font-bold py-3 px-8 rounded-full mt-8 hover:bg-gray-200">返回主選單</button>
+                </div>
+            )}
+            
+            {gameState === 'win' && (
+                <div className="absolute inset-0 bg-yellow-100 flex flex-col items-center justify-center z-50 p-6 text-center">
+                    <div className="text-6xl mb-4 animate-bounce">🏆</div>
+                    <h2 className="text-4xl font-bold mb-2 text-amber-800">功德圓滿</h2>
+                    <div className="text-2xl mt-4 font-bold text-amber-600">得分: {score}</div>
+                    <button onClick={() => setGameState('menu')} className="bg-amber-600 text-white font-bold py-3 px-8 rounded-full mt-8 shadow-lg">返回主選單</button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
+</script>
+</body>
+</html>
