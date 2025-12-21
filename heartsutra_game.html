@@ -61,7 +61,7 @@
         }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        /* 攻擊特效位置修正 */
+        /* 攻擊特效位置 */
         @keyframes shoot-beam {
             0% { left: 20%; opacity: 0; transform: scale(0.5) rotate(0deg); }
             10% { opacity: 1; transform: scale(1.5) rotate(180deg); }
@@ -71,7 +71,7 @@
         .beam-attack {
             position: absolute;
             left: 20%;
-            bottom: 60%; 
+            top: 35%; 
             font-size: 3rem;
             color: #FFD700;
             text-shadow: 0 0 20px #FF8C00;
@@ -79,43 +79,62 @@
             animation: shoot-beam 0.6s ease-in forwards;
         }
 
-        /* 佛號大招特效 */
+        /* 佛號大招特效 - 位置修正 (完全不擋小沙彌) */
         @keyframes mantra-pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.5); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
+            0% { transform: scale(0.5) translateY(20px); opacity: 0; }
+            50% { transform: scale(1.5) translateY(0); opacity: 1; }
+            100% { transform: scale(2) translateY(-20px); opacity: 0; }
         }
         .mantra-effect {
             position: absolute;
-            left: 15%; 
-            bottom: 65%; 
+            left: 2%;  /* 靠左邊緣 */
+            bottom: 75%; /* 提高位置，位於小沙彌頭頂上方 */
             font-size: 4rem;
             color: #FFD700;
             font-weight: 900;
             text-shadow: 0 0 30px #FFD700, 0 0 10px #FFFFFF;
             z-index: 40;
-            animation: mantra-pop 1s ease-out forwards;
+            animation: mantra-pop 1.5s ease-out forwards;
             pointer-events: none;
         }
 
         /* 時間到文字特效 */
         @keyframes timeout-pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
         .timeout-text {
             position: absolute;
-            top: 40%;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* 確保絕對置中 */
             font-size: 4rem;
             font-weight: 900;
             color: #EF4444;
-            text-shadow: 2px 2px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
-            z-index: 60;
-            animation: timeout-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border: 6px solid #EF4444;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 100; /* 最高層級 */
+            animation: timeout-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             white-space: nowrap;
+            pointer-events: none;
+        }
+
+        /* 飄浮扣血文字特效 */
+        @keyframes float-up-fade {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+        }
+        .floating-text {
+            position: absolute;
+            font-weight: 900;
+            z-index: 50;
+            text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+            animation: float-up-fade 0.8s ease-out forwards;
+            pointer-events: none;
         }
 
         @keyframes shake-heavy {
@@ -212,7 +231,7 @@ const FILL_DATA = {
         { key: 'ignorance_2', q: "無無明，亦無__盡", a: "無明", options: ["無明", "老死", "盡滅", "所得"] },
         { key: 'no_fear_2', q: "心無罣礙，無__故", a: "罣礙", options: ["罣礙", "恐怖", "夢想", "障礙"] },
         { key: 'no_fear_3', q: "心無罣礙，無罣__", a: "礙故", options: ["礙故", "礙苦", "礙空", "礙色"] },
-        { key: 'dream_2', q: "遠離__，究竟涅槃", a: "顛倒", options: ["顛倒", "夢想", "恐怖", "罣礙"] },
+        { key: 'dream_2', q: "遠離__夢想，究竟涅槃", a: "顛倒", options: ["顛倒", "夢想", "恐怖", "罣礙"] },
         { key: 'nirvana_2', q: "遠離顛倒夢想，究竟__", a: "涅槃", options: ["涅槃", "解脫", "圓滿", "成佛"] },
         { key: 'no_death_2', q: "乃至無老死，亦無__盡", a: "老死", options: ["老死", "病死", "生死", "苦死"] },
         { key: 'mantra_bright', q: "是大明咒，是__咒", a: "無上", options: ["無上", "無等", "神咒", "大明"] },
@@ -223,13 +242,13 @@ const FILL_DATA = {
     ],
     level3: [ // 填4字
         { key: 'avalokita_3', q: "觀自在菩薩，行深__蜜多時", a: "般若波羅", options: ["般若波羅", "波羅蜜多", "菩提薩埵", "依般若波"] },
-        { key: 'skandhas_3', q: "__，度一切苦厄", a: "照見五蘊", options: ["照見五蘊", "五蘊皆空", "受想行識", "色即是空"] },
+        { key: 'skandhas_3', q: "__皆空，度一切苦厄", a: "照見五蘊", options: ["照見五蘊", "五蘊皆空", "受想行識", "色即是空"] },
         { key: 'form_void_3', q: "色不異空，__", a: "空不異色", options: ["空不異色", "色即是空", "空即是色", "受想行識"] },
         { key: 'form_is_void_3', q: "色即是空，__", a: "空即是色", options: ["空即是色", "色不異空", "空不異色", "亦復如是"] },
         { key: 'feeling_3', q: "__，亦復如是", a: "受想行識", options: ["受想行識", "色受想行", "眼耳鼻舌", "色聲香味"] },
         { key: 'sariputra_3', q: "是諸法空相，__", a: "不生不滅", options: ["不生不滅", "不垢不淨", "不增不減", "真實不虛"] },
         { key: 'no_increase_3', q: "不垢不淨，__", a: "不增不減", options: ["不增不減", "不生不滅", "不垢不淨", "是故空中"] },
-        { key: 'senses_3', q: "無受想行識，無__", a: "眼耳鼻舌", options: ["眼耳鼻舌", "身意無色", "色聲香味", "觸法無眼"] },
+        { key: 'senses_3', q: "無受想行識，無__身意", a: "眼耳鼻舌", options: ["眼耳鼻舌", "身意無色", "色聲香味", "觸法無眼"] },
         { key: 'no_eyes_3', q: "無眼界，乃至__", a: "無意識界", options: ["無意識界", "無無明盡", "無老死盡", "無智亦無"] },
         { key: 'no_death_3', q: "乃至無老死，__盡", a: "亦無老死", options: ["亦無老死", "無老死盡", "無苦集滅", "無智亦無"] },
         { key: 'no_attainment_3', q: "無智亦無得，__故", a: "以無所得", options: ["以無所得", "無所得故", "菩提薩埵", "依般若波"] },
@@ -248,14 +267,14 @@ const FILL_DATA = {
 const ORDER_DATA = [
     ["觀自在菩薩", "行深般若波羅蜜多時", "照見五蘊皆空", "度一切苦厄", "舍利子"],
     ["色不異空", "空不異色", "色即是空", "空即是色", "受想行識亦復如是"],
-    ["是諸法空相", "不生不滅", "不垢不淨", "不增不減", "是故空中無色"],
+    ["舍利子是諸法空相", "不生不滅", "不垢不淨", "不增不減", "是故空中無色"],
     ["無受想行識", "無眼耳鼻舌身意", "無色聲香味觸法", "無眼界乃至無意識界", "無無明亦無無明盡"],
     ["乃至無老死", "亦無老死盡", "無苦集滅道", "無智亦無得", "以無所得故"],
     ["菩提薩埵", "依般若波羅蜜多故", "心無罣礙", "無罣礙故", "無有恐怖"],
     ["遠離顛倒夢想", "究竟涅槃", "三世諸佛", "依般若波羅蜜多故", "得阿耨多羅三藐三菩提"],
     ["故知般若波羅蜜多", "是大神咒", "是大明咒", "是無上咒", "是無等等咒"],
     ["能除一切苦", "真實不虛", "故說般若波羅蜜多咒", "即說咒曰", "揭諦揭諦"],
-    ["波羅揭諦", "波羅僧揭諦", "菩提薩婆訶", "摩訶般若波羅蜜多", "心經圓滿"]
+    ["波羅揭諦", "波羅僧揭諦", "菩提薩婆訶"]
 ];
 
 // --- 粒子系統組件 ---
@@ -288,6 +307,7 @@ function App() {
     const [progress, setProgress] = React.useState(0); 
     const [score, setScore] = React.useState(0);
     const [enemy, setEnemy] = React.useState(null);
+    const [floatingTexts, setFloatingTexts] = React.useState([]); // 飄浮文字
     
     // 戰鬥相關
     const [fillQuestion, setFillQuestion] = React.useState(null); 
@@ -341,6 +361,15 @@ function App() {
         setTimeout(() => setParticles(prev => prev.slice(count)), 800);
     };
 
+    // 新增：飄浮文字特效函式
+    const addFloatingText = (x, y, text, color) => {
+        const id = Date.now() + Math.random();
+        setFloatingTexts(prev => [...prev, { id, x, y, text, color }]);
+        setTimeout(() => {
+            setFloatingTexts(prev => prev.filter(ft => ft.id !== id));
+        }, 800);
+    };
+
     const shuffleArray = (array) => {
         const newArr = [...array];
         for (let i = newArr.length - 1; i > 0; i--) {
@@ -361,7 +390,8 @@ function App() {
         setUltMeter(0);
         setProgress(0);
         setLevel(1);
-        setSeenKeys(new Set()); // 重置已見過的題目記錄
+        setSeenKeys(new Set()); 
+        setFloatingTexts([]);
 
         // 初始化填字遊戲牌堆 (洗牌)
         if (mode === 'fill') {
@@ -383,21 +413,28 @@ function App() {
         return () => clearTimeout(walkTimer);
     }, [gameState]);
 
+    // Timer Logic - Split into two effects to fix the multiple timeout trigger bug
     React.useEffect(() => {
-        let interval;
-        if (gameState === 'battle' && timer > 0) {
-            interval = setInterval(() => {
-                setTimer(prev => {
-                    if (prev <= 0) {
-                        handleTimeOut(); // 觸發時間到邏輯
-                        return 0;
-                    }
-                    return prev - 0.4;
-                });
-            }, 50);
-        }
+        if (gameState !== 'battle' || feedback !== null) return;
+
+        const interval = setInterval(() => {
+            setTimer(prev => {
+                if (prev <= 0) {
+                    return 0;
+                }
+                return prev - 0.2; // 修正：放慢速度，0.4 -> 0.2，時間加倍
+            });
+        }, 50);
+
         return () => clearInterval(interval);
-    }, [gameState, timer]);
+    }, [gameState, feedback]);
+
+    // Check for timeout
+    React.useEffect(() => {
+        if (gameState === 'battle' && feedback === null && timer <= 0) {
+            handleTimeOut();
+        }
+    }, [timer, gameState, feedback]);
 
     const startBattle = () => {
         setGameState('battle');
@@ -405,11 +442,15 @@ function App() {
         setFeedback(null);
         setOrderProgress(0);
 
-        const colors = ['purple', 'green', 'red'];
+        // 根據進度決定怪物顏色 (第一關:紫, 第二關:綠, 第三關:紅)
+        let enemyColor = 'purple';
+        if (progress > 60) enemyColor = 'red';
+        else if (progress > 30) enemyColor = 'green';
+
         setEnemy({
             name: "心魔",
             type: "normal",
-            color: colors[Math.floor(Math.random() * 3)],
+            color: enemyColor,
             hp: 1,
             maxHp: 1
         });
@@ -472,17 +513,28 @@ function App() {
         triggerShake();
         setFeedback('timeout'); // 標記為時間到
         setCombo(0); // 連擊歸零
+        
+        // 修正：時間到顯示扣血特效在玩家身上
+        addFloatingText('15%', '45%', '-15', '#EF4444');
+        
         const damage = 15;
         setPlayerHP(prev => prev - damage);
         
         if (playerHP - damage <= 0) {
             setTimeout(() => setGameState('gameover'), 1000);
         } else {
-            // 時間到算一題，重置時間繼續
+            // 時間到算一題，2秒後換下一題
             setTimeout(() => {
                 setFeedback(null);
                 setTimer(100);
-            }, 1500); // 稍微延長展示時間
+                
+                // 根據模式切換到下一題 (或重置排序題)
+                if (gameMode === 'fill') {
+                    generateFillQuestion();
+                } else {
+                    generateOrderQuestion();
+                }
+            }, 2000); // 延長展示時間到 2 秒
         }
     };
 
@@ -509,7 +561,8 @@ function App() {
             setOrderCurrent(prev => prev.map(item => item === text ? null : item));
             spawnParticles('50%', '50%', 10, '#FFD700');
             
-            if (nextProgress >= 5) {
+            // 修正：動態判斷是否完成該組所有句子，而不是寫死 5
+            if (nextProgress >= orderTarget.length) {
                 handleSuccess();
             }
         } else {
@@ -530,6 +583,10 @@ function App() {
         if (!isUlt) {
             setUltMeter(prevMp => Math.min(100, prevMp + 25));
         }
+        
+        // 修正：成功時在怪物身上顯示扣血特效
+        addFloatingText('85%', '40%', '-10%', '#EF4444');
+
         // Visuals
         spawnParticles('80%', '40%', 30, '#FFD700');
         
@@ -563,7 +620,7 @@ function App() {
         if (ultMeter < 100) return;
         triggerFlash();
         setUltMeter(0); // 消耗 MP，歸零
-        setMantraText('卍'); // 設定大招文字
+        setProjectile('卍'); // 修正：加入這行，讓大招發動時顯示「卍」字攻擊
         playSound('correct'); // 大招也播放正確音效
         handleSuccess(true); // 傳入 true 標記為大招，不重複增加 MP
     };
@@ -698,8 +755,8 @@ function App() {
                     <div className="flex-1 h-full flex items-center justify-center relative z-10">
                         <Particles items={particles} />
                         {enemy && gameState === 'battle' && (
-                            <div className="absolute right-[10%] bottom-[60%] w-32 h-32 flex flex-col items-center animate-float transition-all duration-500">
-                                <img src={gameMode==='fill' ? ASSETS.enemy_purple : ASSETS.enemy_red} className="w-full h-full object-contain filter drop-shadow-xl" />
+                            <div className="absolute right-[10%] bottom-[55%] w-48 h-48 flex flex-col items-center animate-float transition-all duration-500">
+                                <img src={ASSETS[`enemy_${enemy.color}`]} className="w-full h-full object-contain filter drop-shadow-xl" />
                             </div>
                         )}
                         <div className={`absolute left-[10%] bottom-[50%] w-36 h-36 flex flex-col items-center z-20 ${gameState==='walking'?'animate-[walk_0.8s_infinite]':'animate-float'}`}>
@@ -712,25 +769,43 @@ function App() {
                         {mantraText && (
                             <div className="mantra-effect">{mantraText}</div>
                         )}
-                        {feedback === 'timeout' && (
-                            <div className="timeout-text">時間到！</div>
-                        )}
+                        
+                        {/* 飄浮文字渲染區域 */}
+                        {floatingTexts.map(ft => (
+                            <div 
+                                key={ft.id}
+                                className="floating-text"
+                                style={{ 
+                                    left: ft.x, 
+                                    top: ft.y, 
+                                    color: ft.color,
+                                    fontSize: '2rem'
+                                }}
+                            >
+                                {ft.text}
+                            </div>
+                        ))}
                     </div>
+                    {/* Time's up overlay - Absolute centered and visible */}
+                    {feedback === 'timeout' && (
+                        <div className="timeout-text">時間到！</div>
+                    )}
+
                     {gameState === 'walking' && <div className="absolute bottom-20 w-full text-center z-20"><span className="bg-black/60 text-white px-6 py-2 rounded-full font-bold backdrop-blur-sm animate-pulse">前往下一關...</span></div>}
 
                     {gameState === 'battle' && gameMode === 'fill' && fillQuestion && renderFillGame()}
                     {gameState === 'battle' && gameMode === 'order' && renderOrderGame()}
                     
                     {ultMeter >= 100 && gameState === 'battle' && (
-                         <button onClick={activateUlt} className="absolute left-[12%] bottom-[55%] z-50 bg-yellow-400 text-amber-900 rounded-full w-12 h-12 flex items-center justify-center shadow-lg border-2 border-yellow-200 ult-ready active:scale-90 font-black text-lg animate-bounce">卍</button>
+                         <button onClick={activateUlt} className="absolute left-[25%] bottom-[40%] z-50 bg-yellow-400 text-amber-900 rounded-full w-16 h-16 flex items-center justify-center shadow-lg border-4 border-yellow-200 ult-ready active:scale-90 font-black text-2xl animate-bounce">卍</button>
                     )}
                 </>
             )}
 
             {gameState === 'gameover' && (
                 <div className="absolute inset-0 bg-black/90 text-white flex flex-col items-center justify-center z-50 p-6 text-center">
-                    <div className="text-6xl mb-4 grayscale opacity-50">☠️</div>
-                    <h2 className="text-4xl font-bold mb-2 text-red-500">心魔未除</h2>
+                    <div className="text-6xl mb-4 grayscale opacity-50">💪</div>
+                    <h2 className="text-4xl font-bold mb-2 text-red-500">再接再勵</h2>
                     <button onClick={() => setGameState('menu')} className="bg-white text-black font-bold py-3 px-8 rounded-full mt-8 hover:bg-gray-200">返回主選單</button>
                 </div>
             )}
