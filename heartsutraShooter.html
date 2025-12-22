@@ -11,19 +11,27 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #050505;
+            background-color: #050505; /* 外部背景全黑 */
             font-family: 'Noto Serif TC', serif;
             user-select: none;
+            /* 讓遊戲畫面置中 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         #game-container {
             position: relative;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            max-width: 600px; /* 限制電腦版最大寬度，避免太寬 */
+            height: 100%;
             /* 背景基礎色，動態星雲會在 Canvas 繪製 */
             background: radial-gradient(circle at bottom, #1a1025 0%, #000000 100%);
             cursor: none;
             overflow: hidden;
+            /* 增加陰影讓畫面與外部區隔 */
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.1); 
         }
 
         canvas {
@@ -134,6 +142,8 @@
             margin: 0;
             filter: drop-shadow(0 0 20px rgba(255, 111, 0, 0.6));
             animation: floatTitle 3s infinite ease-in-out;
+            text-align: center; /* 確保窄畫面時置中 */
+            line-height: 1.2;
         }
 
         @keyframes floatTitle {
@@ -246,7 +256,8 @@
             top: 100px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50%;
+            width: 80%; /* 手機/窄版寬度調整 */
+            max-width: 400px;
             display: none;
             flex-direction: column;
             align-items: center;
@@ -285,12 +296,14 @@
             color: #ffd700;
             margin-bottom: 20px;
             text-shadow: 0 0 20px #ff6f00;
+            text-align: center;
         }
         #level-subtitle {
             font-family: 'Noto Serif TC', serif;
             font-size: 24px;
             color: #ddd;
             letter-spacing: 2px;
+            text-align: center;
         }
     </style>
 </head>
@@ -328,7 +341,7 @@
     <div id="start-screen">
         <h1>心經降魔錄</h1>
         <div class="instruction">
-            <p><strong>操作：</strong>左右滑動移動 | 點擊畫面射擊</p>
+            <p><strong>操作：</strong>左右滑動移動 | 輕點螢幕發射</p>
             <p><strong>關卡：</strong>共 25 關，循序漸進修煉心經</p>
             <p><strong>道具：</strong>「定」字暫停 | 金蓮花散射</p>
             <p><strong>背景音樂：</strong>開啟音效以體驗禪意氛圍</p>
@@ -702,48 +715,93 @@
         const div = document.createElement('div');
         div.className = 'floating-msg';
         div.innerText = text;
-        if (x && y) { div.style.left = x + 'px'; div.style.top = y + 'px'; }
+        // 確保浮動文字在容器內
+        const container = document.getElementById('game-container');
+        if (x && y) { 
+            // 簡單限制邊界
+            x = Math.max(0, Math.min(x, container.clientWidth));
+            div.style.left = x + 'px'; 
+            div.style.top = y + 'px'; 
+        }
         if (type === 'golden') { div.style.color = '#ffd700'; div.style.fontSize = '60px'; div.style.textShadow = '0 0 30px #ffd700'; }
-        document.getElementById('game-container').appendChild(div);
+        container.appendChild(div);
         setTimeout(() => div.remove(), 1500);
     }
 
     // --- 核心邏輯 ---
 
     function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        player.y = canvas.height - 110; // 稍微往上提一點，避開收集區
+        // 修改這裡：跟隨 #game-container 大小，而不是 window
+        const container = document.getElementById('game-container');
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        
+        player.y = canvas.height - 110; 
         player.x = canvas.width / 2;
         initUniverse();
     }
     window.addEventListener('resize', resize);
     
     // 滑鼠事件
-    document.addEventListener('mousemove', (e) => { if (gameState === 'PLAYING' || gameState === 'BOSS') player.targetX = e.clientX; });
+    document.addEventListener('mousemove', (e) => { 
+        if (gameState === 'PLAYING' || gameState === 'BOSS') {
+            // 需要校正滑鼠位置，因為 canvas 可能不是全螢幕了
+            const rect = canvas.getBoundingClientRect();
+            player.targetX = e.clientX - rect.left;
+        }
+    });
+    
     document.addEventListener('mousedown', (e) => { if (gameState === 'PLAYING' || gameState === 'BOSS') shoot(); });
 
     // --- 新增：手機觸控事件 ---
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
     canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault(); // 防止滑動時畫面捲動
+        e.preventDefault(); 
         if (gameState === 'PLAYING' || gameState === 'BOSS') {
-            player.targetX = e.touches[0].clientX;
+            // 校正觸控位置
+            const rect = canvas.getBoundingClientRect();
+            player.targetX = e.touches[0].clientX - rect.left;
         }
     }, { passive: false });
 
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        if (gameState === 'START' || gameState === 'GAMEOVER') return; // 按鈕邏輯另外處理
+        if (gameState === 'START' || gameState === 'GAMEOVER') return; 
         
         if (gameState === 'PLAYING' || gameState === 'BOSS') {
-            shoot();
-            player.targetX = e.touches[0].clientX; // 點擊時同時移動到該處
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            
+            player.targetX = touchX;
+            
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        if (gameState === 'PLAYING' || gameState === 'BOSS') {
+            const touch = e.changedTouches[0];
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const duration = Date.now() - touchStartTime;
+
+            if (distance < 30 && duration < 500) {
+                shoot();
+            }
         }
     }, { passive: false });
     // ---------------------------
 
     document.getElementById('start-btn').onclick = startGame;
-    document.getElementById('start-btn').ontouchend = (e) => { e.preventDefault(); startGame(); }; // 手機按鈕支援
+    document.getElementById('start-btn').ontouchend = (e) => { e.preventDefault(); startGame(); }; 
 
     document.getElementById('restart-btn').onclick = startGame;
     document.getElementById('restart-btn').ontouchend = (e) => { e.preventDefault(); startGame(); };
@@ -762,9 +820,10 @@
         // 啟動 BGM
         startBGM();
 
-        loadLevel(0);
-        
+        // 確保尺寸正確
         resize();
+        
+        loadLevel(0);
         lastTime = performance.now();
         requestAnimationFrame(gameLoop);
     }
