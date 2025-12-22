@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小沙彌歷險：心經降魔錄 - 降魔篇</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>微笑心經：星際大冒險</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@500;900&display=swap');
 
@@ -19,6 +19,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            touch-action: none; /* 防止手機瀏覽器預設觸控行為 */
         }
 
         #game-container {
@@ -122,6 +123,8 @@
             z-index: 20;
             cursor: default;
             backdrop-filter: blur(10px);
+            padding: 20px; /* 增加內距避免文字貼邊 */
+            box-sizing: border-box;
         }
 
         /* 關卡轉場畫面 */
@@ -134,7 +137,8 @@
 
         h1 {
             font-family: 'Ma Shan Zheng', cursive;
-            font-size: 80px;
+            /* 使用 clamp 讓字體在手機(最小30px)到電腦(最大60px)間自動調整 */
+            font-size: clamp(30px, 8vw, 60px);
             /* 標題改為較為穩重的金橙漸層 */
             background: linear-gradient(to bottom, #ffe082, #ff6f00);
             -webkit-background-clip: text;
@@ -143,7 +147,9 @@
             filter: drop-shadow(0 0 20px rgba(255, 111, 0, 0.6));
             animation: floatTitle 3s infinite ease-in-out;
             text-align: center; /* 確保窄畫面時置中 */
-            line-height: 1.2;
+            line-height: 1.3;
+            width: 100%;
+            padding: 0 10px;
         }
 
         @keyframes floatTitle {
@@ -165,6 +171,7 @@
             transition: all 0.3s;
             text-decoration: none;
             box-shadow: 0 0 15px rgba(74, 20, 140, 0.6);
+            white-space: nowrap; /* 防止按鈕文字換行 */
         }
 
         .btn:hover {
@@ -226,6 +233,8 @@
             background: rgba(0,0,0,0.3);
             padding: 15px 30px;
             border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
         }
         
         .floating-msg {
@@ -339,12 +348,12 @@
     <div id="collected-sutra"></div>
 
     <div id="start-screen">
-        <h1>心經降魔錄</h1>
+        <h1>微笑心經：星際大冒險</h1>
         <div class="instruction">
             <p><strong>操作：</strong>左右滑動移動 | 輕點螢幕發射</p>
             <p><strong>關卡：</strong>共 25 關，循序漸進修煉心經</p>
             <p><strong>道具：</strong>「定」字暫停 | 金蓮花散射</p>
-            <p><strong>背景音樂：</strong>開啟音效以體驗禪意氛圍</p>
+            <p><strong>背景音樂：</strong>請開啟音效享受禪意</p>
         </div>
         <button class="btn" id="start-btn">開始修煉</button>
     </div>
@@ -362,6 +371,9 @@
         <button class="btn" id="restart-btn">重新來過</button>
     </div>
 </div>
+
+<!-- 固定的背景音樂 -->
+<audio id="bgm-player" loop src="https://jamiejenjen0305.github.io/MED/meditation-background-434654.mp3"></audio>
 
 <script>
     // --- 遊戲圖檔生成器 ---
@@ -507,6 +519,7 @@
     const levelTitle = document.getElementById('level-title');
     const bossHud = document.getElementById('boss-hud');
     const bossHpFill = document.getElementById('boss-hp-fill');
+    const bgmPlayer = document.getElementById('bgm-player');
 
     // --- 遊戲變數 ---
     let gameState = 'START'; 
@@ -528,7 +541,7 @@
     let particles = [];
     let floatTexts = []; 
     let items = []; 
-    let bgParticles = { stars: [], nebulas: [], meteors: [] }; // 新增星雲與流星
+    let bgParticles = { stars: [], nebulas: [], meteors: [] }; 
 
     let boss = { active: false, x: 0, y: -200, hp: 100, maxHp: 100, weakPoints: [], attackTimer: 0, defeated: false };
     const BOSS_LEVEL_TRIGGER = 10; 
@@ -538,11 +551,7 @@
     const spawnInterval = 1500;
     let waveQueue = [];
 
-    // --- 背景音樂 (BGM) 變數 ---
-    let bgmNodes = [];
-    let bgmTimer = null;
-
-    // --- 音效 ---
+    // --- 音效 (SFX) ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     const PENTATONIC_SCALE = [
@@ -550,72 +559,6 @@
         523.25, 587.33, 659.25, 783.99, 880.00, 
         1046.50 
     ];
-
-    // 啟動背景音樂
-    function startBGM() {
-        stopBGM(); // 清除舊的
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-
-        // 1. 底層嗡鳴聲 (Drone) - 營造宇宙/禪意感
-        const droneOsc = audioCtx.createOscillator();
-        const droneGain = audioCtx.createGain();
-        droneOsc.type = 'triangle';
-        droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // 低音 A1
-        droneGain.gain.setValueAtTime(0.05, audioCtx.currentTime); // 很小聲
-        
-        // 簡單的 LFO 讓聲音有點波動
-        const lfo = audioCtx.createOscillator();
-        lfo.frequency.value = 0.2;
-        const lfoGain = audioCtx.createGain();
-        lfoGain.gain.value = 0.02;
-        lfo.connect(lfoGain);
-        lfoGain.connect(droneGain.gain);
-        lfo.start();
-
-        droneOsc.connect(droneGain);
-        droneGain.connect(audioCtx.destination);
-        droneOsc.start();
-        
-        bgmNodes.push(droneOsc, droneGain, lfo, lfoGain);
-
-        // 2. 隨機風鈴聲 (Random Chimes)
-        bgmTimer = setInterval(() => {
-            if (Math.random() > 0.3) { // 70% 機率響起
-                playChime();
-            }
-        }, 3000);
-    }
-
-    function playChime() {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        
-        // 隨機五聲音階高音
-        const note = PENTATONIC_SCALE[Math.floor(Math.random() * PENTATONIC_SCALE.length)] * 2; // 高八度
-        
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(note, audioCtx.currentTime);
-        
-        // 鐘聲 Envelope (長尾韻)
-        const now = audioCtx.currentTime;
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.05, now + 0.1); // Attack
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 4.0); // Release (4秒長尾)
-        
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(now + 4.0);
-    }
-
-    function stopBGM() {
-        bgmNodes.forEach(node => {
-            try { node.stop(); } catch(e){}
-            try { node.disconnect(); } catch(e){}
-        });
-        bgmNodes = [];
-        if (bgmTimer) clearInterval(bgmTimer);
-    }
 
     function playSound(type, combo = 0) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -817,15 +760,16 @@
         scoreEl.innerText = 0; comboEl.innerText = 0; collectedEl.innerHTML = '';
         startScreen.style.display = 'none'; gameOverScreen.style.display = 'none';
         
-        // 啟動 BGM
-        startBGM();
+        // 播放音樂
+        bgmPlayer.play().catch(e => console.log("需使用者互動才能播放音樂"));
 
         // 確保尺寸正確
         resize();
         
         loadLevel(0);
         lastTime = performance.now();
-        requestAnimationFrame(gameLoop);
+        // 取消這裡的 requestAnimationFrame，因為已經在最後一行啟動了 Loop
+        // 這裡只需要重置狀態
     }
 
     function loadLevel(levelIdx) {
@@ -937,7 +881,8 @@
     }
 
     function gameLoop(timestamp) {
-        if (gameState === 'GAMEOVER') return;
+        // if (gameState === 'GAMEOVER') return; // 移除這行，讓背景動畫持續
+
         const dt = timestamp - lastTime;
         lastTime = timestamp;
 
@@ -1162,112 +1107,115 @@
 
         // --- 3. 繪製 ---
         
-        items.forEach(item => {
-            let img = (item.type === 'spread') ? spreadImg : freezeImg; 
-            ctx.drawImage(img, item.x-20, item.y-20, 40, 40);
-        });
-
-        ctx.save();
-        ctx.translate(player.x, player.y);
-        ctx.rotate(player.haloAngle);
-        // 光環稍微增強
-        ctx.strokeStyle = `rgba(255, 215, 0, ${hasShield ? 0.9 : 0.4})`;
-        ctx.lineWidth = hasShield ? 5 : 3;
-        ctx.beginPath();
-        for(let k=0; k<8; k++) { ctx.moveTo(0,0); ctx.lineTo(60,0); ctx.rotate(Math.PI/4); }
-        ctx.stroke();
-        ctx.beginPath(); ctx.arc(0,0,55,0,Math.PI*2); ctx.stroke();
-        if (hasShield) {
-            ctx.fillStyle = 'rgba(255, 64, 129, 0.4)';
-            for(let k=0; k<6; k++) { ctx.rotate(Math.PI/3); ctx.beginPath(); ctx.ellipse(0, -60, 10, 30, 0, 0, Math.PI*2); ctx.fill(); }
-        }
-        ctx.restore();
-        ctx.drawImage(playerImg, player.x-32, player.y-32, 64, 64);
-
-        ctx.globalCompositeOperation = 'lighter';
-        bullets.forEach(b => {
-            if (b.trail.length) {
-                ctx.strokeStyle = 'rgba(255,255,0,0.5)'; ctx.lineWidth=10;
-                ctx.beginPath(); ctx.moveTo(b.trail[0].x, b.trail[0].y);
-                b.trail.forEach(t=>ctx.lineTo(t.x, t.y)); ctx.stroke();
-            }
-            ctx.drawImage(bulletImg, b.x-16, b.y-16, 32, 32);
-        });
-        ctx.globalCompositeOperation = 'source-over';
-
-        enemies.forEach(e => {
-            ctx.save();
-            ctx.translate(e.x + 35, e.y + 35); // 中心點
-            if (e.angle) ctx.rotate(e.angle); // 旋轉
-            
-            if (e.type === 'interference') {
-                ctx.fillStyle = '#ff1744'; ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI*2); ctx.fill();
-            } else {
-                ctx.drawImage(enemyImg, -35, -35, 70, 70);
-                // 目標提示框
-                if (e.idx === currentLevelCharIndex) {
-                    ctx.strokeStyle = '#ffd700'; ctx.lineWidth=3;
-                    let scale = 1 + Math.sin(timestamp*0.01)*0.1;
-                    ctx.scale(scale, scale);
-                    ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI*2); ctx.stroke();
-                    ctx.scale(1/scale, 1/scale);
-                }
-                
-                // 為了讓字體不跟著轉太暈，字體可以反向轉回來，或者就跟著轉(更有動感)
-                // 這裡選擇讓字體跟著轉，因為隕石也在轉
-                ctx.font = "bold 30px 'Ma Shan Zheng'"; ctx.textAlign="center"; ctx.textBaseline="middle";
-                ctx.fillStyle = (e.idx === currentLevelCharIndex) ? '#ffd700' : '#ddd';
-                // 陰影增加清晰度
-                ctx.shadowColor = 'black'; ctx.shadowBlur = 4;
-                ctx.fillText(e.char, 0, 3);
-            }
-            ctx.restore();
-        });
-
-        if (gameState === 'BOSS' && boss.active) {
-            ctx.save();
-            ctx.translate(boss.x, boss.y);
-            // Boss 增加呼吸效果
-            let bossScale = 1 + Math.sin(timestamp * 0.005) * 0.05;
-            ctx.scale(bossScale, bossScale);
-            
-            ctx.fillStyle = 'rgba(20, 0, 0, 0.8)';
-            ctx.shadowColor = '#d50000'; ctx.shadowBlur = 40;
-            ctx.beginPath(); ctx.arc(0, 0, 80, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#ff1744';
-            ctx.beginPath(); ctx.ellipse(-30, -10, 10, 20, 0.2, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(30, -10, 10, 20, -0.2, 0, Math.PI*2); ctx.fill();
-            ctx.restore();
-
-            boss.weakPoints.forEach(wp => {
-                if (wp.active) {
-                    ctx.save();
-                    ctx.translate(wp.x, wp.y);
-                    ctx.beginPath(); ctx.arc(0, 0, 30, 0, Math.PI*2);
-                    ctx.fillStyle = '#111'; ctx.fill();
-                    ctx.strokeStyle = '#ff1744'; ctx.lineWidth=3; ctx.stroke();
-                    ctx.fillStyle = '#ff1744'; ctx.font="30px 'Ma Shan Zheng'";
-                    ctx.textAlign="center"; ctx.textBaseline="middle";
-                    ctx.fillText(wp.text, 0, 0);
-                    ctx.restore();
-                }
+        // 只在非首頁時繪製遊戲物件
+        if (gameState !== 'START') {
+            items.forEach(item => {
+                let img = (item.type === 'spread') ? spreadImg : freezeImg; 
+                ctx.drawImage(img, item.x-20, item.y-20, 40, 40);
             });
-        }
 
-        for (let i = floatTexts.length - 1; i >= 0; i--) {
-            let ft = floatTexts[i];
-            ft.life -= 0.04; // 稍微慢一點消失
-            if (ft.life <= 0) { floatTexts.splice(i, 1); continue; }
             ctx.save();
-            ctx.translate(ft.x + 35, ft.y + 35);
-            let s = 1 + (1-ft.life) * 0.5; 
-            ctx.scale(s, s);
-            ctx.globalAlpha = ft.life;
-            ctx.fillStyle = '#ffd700';
-            ctx.shadowColor = '#ff6f00'; ctx.shadowBlur = 20;
-            ctx.font = "bold 60px 'Ma Shan Zheng'";
-            ctx.fillText(ft.text, 0, 0);
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.haloAngle);
+            // 光環稍微增強
+            ctx.strokeStyle = `rgba(255, 215, 0, ${hasShield ? 0.9 : 0.4})`;
+            ctx.lineWidth = hasShield ? 5 : 3;
+            ctx.beginPath();
+            for(let k=0; k<8; k++) { ctx.moveTo(0,0); ctx.lineTo(60,0); ctx.rotate(Math.PI/4); }
+            ctx.stroke();
+            ctx.beginPath(); ctx.arc(0,0,55,0,Math.PI*2); ctx.stroke();
+            if (hasShield) {
+                ctx.fillStyle = 'rgba(255, 64, 129, 0.4)';
+                for(let k=0; k<6; k++) { ctx.rotate(Math.PI/3); ctx.beginPath(); ctx.ellipse(0, -60, 10, 30, 0, 0, Math.PI*2); ctx.fill(); }
+            }
             ctx.restore();
+            ctx.drawImage(playerImg, player.x-32, player.y-32, 64, 64);
+
+            ctx.globalCompositeOperation = 'lighter';
+            bullets.forEach(b => {
+                if (b.trail.length) {
+                    ctx.strokeStyle = 'rgba(255,255,0,0.5)'; ctx.lineWidth=10;
+                    ctx.beginPath(); ctx.moveTo(b.trail[0].x, b.trail[0].y);
+                    b.trail.forEach(t=>ctx.lineTo(t.x, t.y)); ctx.stroke();
+                }
+                ctx.drawImage(bulletImg, b.x-16, b.y-16, 32, 32);
+            });
+            ctx.globalCompositeOperation = 'source-over';
+
+            enemies.forEach(e => {
+                ctx.save();
+                ctx.translate(e.x + 35, e.y + 35); // 中心點
+                if (e.angle) ctx.rotate(e.angle); // 旋轉
+                
+                if (e.type === 'interference') {
+                    ctx.fillStyle = '#ff1744'; ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI*2); ctx.fill();
+                } else {
+                    ctx.drawImage(enemyImg, -35, -35, 70, 70);
+                    // 目標提示框
+                    if (e.idx === currentLevelCharIndex) {
+                        ctx.strokeStyle = '#ffd700'; ctx.lineWidth=3;
+                        let scale = 1 + Math.sin(timestamp*0.01)*0.1;
+                        ctx.scale(scale, scale);
+                        ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI*2); ctx.stroke();
+                        ctx.scale(1/scale, 1/scale);
+                    }
+                    
+                    // 為了讓字體不跟著轉太暈，字體可以反向轉回來，或者就跟著轉(更有動感)
+                    // 這裡選擇讓字體跟著轉，因為隕石也在轉
+                    ctx.font = "bold 30px 'Ma Shan Zheng'"; ctx.textAlign="center"; ctx.textBaseline="middle";
+                    ctx.fillStyle = (e.idx === currentLevelCharIndex) ? '#ffd700' : '#ddd';
+                    // 陰影增加清晰度
+                    ctx.shadowColor = 'black'; ctx.shadowBlur = 4;
+                    ctx.fillText(e.char, 0, 3);
+                }
+                ctx.restore();
+            });
+
+            if (gameState === 'BOSS' && boss.active) {
+                ctx.save();
+                ctx.translate(boss.x, boss.y);
+                // Boss 增加呼吸效果
+                let bossScale = 1 + Math.sin(timestamp * 0.005) * 0.05;
+                ctx.scale(bossScale, bossScale);
+                
+                ctx.fillStyle = 'rgba(20, 0, 0, 0.8)';
+                ctx.shadowColor = '#d50000'; ctx.shadowBlur = 40;
+                ctx.beginPath(); ctx.arc(0, 0, 80, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ff1744';
+                ctx.beginPath(); ctx.ellipse(-30, -10, 10, 20, 0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(30, -10, 10, 20, -0.2, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                boss.weakPoints.forEach(wp => {
+                    if (wp.active) {
+                        ctx.save();
+                        ctx.translate(wp.x, wp.y);
+                        ctx.beginPath(); ctx.arc(0, 0, 30, 0, Math.PI*2);
+                        ctx.fillStyle = '#111'; ctx.fill();
+                        ctx.strokeStyle = '#ff1744'; ctx.lineWidth=3; ctx.stroke();
+                        ctx.fillStyle = '#ff1744'; ctx.font="30px 'Ma Shan Zheng'";
+                        ctx.textAlign="center"; ctx.textBaseline="middle";
+                        ctx.fillText(wp.text, 0, 0);
+                        ctx.restore();
+                    }
+                });
+            }
+
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                let ft = floatTexts[i];
+                ft.life -= 0.04; // 稍微慢一點消失
+                if (ft.life <= 0) { floatTexts.splice(i, 1); continue; }
+                ctx.save();
+                ctx.translate(ft.x + 35, ft.y + 35);
+                let s = 1 + (1-ft.life) * 0.5; 
+                ctx.scale(s, s);
+                ctx.globalAlpha = ft.life;
+                ctx.fillStyle = '#ffd700';
+                ctx.shadowColor = '#ff6f00'; ctx.shadowBlur = 20;
+                ctx.font = "bold 60px 'Ma Shan Zheng'";
+                ctx.fillText(ft.text, 0, 0);
+                ctx.restore();
+            }
         }
 
         particles.forEach((p, i) => {
@@ -1293,7 +1241,7 @@
 
     function winGame() {
         gameState = 'GAMEOVER';
-        stopBGM(); // 遊戲結束停止 BGM
+        bgmPlayer.pause(); // 遊戲結束停止 BGM
         document.getElementById('end-title').innerText = "功德圓滿";
         document.getElementById('end-reason').innerText = "心無罣礙，究竟涅槃";
         document.getElementById('final-score').innerText = score;
@@ -1302,12 +1250,16 @@
 
     function gameOver(reason) {
         gameState = 'GAMEOVER';
-        stopBGM(); // 遊戲結束停止 BGM
+        bgmPlayer.pause(); // 遊戲結束停止 BGM
         document.getElementById('end-title').innerText = "修行未果";
         document.getElementById('end-reason').innerText = reason;
         document.getElementById('final-score').innerText = score;
         gameOverScreen.style.display = 'flex';
     }
+
+    // 啟動動畫迴圈 (讓首頁能顯示流星)
+    resize();
+    requestAnimationFrame(gameLoop);
 
 </script>
 </body>
