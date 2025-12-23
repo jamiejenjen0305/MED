@@ -200,6 +200,7 @@
             background: linear-gradient(180deg, #e1f5fe 0%, #4fc3f7 40%, #0288d1 60%, #01579b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            /* 將白色描邊調細為 0.1px */
             -webkit-text-stroke: 0.1px #fff;
             filter: drop-shadow(0 0 15px rgba(3, 169, 244, 0.6)) drop-shadow(0 5px 0 #002f6c);
         }
@@ -799,22 +800,44 @@
         canvas.addEventListener('touchmove', (e) => { 
             e.preventDefault(); 
             handleMove(e.touches[0].clientX, e.touches[0].clientY); 
+            // 修正：移動時強制設為射擊狀態
+            isFiring = true; 
         }, { passive: false });
 
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault(); 
             if (gameState === 'START' || gameState === 'GAMEOVER') return; 
             handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            // 修正：按下時強制設為射擊狀態
             isFiring = true; 
         }, { passive: false });
 
         canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
-            isFiring = false; 
+            // 修正：只有當所有手指離開時才停止射擊
+            if (e.touches.length === 0) {
+                isFiring = false;
+            }
         }, { passive: false });
 
-        document.getElementById('start-btn').onclick = startGame;
-        document.getElementById('start-btn').ontouchend = (e) => { e.preventDefault(); startGame(); }; 
+        document.getElementById('start-btn').onclick = function() {
+            // 修正：在按鈕點擊時預熱語音引擎
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance("");
+                window.speechSynthesis.speak(u);
+            }
+            startGame();
+        };
+        document.getElementById('start-btn').ontouchend = (e) => { 
+            e.preventDefault(); 
+            // 修正：在按鈕觸碰時預熱語音引擎
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance("");
+                window.speechSynthesis.speak(u);
+            }
+            startGame(); 
+        }; 
+        
         document.getElementById('restart-btn').onclick = resetToHome;
         document.getElementById('restart-btn').ontouchend = (e) => { e.preventDefault(); resetToHome(); };
 
@@ -899,7 +922,6 @@
             levelTitle.innerText = `第 ${currentLevelIndex + 1} 關 完成`;
             levelScreen.style.display = 'flex';
             
-            // 修正：過關時顯示已收集的經文
             let fullText = LEVEL_TEXTS[currentLevelIndex];
             const levelSubtitleEl = document.getElementById('level-subtitle');
             if (levelSubtitleEl) {
@@ -1070,7 +1092,7 @@
                 }
                 ctx.restore();
 
-                // 邏輯
+                // 2. 邏輯更新
                 if (gameState === 'PLAYING' || gameState === 'BOSS') {
                     let diffX = player.targetX - player.x;
                     let diffY = player.targetY - player.y; 
@@ -1228,6 +1250,10 @@
                                 hit = true;
                                 if (e.type.startsWith('interference') || e.type === 'karma') {
                                     createExplosion(e.x+35, e.y+35, '#555', true); enemies.splice(j, 1);
+                                    if(e.type === 'karma') {
+                                        player.karma += 20; updateKarma();
+                                        showFloatingMsg("業力增加", 'crit');
+                                    }
                                 } else if (e.idx === currentLevelCharIndex) {
                                     comboCount++; playSound('hit', comboCount); score += 100 + (comboCount * 10);
                                     speakText(e.char);
@@ -1305,6 +1331,10 @@
                                 // Fallback
                                 ctx.fillStyle = '#ff1744'; ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI*2); ctx.fill();
                             }
+                        } else if (e.type === 'karma') {
+                            ctx.fillStyle = '#ff1744'; ctx.beginPath(); ctx.arc(0,0,20,0,Math.PI*2); ctx.fill();
+                            ctx.strokeStyle = '#fff'; ctx.lineWidth=2; ctx.stroke();
+                            ctx.fillStyle = '#fff'; ctx.font="bold 20px Arial"; ctx.textAlign="center"; ctx.fillText("業",0,5);
                         } else {
                             ctx.drawImage(lotusImg, -35, -35, 70, 70);
                             if (e.idx === currentLevelCharIndex) {
