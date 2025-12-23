@@ -29,7 +29,7 @@
             background: #000;
             cursor: none;
             overflow: hidden;
-            box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), 0 0 20px rgba(100, 50, 255, 0.1);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
         }
 
         #game-container::after {
@@ -64,53 +64,57 @@
 
         canvas {
             display: block;
-            filter: contrast(1.2) saturate(1.4) brightness(1.1);
+            filter: contrast(1.1) saturate(1.2) brightness(1.1); /* 稍微降低飽和度，讓畫面柔和 */
         }
 
+        /* --- UI 設計優化：統一色調與風格 --- */
         #dashboard {
             position: absolute;
             top: 15px; left: 10px; right: 10px;
-            height: 85px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            height: 80px;
+            /* 改為深色半透明背景，突顯文字 */
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            /* 邊框改為低調的金色 */
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 0 10px;
+            padding: 0 5px;
             z-index: 10;
             pointer-events: none;
         }
 
         #progress-container {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 6px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 24px 24px 0 0;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px 12px 0 0;
             overflow: hidden;
         }
         #progress-bar {
             width: 0%; height: 100%;
-            background: linear-gradient(90deg, #ff6f00, #ffd700, #ff6f00);
-            box-shadow: 0 0 15px #ffd700;
+            /* 進度條改為純粹的金色 */
+            background: #ffd700;
+            box-shadow: 0 0 10px #ffd700;
             transition: width 0.3s;
         }
 
-        /* 業力條 (Karma Meter) */
+        /* 業力條 (Karma Meter) - 保持紅色警示 */
         #karma-container {
             position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 4px;
-            background: rgba(50, 0, 0, 0.5);
-            border-radius: 0 0 24px 24px;
+            bottom: 0; left: 0; width: 100%; height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0 0 12px 12px;
             overflow: hidden;
         }
         #karma-bar {
             width: 0%; height: 100%;
-            background: linear-gradient(90deg, #550000, #ff1744);
+            background: #ff5252;
             transition: width 0.3s;
-            box-shadow: 0 0 10px #ff1744;
+            box-shadow: 0 0 5px #ff1744;
         }
 
         .hud-group {
@@ -118,49 +122,55 @@
         }
 
         .hud-label {
-            font-size: 10px; color: #a0a0ff; text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 2px; font-weight: bold; text-shadow: 0 0 5px rgba(160, 160, 255, 0.5);
+            /* 標籤統一為低飽和度的灰金色 */
+            font-family: 'Noto Serif TC', serif;
+            font-size: 10px; color: #aaa; letter-spacing: 1px;
+            margin-bottom: 2px; 
+            text-shadow: none;
         }
 
         .hud-value {
             font-family: 'Ma Shan Zheng', cursive;
-            font-size: 24px; color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+            font-size: 22px; 
+            /* 數值統一為亮白色，帶微弱陰影 */
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8);
         }
 
+        /* 生命值保持紅色愛心 */
         #hp-display {
-            color: #ff5252;
-            font-size: 18px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px #ff1744;
-            white-space: nowrap;
+            font-size: 16px;
+            letter-spacing: 2px;
         }
 
-        #score { color: #80d8ff; font-size: 22px; }
-        #combo { color: #ff80ab; font-size: 26px; text-shadow: 0 0 10px #ff4081; transition: transform 0.1s; }
+        /* 分數與連擊改為金色系，突出重點 */
+        #score { color: #fff8e1; }
+        #combo { color: #ffd700; font-size: 24px; text-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
         
         #target-group {
             text-align: center;
-            border-left: 1px solid rgba(255,255,255,0.15);
-            padding-left: 10px;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 12px;
             min-width: 50px;
         }
 
         #next-target {
-            color: #ffd700; font-size: 36px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-            animation: pulse-target 1.5s infinite alternate;
+            /* 目標字最大最亮 */
+            color: #ffd700; font-size: 38px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            animation: pulse-target 2s infinite alternate;
         }
 
-        @keyframes pulse-target { from { text-shadow: 0 0 10px #ff6f00; transform: scale(1); } to { text-shadow: 0 0 25px #ffd700; transform: scale(1.1); } }
+        @keyframes pulse-target { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.05); opacity: 1; } }
 
+        /* 關卡顯示優化 */
         #level-display {
-            position: absolute; top: 105px; left: 20px;
-            font-family: 'Ma Shan Zheng', cursive; font-size: 20px;
-            color: #ffd700; text-shadow: 0 0 5px #000;
-            z-index: 9; opacity: 0.7;
-            background: rgba(0,0,0,0.5); padding: 2px 10px; border-radius: 10px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            font-family: 'Ma Shan Zheng', cursive; font-size: 18px;
+            color: #eee;
+            text-shadow: 0 0 3px #000;
+            background: rgba(0,0,0,0.4); 
+            padding: 4px 12px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #level-display-container {
@@ -171,15 +181,11 @@
             z-index: 9;
         }
 
-        #level-display {
-            position: static; /* Reset absolute positioning */
-        }
-
         #sound-btn {
             width: 32px;
             height: 32px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -189,18 +195,18 @@
             backdrop-filter: blur(5px);
         }
         #sound-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
+            width: 18px;
+            height: 18px;
+            fill: #ccc; /* 圖示改為淺灰色 */
         }
         #sound-btn.muted svg {
-            fill: #ff5252;
+            fill: #ef5350;
         }
 
         /* --- 遊戲狀態畫面 --- */
         #start-screen, #game-over-screen, #level-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(20,10,40,0.9) 0%, #000 100%);
+            background: radial-gradient(circle, rgba(10,10,15,0.95) 0%, #000 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; z-index: 30;
             cursor: default;
@@ -210,125 +216,113 @@
         #start-screen::before {
             content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 120vw; height: 120vw;
-            background: repeating-conic-gradient(from 0deg, rgba(255,215,0,0.05) 0deg, transparent 10deg, rgba(255,215,0,0.05) 20deg);
+            background: repeating-conic-gradient(from 0deg, rgba(255,215,0,0.03) 0deg, transparent 10deg, rgba(255,215,0,0.03) 20deg);
             border-radius: 50%; animation: rotateBg 60s linear infinite; z-index: -1; pointer-events: none;
         }
 
         @keyframes rotateBg { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        #level-screen { background: rgba(10, 0, 20, 0.85); display: none; z-index: 15; animation: fadeIn 0.5s; }
+        #level-screen { background: rgba(0, 0, 0, 0.85); display: none; z-index: 15; animation: fadeIn 0.5s; }
 
         h1 {
             font-family: 'Ma Shan Zheng', cursive;
             font-size: clamp(30px, 8vw, 60px);
-            background: linear-gradient(180deg, #fff 10%, #ffd700 40%, #ff8f00 60%, #bf360c 100%);
+            /* 通用標題：金色漸層 */
+            background: linear-gradient(180deg, #fff 20%, #ffd700 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin: 0 0 30px 0;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)) drop-shadow(0 5px 0 #8f4b0e);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
             animation: floatTitle 4s infinite ease-in-out;
             text-align: center; line-height: 1.2; width: 100%;
             padding: 0 10px;
         }
         
         #start-screen h1 {
-            background: linear-gradient(180deg, #e1f5fe 0%, #4fc3f7 40%, #0288d1 60%, #01579b 100%);
+            /* 首頁標題：維持藍色系但更深邃 */
+            background: linear-gradient(180deg, #e3f2fd 0%, #2196f3 50%, #0d47a1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            /* 將白色描邊調細為 0.1px */
-            -webkit-text-stroke: 0.1px #fff;
-            filter: drop-shadow(0 0 15px rgba(3, 169, 244, 0.6)) drop-shadow(0 5px 0 #002f6c);
+            -webkit-text-stroke: 0.5px rgba(255,255,255,0.8);
+            filter: drop-shadow(0 0 20px rgba(33, 150, 243, 0.5));
         }
 
         @keyframes floatTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* 立體透明感按鈕 */
         .btn {
-            margin-top: 40px; padding: 16px 56px; font-size: 26px;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 143, 0, 0.4));
-            background-color: rgba(0,0,0,0.5);
-            color: #ffd700; border: 1px solid rgba(255, 255, 255, 0.4);
-            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
-            border-right: 3px solid rgba(255, 255, 255, 0.2);
+            margin-top: 40px; padding: 14px 50px; font-size: 24px;
+            /* 按鈕改為更簡潔的金色風格 */
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.2), rgba(255, 143, 0, 0.3));
+            background-color: rgba(0,0,0,0.3);
+            color: #fff8e1; border: 1px solid rgba(255, 215, 0, 0.6);
             border-radius: 50px; cursor: pointer;
             font-family: 'Ma Shan Zheng', cursive; transition: all 0.2s ease-out;
-            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.1);
             white-space: nowrap; letter-spacing: 3px;
             position: relative; overflow: hidden;
             pointer-events: auto;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .btn::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
-            border-radius: 50px 50px 0 0; pointer-events: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
         }
         .btn:hover { 
-            transform: translateY(-3px) scale(1.02); 
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.5), rgba(255, 143, 0, 0.6));
-            box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.4), 0 15px 30px rgba(255, 193, 7, 0.3);
-            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px); 
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.4), rgba(255, 143, 0, 0.5));
+            box-shadow: 0 0 25px rgba(255, 193, 7, 0.4);
+            border-color: #ffd700;
             color: #fff;
         }
-        .btn:active { transform: translateY(1px) scale(0.98); box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(1px); }
 
         #collected-sutra {
             position: absolute; bottom: 0; left: 0; width: 100%; height: auto; min-height: 110px; max-height: 180px;
-            background: linear-gradient(to top, #1a0510 0%, rgba(40, 10, 30, 0.9) 60%, transparent 100%);
-            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            background: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end;
             padding: 10px 20px 35px 20px; pointer-events: none; z-index: 5; box-sizing: border-box; overflow: hidden;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
         }
 
         .sutra-char {
-            font-family: 'Ma Shan Zheng', cursive; font-size: 34px; color: #ffd700;
+            font-family: 'Ma Shan Zheng', cursive; font-size: 32px; color: #ffd700;
             margin: 0 4px; opacity: 0; display: inline-block;
-            transform: translateY(30px) scale(0.5); 
+            transform: translateY(20px); 
             animation: floatUpChar 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            text-shadow: 0 0 10px rgba(255, 160, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.4);
+            text-shadow: 0 0 8px rgba(255, 160, 0, 0.6);
         }
-        @keyframes floatUpChar { to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes floatUpChar { to { opacity: 1; transform: translateY(0); } }
 
         .instruction {
-            margin-top: 10px; color: #ccc; font-size: 16px; line-height: 1.8; text-align: center;
-            background: rgba(20, 20, 30, 0.7); padding: 18px 28px; border-radius: 16px; 
-            width: 85%; max-width: 360px; border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 10px; color: #ccc; font-size: 15px; line-height: 1.8; text-align: center;
+            background: rgba(30, 30, 30, 0.6); padding: 18px 28px; border-radius: 16px; 
+            width: 85%; max-width: 360px; border: 1px solid rgba(255,255,255,0.1);
         }
         .instruction p { margin: 6px 0; }
-        .instruction strong { color: #ffca28; text-shadow: 0 0 5px rgba(255, 202, 40, 0.5); }
+        .instruction strong { color: #ffd700; font-weight: normal; }
 
         #boss-hud {
             position: absolute; top: 120px; left: 50%; transform: translateX(-50%); 
-            width: 40%; max-width: 200px; /* 縮小寬度 */
+            width: 40%; max-width: 200px; 
             display: none; flex-direction: column; align-items: center;
-            /* 移除厚重背景，改為透明 */
             background: transparent;
             z-index: 15;
         }
         #boss-name { 
             font-family: 'Ma Shan Zheng', cursive; color: #ff5252; 
-            font-size: 20px; text-shadow: 0 0 5px #000, 0 0 10px #ff0000; 
+            font-size: 20px; text-shadow: 0 0 5px #000; 
             margin-bottom: 5px; letter-spacing: 2px;
         }
         #boss-hp-bar { 
-            width: 100%; height: 8px; /* 變細 */
-            background: rgba(20, 0, 0, 0.6); 
-            border: 1px solid rgba(255, 82, 82, 0.8); /* 霓虹邊框 */
-            border-radius: 10px; overflow: hidden; 
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            width: 100%; height: 6px; 
+            background: rgba(50, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 82, 82, 0.5); 
+            border-radius: 4px; overflow: hidden; 
         }
         #boss-hp-fill { 
             width: 100%; height: 100%; 
-            background: linear-gradient(90deg, #ff5252, #d50000); 
+            background: linear-gradient(90deg, #ff5252, #ff1744); 
             transition: width 0.2s; 
-            box-shadow: 0 0 10px #ff1744; 
         }
 
-        #level-title { font-family: 'Ma Shan Zheng', cursive; font-size: 60px; color: #ffd700; margin-bottom: 15px; text-shadow: 0 0 30px #ff6f00; text-align: center; }
-        #level-subtitle { font-family: 'Noto Serif TC', serif; font-size: 24px; color: #eee; letter-spacing: 4px; text-align: center; opacity: 0.9; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        #level-title { font-family: 'Ma Shan Zheng', cursive; font-size: 60px; color: #ffd700; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); text-align: center; }
+        #level-subtitle { font-family: 'Noto Serif TC', serif; font-size: 24px; color: #eee; letter-spacing: 4px; text-align: center; opacity: 0.9; }
         
         .floating-msg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -378,11 +372,9 @@
     <div id="level-display-container">
         <div id="level-display">第 1 關</div>
         <div id="sound-btn">
-            <!-- SVG Icon: Volume Up -->
             <svg viewBox="0 0 24 24" id="icon-sound-on">
                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
             </svg>
-            <!-- SVG Icon: Volume Off (Hidden by default) -->
             <svg viewBox="0 0 24 24" id="icon-sound-off" style="display:none;">
                 <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
             </svg>
@@ -618,7 +610,7 @@
                 tmpCtx.beginPath(); tmpCtx.arc(64, 64, 20, 0, Math.PI * 2);
                 tmpCtx.fillStyle = '#fff'; tmpCtx.fill();
                 
-                tmpCtx.fillStyle = '#ff6f00'; tmpCtx.font = "bold 30px sans-serif"; 
+                tmpCtx.fillStyle = '#ff6f00'; tmpCtx.font = "bold 30px 'Ma Shan Zheng'"; 
                 tmpCtx.textAlign = "center"; tmpCtx.textBaseline = "middle"; 
                 tmpCtx.shadowBlur = 0; 
                 tmpCtx.fillText("卍", 64, 66);
@@ -786,12 +778,11 @@
             bossBulletImgs[c] = img;
         });
         
-        // 障礙物圖片 (移除鈴鐺，改為隕石)
+        // 障礙物圖片 (更多種類)
         const obstacleImgs = {};
         const obstacleTypes = ['meteor', 'ufo', 'alien', 'flower', 'fruit', 'apple', 'pear'];
         obstacleTypes.forEach(t => {
             obstacleImgs[t] = new Image();
-            // 這裡為了相容舊的 type 命名，如果是 meteor 就用 obstacle_meteor
             obstacleImgs[t].src = createTexture('obstacle_' + t);
         });
 
@@ -1357,58 +1348,30 @@
                                 const enemyWidth = 70; const margin = canvas.width * 0.15;
                                 const spawnX = Math.random() * (canvas.width - margin*2 - enemyWidth) + margin;
                                 
-                                // 經文掉落速度調整
                                 let dropSpeed = (canvas.height/600) * (1.2 + currentLevelIndex * 0.08); 
 
-                                const side = Math.floor(Math.random() * 3); // 0:Top, 1:Left, 2:Right
-                                let sx, sy;
-                                if(side === 0) { sx = Math.random() * canvas.width; sy = -60; }
-                                else if(side === 1) { sx = -60; sy = Math.random() * (canvas.height/2); }
-                                else { sx = canvas.width + 60; sy = Math.random() * (canvas.height/2); }
-
-                                // 目標點：畫面中下區域
-                                const tx = Math.random() * (canvas.width * 0.8) + (canvas.width * 0.1);
-                                const ty = Math.random() * (canvas.height * 0.5) + (canvas.height * 0.4);
-
-                                const angle = Math.atan2(ty - sy, tx - sx);
-                                const vx = Math.cos(angle) * dropSpeed;
-                                const vy = Math.sin(angle) * dropSpeed;
-
                                 enemies.push({
-                                    x: sx, y: sy, width: 70, height: 70, type: 'text',
+                                    x: spawnX, y: -50, width: 70, height: 70, type: 'text',
                                     char: data.char, idx: data.idx,
-                                    vx: vx, vy: vy,
-                                    angle: 0, rotSpeed: (Math.random()-0.5) * 0.05
+                                    speed: dropSpeed, 
+                                    wobble: Math.random()*100, angle: 0, rotSpeed: (Math.random()-0.5) * 0.05
                                 });
                             } else if (enemies.length === 0) { levelComplete(); }
                         }
                     }
 
-                    // 障礙物生成邏輯
+                    // 障礙物生成邏輯 (獨立計時)
                     obstacleTimer += dt;
                     let currentObsInterval = Math.max(800, 2000 - currentLevelIndex * 50); 
 
                     if(obstacleTimer > currentObsInterval) {
                         obstacleTimer = 0;
-                        if(Math.random() < 0.6) {
-                            const side = Math.floor(Math.random() * 3);
-                            let sx, sy;
-                            if(side === 0) { sx = Math.random() * canvas.width; sy = -60; }
-                            else if(side === 1) { sx = -60; sy = Math.random() * (canvas.height/2); }
-                            else { sx = canvas.width + 60; sy = Math.random() * (canvas.height/2); }
-
-                            const tx = Math.random() * (canvas.width * 0.8) + (canvas.width * 0.1);
-                            const ty = Math.random() * (canvas.height * 0.6) + (canvas.height * 0.2); // 障礙物可以飛更低
-
-                            const speed = (canvas.height/600) * (3 + currentLevelIndex * 0.15);
-                            const angle = Math.atan2(ty - sy, tx - sx);
-                            const vx = Math.cos(angle) * speed;
-                            const vy = Math.sin(angle) * speed;
-
+                        if(Math.random() < 0.6) { // 60% 機率生成
+                            const spawnX = Math.random() * (canvas.width - 100) + 50;
                             const obsType = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
                             enemies.push({
-                                x: sx, y: sy, width: 70, height: 70, type: 'obstacle_' + obsType,
-                                vx: vx, vy: vy,
+                                x: spawnX, y: -50, width: 70, height: 70, type: 'obstacle_' + obsType,
+                                speed: (canvas.height/600) * (3 + currentLevelIndex * 0.15), // 障礙物速度更快
                                 angle: 0, rotSpeed: 0.05
                             });
                         }
@@ -1426,14 +1389,10 @@
                             let angle = Math.atan2(player.y - e.y, player.x - e.x);
                             e.x += Math.cos(angle) * 3; e.y += Math.sin(angle) * 3;
                         }
-                        else if (e.type.startsWith('obstacle') || e.type === 'text') { 
-                             // 使用向量移動
-                             e.x += e.vx;
-                             e.y += e.vy;
-                             e.angle += e.rotSpeed || 0;
-                        }
+                        else if (e.type.startsWith('obstacle')) { e.y += e.speed * 1.2; e.x += Math.sin(e.y*0.03)*1; }
                         else if (e.type === 'karma') { e.y += e.speed * 1.5; e.x += Math.sin(e.y*0.05)*2; } 
                         else { e.y += e.speed; if (e.char && e.type==='text') e.x += Math.sin((e.y + e.wobble)*0.02)*0.5; }
+                        if (e.rotSpeed) e.angle += e.rotSpeed; 
                     }
 
                     let dist = Math.hypot(player.x - (e.x + 35), player.y - (e.y + 35));
@@ -1447,24 +1406,22 @@
                             triggerShake(15); playSound('damage');
                         }
 
+                        // 修改：如果撞到的是經文，彈回重來
                         if (e.type === 'text') {
                             e.y = -100; e.x = Math.random() * (canvas.width - 70);
                             if(score>0) score = Math.max(0, score - 50); 
                             scoreEl.innerText = score;
+                            // 經文撞到不消失，只是重來
                         } else {
+                            // 撞到障礙物或敵人，移除
                             enemies.splice(i, 1);
                         }
 
                         if (takeDamage && player.hp <= 0) { gameOver("定力不足，心魔入侵"); } 
                     }
                     else if (e.y > canvas.height + 100 || e.x < -100 || e.x > canvas.width + 100) {
-                        // 移除超出邊界的物件
                         if (e.type === 'text') { 
-                            // 經文不能消失，要重置
-                            e.y = -100; 
-                            e.x = Math.random() * (canvas.width - 70);
-                            // 重置速度為垂直下落，或者再次隨機
-                            e.vx = 0; e.vy = (canvas.height/600) * 2; 
+                            e.y = -100; e.x = Math.random() * (canvas.width - 70);
                             if(score>0) score = Math.max(0, score - 50); 
                             scoreEl.innerText = score;
                             comboEl.innerText = 0;
