@@ -163,13 +163,21 @@
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
-        /* --- 音效按鈕 --- */
+        #level-display-container {
+            position: absolute; top: 105px; left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 9;
+        }
+
+        #level-display {
+            position: static; /* Reset absolute positioning */
+        }
+
         #sound-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
@@ -177,13 +185,12 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 100;
             pointer-events: auto;
             backdrop-filter: blur(5px);
         }
         #sound-btn svg {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             fill: #fff;
         }
         #sound-btn.muted svg {
@@ -234,6 +241,7 @@
 
         @keyframes floatTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
+        /* 立體透明感按鈕 */
         .btn {
             margin-top: 40px; padding: 16px 56px; font-size: 26px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 143, 0, 0.4));
@@ -293,15 +301,31 @@
         .instruction strong { color: #ffca28; text-shadow: 0 0 5px rgba(255, 202, 40, 0.5); }
 
         #boss-hud {
-            position: absolute; top: 110px; left: 50%; transform: translateX(-50%); width: 70%; max-width: 350px;
+            position: absolute; top: 120px; left: 50%; transform: translateX(-50%); 
+            width: 40%; max-width: 200px; /* 縮小寬度 */
             display: none; flex-direction: column; align-items: center;
-            background: rgba(30, 0, 0, 0.7); padding: 10px 15px; border-radius: 20px;
-            border: 1px solid rgba(255, 82, 82, 0.6); backdrop-filter: blur(8px);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            /* 移除厚重背景，改為透明 */
+            background: transparent;
+            z-index: 15;
         }
-        #boss-name { font-family: 'Ma Shan Zheng', cursive; color: #ff5252; font-size: 26px; text-shadow: 0 0 15px #b71c1c; margin-bottom: 6px; }
-        #boss-hp-bar { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; box-shadow: inset 0 0 5px #000; }
-        #boss-hp-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #ff1744, #d50000); transition: width 0.2s; box-shadow: 0 0 10px #ff1744; }
+        #boss-name { 
+            font-family: 'Ma Shan Zheng', cursive; color: #ff5252; 
+            font-size: 20px; text-shadow: 0 0 5px #000, 0 0 10px #ff0000; 
+            margin-bottom: 5px; letter-spacing: 2px;
+        }
+        #boss-hp-bar { 
+            width: 100%; height: 8px; /* 變細 */
+            background: rgba(20, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 82, 82, 0.8); /* 霓虹邊框 */
+            border-radius: 10px; overflow: hidden; 
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        #boss-hp-fill { 
+            width: 100%; height: 100%; 
+            background: linear-gradient(90deg, #ff5252, #d50000); 
+            transition: width 0.2s; 
+            box-shadow: 0 0 10px #ff1744; 
+        }
 
         #level-title { font-family: 'Ma Shan Zheng', cursive; font-size: 60px; color: #ffd700; margin-bottom: 15px; text-shadow: 0 0 30px #ff6f00; text-align: center; }
         #level-subtitle { font-family: 'Noto Serif TC', serif; font-size: 24px; color: #eee; letter-spacing: 4px; text-align: center; opacity: 0.9; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
@@ -325,17 +349,6 @@
     <canvas id="gameCanvas"></canvas>
     <div id="damage-overlay"></div>
     <div id="fever-overlay"></div>
-
-    <div id="sound-btn">
-        <!-- SVG Icon: Volume Up -->
-        <svg viewBox="0 0 24 24" id="icon-sound-on">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-        </svg>
-        <!-- SVG Icon: Volume Off (Hidden by default) -->
-        <svg viewBox="0 0 24 24" id="icon-sound-off" style="display:none;">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-        </svg>
-    </div>
 
     <div id="dashboard">
         <div id="progress-container"><div id="progress-bar"></div></div>
@@ -362,7 +375,19 @@
         </div>
     </div>
     
-    <div id="level-display">第 1 關</div>
+    <div id="level-display-container">
+        <div id="level-display">第 1 關</div>
+        <div id="sound-btn">
+            <!-- SVG Icon: Volume Up -->
+            <svg viewBox="0 0 24 24" id="icon-sound-on">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+            <!-- SVG Icon: Volume Off (Hidden by default) -->
+            <svg viewBox="0 0 24 24" id="icon-sound-off" style="display:none;">
+                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+        </div>
+    </div>
 
     <div id="boss-hud">
         <div id="boss-name">五蘊心魔</div>
@@ -378,6 +403,7 @@
             <p><strong>按住：</strong>自動發射佛光</p>
             <p><strong>生存：</strong>擁有 3 顆心，5連擊掉落補血</p>
             <p><strong>Boss：</strong>每 3 關魔王進化，難度提升</p>
+            <p><strong>障礙：</strong>小心避開隕石、外星人、飛碟</p>
         </div>
         <button class="btn" id="start-btn">開始冒險</button>
     </div>
@@ -659,6 +685,87 @@
                 tmpCtx.textAlign = "center"; tmpCtx.textBaseline = "middle";
                 tmpCtx.shadowBlur = 10;
                 tmpCtx.fillText(char, 64, 68);
+            } 
+            // 障礙物貼圖 - 修改為隕石
+            else if (type === 'obstacle_meteor') { 
+                // 岩石質感
+                const grad = tmpCtx.createRadialGradient(50, 50, 5, 64, 64, 60);
+                grad.addColorStop(0, '#8d6e63'); grad.addColorStop(1, '#3e2723');
+                tmpCtx.fillStyle = grad;
+                
+                // 不規則多邊形模擬岩石
+                tmpCtx.beginPath();
+                tmpCtx.moveTo(64, 20);
+                tmpCtx.lineTo(90, 40);
+                tmpCtx.lineTo(100, 80);
+                tmpCtx.lineTo(70, 110);
+                tmpCtx.lineTo(40, 100);
+                tmpCtx.lineTo(20, 60);
+                tmpCtx.lineTo(35, 30);
+                tmpCtx.closePath();
+                tmpCtx.fill();
+                
+                // 坑洞細節
+                tmpCtx.fillStyle = 'rgba(0,0,0,0.3)';
+                tmpCtx.beginPath(); tmpCtx.arc(50, 50, 10, 0, Math.PI*2); tmpCtx.fill();
+                tmpCtx.beginPath(); tmpCtx.arc(80, 70, 8, 0, Math.PI*2); tmpCtx.fill();
+                tmpCtx.beginPath(); tmpCtx.arc(50, 90, 6, 0, Math.PI*2); tmpCtx.fill();
+
+            } else if (type === 'obstacle_ufo') { // 飛碟
+                tmpCtx.fillStyle = '#e1f5fe';
+                tmpCtx.beginPath(); tmpCtx.arc(64, 50, 20, Math.PI, 0); tmpCtx.fill();
+                const ufoGrad = tmpCtx.createLinearGradient(0, 50, 0, 80);
+                ufoGrad.addColorStop(0, '#b0bec5'); ufoGrad.addColorStop(1, '#607d8b');
+                tmpCtx.fillStyle = ufoGrad;
+                tmpCtx.beginPath(); tmpCtx.ellipse(64, 60, 50, 15, 0, 0, Math.PI*2); tmpCtx.fill();
+                for(let i=0; i<5; i++) {
+                    tmpCtx.fillStyle = (i%2===0) ? '#ffeb3b' : '#ff1744';
+                    tmpCtx.beginPath(); tmpCtx.arc(34 + i*15, 60, 3, 0, Math.PI*2); tmpCtx.fill();
+                }
+            } else if (type === 'obstacle_alien') { // 外星人
+                tmpCtx.fillStyle = '#69f0ae';
+                tmpCtx.beginPath();
+                tmpCtx.moveTo(64, 20);
+                tmpCtx.quadraticCurveTo(100, 20, 100, 60);
+                tmpCtx.quadraticCurveTo(100, 110, 64, 110);
+                tmpCtx.quadraticCurveTo(28, 110, 28, 60);
+                tmpCtx.quadraticCurveTo(28, 20, 64, 20);
+                tmpCtx.fill();
+                tmpCtx.fillStyle = '#000';
+                tmpCtx.beginPath(); tmpCtx.ellipse(45, 60, 12, 20, 0.2, 0, Math.PI*2); tmpCtx.fill();
+                tmpCtx.beginPath(); tmpCtx.ellipse(83, 60, 12, 20, -0.2, 0, Math.PI*2); tmpCtx.fill();
+            } else if (type === 'obstacle_flower') { // 花瓣
+                 tmpCtx.fillStyle = '#f48fb1';
+                 for(let i=0; i<5; i++) {
+                     const angle = (i/5)*Math.PI*2;
+                     tmpCtx.beginPath();
+                     tmpCtx.ellipse(64 + Math.cos(angle)*20, 64 + Math.sin(angle)*20, 15, 25, angle, 0, Math.PI*2);
+                     tmpCtx.fill();
+                 }
+                 tmpCtx.fillStyle = '#fff59d';
+                 tmpCtx.beginPath(); tmpCtx.arc(64, 64, 10, 0, Math.PI*2); tmpCtx.fill();
+            } else if (type === 'obstacle_fruit') { // 水果(桃子)
+                const grad = tmpCtx.createRadialGradient(50, 50, 5, 64, 64, 50);
+                grad.addColorStop(0, '#ffcdd2'); grad.addColorStop(1, '#e91e63');
+                tmpCtx.fillStyle = grad;
+                tmpCtx.beginPath(); tmpCtx.arc(64, 64, 40, 0, Math.PI*2); tmpCtx.fill();
+                tmpCtx.fillStyle = '#4caf50';
+                tmpCtx.beginPath(); tmpCtx.ellipse(64, 24, 8, 16, -0.5, 0, Math.PI*2); tmpCtx.fill();
+            } else if (type === 'obstacle_apple') { // 蘋果
+                const grad = tmpCtx.createRadialGradient(50, 50, 5, 64, 64, 50);
+                grad.addColorStop(0, '#ffcdd2'); grad.addColorStop(1, '#d32f2f');
+                tmpCtx.fillStyle = grad;
+                tmpCtx.beginPath(); tmpCtx.arc(64, 64, 42, 0, Math.PI*2); tmpCtx.fill();
+                tmpCtx.fillStyle = '#4caf50';
+                tmpCtx.beginPath(); tmpCtx.ellipse(64, 20, 8, 16, 0.5, 0, Math.PI*2); tmpCtx.fill();
+            } else if (type === 'obstacle_pear') { // 梨子
+                const grad = tmpCtx.createLinearGradient(64, 20, 64, 100);
+                grad.addColorStop(0, '#fff9c4'); grad.addColorStop(1, '#fbc02d');
+                tmpCtx.fillStyle = grad;
+                tmpCtx.beginPath();
+                tmpCtx.ellipse(64, 70, 40, 45, 0, 0, Math.PI*2);
+                tmpCtx.ellipse(64, 40, 25, 30, 0, 0, Math.PI*2);
+                tmpCtx.fill();
             }
 
             const url = tmpCanvas.toDataURL('image/png');
@@ -678,6 +785,16 @@
             img.src = createTexture('boss_bullet', c);
             bossBulletImgs[c] = img;
         });
+        
+        // 障礙物圖片 (移除鈴鐺，改為隕石)
+        const obstacleImgs = {};
+        const obstacleTypes = ['meteor', 'ufo', 'alien', 'flower', 'fruit', 'apple', 'pear'];
+        obstacleTypes.forEach(t => {
+            obstacleImgs[t] = new Image();
+            // 這裡為了相容舊的 type 命名，如果是 meteor 就用 obstacle_meteor
+            obstacleImgs[t].src = createTexture('obstacle_' + t);
+        });
+
 
         const LEVEL_TEXTS = [
             "觀自在菩薩行深般若波羅蜜多時", "照見五蘊皆空度一切苦厄", "舍利子色不異空空不異色", "色即是空空即是色", "受想行識亦復如是",
@@ -719,6 +836,7 @@
 
         let lastTime = 0;
         let spawnTimer = 0;
+        let obstacleTimer = 0; // 獨立的障礙物計時器
         const spawnInterval = 1500;
         let waveQueue = [];
         let animationFrameId = null; 
@@ -942,6 +1060,7 @@
                 
                 isFiring = false; spreadTimer = 0; freezeTimer = 0;
                 spawnTimer = 0;
+                obstacleTimer = 0;
                 
                 resize();
                 lastTime = performance.now();
@@ -1049,6 +1168,8 @@
                      boss.active = false; boss.defeated = true; bossHud.style.display = 'none';
                      showFloatingMsg("心魔已除！", 'golden'); enemies = []; levelComplete();
                 }
+                // 死亡時血條歸零
+                bossHpFill.style.width = '0%';
                 return; 
             }
 
@@ -1163,7 +1284,7 @@
                 }
                 ctx.restore();
 
-                // 邏輯
+                // 2. 邏輯更新
                 if (gameState === 'PLAYING' || gameState === 'BOSS') {
                     let diffX = player.targetX - player.x;
                     let diffY = player.targetY - player.y; 
@@ -1246,6 +1367,25 @@
                             } else if (enemies.length === 0) { levelComplete(); }
                         }
                     }
+
+                    // 障礙物生成邏輯 (獨立計時)
+                    // 修改：難度曲線 - 障礙物頻率隨關卡增加
+                    // 基礎間隔 2000ms，每關減少 50ms，最低 800ms
+                    obstacleTimer += dt;
+                    let currentObsInterval = Math.max(800, 2000 - currentLevelIndex * 50); 
+
+                    if(obstacleTimer > currentObsInterval) {
+                        obstacleTimer = 0;
+                        if(Math.random() < 0.6) { // 60% 機率生成
+                            const spawnX = Math.random() * (canvas.width - 100) + 50;
+                            const obsType = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+                            enemies.push({
+                                x: spawnX, y: -50, width: 70, height: 70, type: 'obstacle_' + obsType,
+                                speed: (canvas.height/600) * (3 + currentLevelIndex * 0.15), // 障礙物速度更快
+                                angle: 0, rotSpeed: 0.05
+                            });
+                        }
+                    }
                 }
 
                 for (let i = enemies.length - 1; i >= 0; i--) {
@@ -1259,6 +1399,7 @@
                             let angle = Math.atan2(player.y - e.y, player.x - e.x);
                             e.x += Math.cos(angle) * 3; e.y += Math.sin(angle) * 3;
                         }
+                        else if (e.type.startsWith('obstacle')) { e.y += e.speed * 1.2; e.x += Math.sin(e.y*0.03)*1; }
                         else if (e.type === 'karma') { e.y += e.speed * 1.5; e.x += Math.sin(e.y*0.05)*2; } 
                         else { e.y += e.speed; if (e.char && e.type==='text') e.x += Math.sin((e.y + e.wobble)*0.02)*0.5; }
                         if (e.rotSpeed) e.angle += e.rotSpeed; 
@@ -1319,11 +1460,14 @@
                             let e = enemies[j];
                             if (Math.hypot(b.x - (e.x + 35), b.y - (e.y + 35)) < 40) {
                                 hit = true;
-                                if (e.type.startsWith('interference') || e.type === 'karma') {
+                                if (e.type.startsWith('interference') || e.type.startsWith('obstacle') || e.type === 'karma') {
                                     createExplosion(e.x+35, e.y+35, '#555', true); enemies.splice(j, 1);
                                     if(e.type === 'karma') {
                                         player.karma += 20; updateKarma();
                                         showFloatingMsg("業力增加", 'crit');
+                                    }
+                                    if(e.type.startsWith('obstacle')) {
+                                        showFloatingMsg("破除", 'normal');
                                     }
                                 } else if (e.idx === currentLevelCharIndex) {
                                     comboCount++; playSound('hit', comboCount); score += 100 + (comboCount * 10);
@@ -1402,10 +1546,11 @@
                                 // Fallback
                                 ctx.fillStyle = '#ff1744'; ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI*2); ctx.fill();
                             }
-                        } else if (e.type === 'karma') {
-                            ctx.fillStyle = '#ff1744'; ctx.beginPath(); ctx.arc(0,0,20,0,Math.PI*2); ctx.fill();
-                            ctx.strokeStyle = '#fff'; ctx.lineWidth=2; ctx.stroke();
-                            ctx.fillStyle = '#fff'; ctx.font="bold 20px Arial"; ctx.textAlign="center"; ctx.fillText("業",0,5);
+                        } else if (e.type.startsWith('obstacle')) {
+                            const typeName = e.type.split('_')[1];
+                            if(obstacleImgs[typeName]) {
+                                ctx.drawImage(obstacleImgs[typeName], -35, -35, 70, 70);
+                            }
                         } else {
                             ctx.drawImage(lotusImg, -35, -35, 70, 70);
                             if (e.idx === currentLevelCharIndex) {
