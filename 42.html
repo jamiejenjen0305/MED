@@ -118,12 +118,14 @@
             background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);
             display: flex; align-items: center; padding: 0 20px;
             box-shadow: 0 1px 0 rgba(0,0,0,0.1); z-index: 20;
+            padding-left: 60px; /* 為左側的音樂按鈕留空間 */
         }
         .header-title { flex: 1; text-align: center; color: #3E2723; font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; }
         .btn-back {
-            background: transparent; color: #3E2723; border: 1px solid #3E2723; 
+            background: rgba(255,255,255,0.8); color: #3E2723; border: 1px solid #3E2723; 
             width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
             display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
+            /* 確保按鈕有背景色，避免在複雜背景下看不見 */
         }
         .btn-back:hover { background: #3E2723; color: #fff; }
 
@@ -144,7 +146,7 @@
         .level-node.locked::after { content: '🔒'; font-size: 1.5rem; opacity: 0.5; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
         .level-node.locked span.lvl-num { display: block !important; opacity: 0.3; filter: blur(0.5px); color: #555; z-index: 0; }
         
-        /* 過關紅色大花印章 */
+        /* 1. 過關回復紅色圈圈處要有紅色小花(要大) */
         .level-node.completed { background: rgba(255,255,255,0.85); border-color: #D32F2F; box-shadow: 0 5px 15px rgba(211, 47, 47, 0.2); }
         .level-node.completed::after {
             content: '❀'; /* 實心花朵 */
@@ -164,13 +166,20 @@
         .lvl-name { font-size: 0.9rem; color: #5D4037; text-align: center; margin-top: 5px; font-weight: bold; }
 
         #game-screen { padding: 0; display: flex; flex-direction: column; background: transparent; }
+        
+        /* 修改：增加左側 Padding 給音樂按鈕 */
         .game-top-bar {
-            width: 100%; padding: 10px 20px; background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);
+            width: 100%; padding: 10px 20px 10px 60px; /* 左側留空 */
+            background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 30; flex-shrink: 0;
         }
-        .level-tag { font-size: 1.1rem; font-weight: 900; color: #3E2723; letter-spacing: 1px; font-family: 'Noto Serif TC', serif; }
-        .hearts-bar { display: flex; gap: 8px; }
+        .level-tag { 
+            font-size: 1.1rem; font-weight: 900; color: #3E2723; 
+            letter-spacing: 1px; font-family: 'Noto Serif TC', serif;
+            flex-shrink: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+        }
+        .hearts-bar { display: flex; gap: 8px; margin: 0 10px; }
         .heart-life { font-size: 1.2rem; color: rgba(62,39,35,0.2); transition: transform 0.2s; }
         .heart-life.active { color: #C62828; transform: scale(1.1); text-shadow: 0 0 2px rgba(198,40,40,0.5); }
         
@@ -230,12 +239,14 @@
         .shake-anim { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
+        /* 修改：音樂按鈕移至左上角，避免擋住關閉按鈕 */
         #music-btn {
-            position: absolute; top: 15px; right: 15px; width: 36px; height: 36px;
-            background: rgba(255,255,255,0.3); border-radius: 50%; border: 1px solid rgba(255,255,255,0.5);
+            position: absolute; top: 15px; left: 15px; width: 36px; height: 36px;
+            background: rgba(255,255,255,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.8);
             font-size: 1.2rem; cursor: pointer; z-index: 50; 
             display: flex; justify-content: center; align-items: center;
-            backdrop-filter: blur(2px); color: #3E2723;
+            backdrop-filter: blur(4px); color: #3E2723;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
     </style>
@@ -277,7 +288,8 @@
         <div class="game-top-bar">
             <div class="level-tag" id="level-title">第一章</div>
             <div class="hearts-bar" id="hearts-display"></div>
-            <button class="btn-back" style="border:none; font-size:1.5rem;" onclick="window.game.quitLevel()">✕</button>
+            <!-- 確保關閉按鈕有背景 -->
+            <button class="btn-back" style="background:rgba(255,255,255,0.6); font-size:1.2rem; border:1px solid #3E2723;" onclick="window.game.quitLevel()">✕</button>
         </div>
         <div class="time-wrapper"><div class="time-fill" id="time-bar"></div></div>
         <div id="scroll-area">
@@ -375,21 +387,12 @@
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
             let spokenText = text;
-            spokenText = spokenText.replace(/佛為解說/g, "佛為味說");
             spokenText = spokenText.replace(/為/g, "維"); 
             spokenText = spokenText.replace(/度憍陳如/g, "度橋陳如");
             spokenText = spokenText.replace(/一上一還/g, "一上一環");
             spokenText = spokenText.replace(/降諸魔道/g, "祥諸魔道");
             spokenText = spokenText.replace(/四真道行/g, "四真道橫");
             spokenText = spokenText.replace(/難/g, "南");
-            spokenText = spokenText.replace(/逮於今日/g, "帶於今日");
-            spokenText = spokenText.replace(/當如蓮華/g, "當如蓮花");
-            spokenText = spokenText.replace(/少者如妹/g, "劭者如妹");
-            spokenText = spokenText.replace(/如被乾草/g, "如批乾草");
-            spokenText = spokenText.replace(/非色亦非行/g, "非色亦非形");
-            spokenText = spokenText.replace(/此偈是迦葉佛說/g, "此偈是迦社佛說");
-            spokenText = spokenText.replace(/或得勝而還/g, "或得勝而環");
-            spokenText = spokenText.replace(/夫為道者/g, "符為道者");
             const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
@@ -412,15 +415,15 @@
         { title: "第十二章：舉難勸修", text: "佛言：人有二十難。貧窮布施難。豪貴學道難。棄命必死難。得睹佛經難。生值佛世難。忍色忍欲難。見好不求難。被辱不瞋難。有勢不臨難。觸事無心難。廣學博究難。除滅我慢難。不輕未學難。心行平等難。不說是非難。會善知識難。見性學道難。隨化度人難。睹境不動難。善解方便難。" },
         { title: "第十三章：問道宿命", text: "沙門問佛：以何因緣，得知道宿命，會其至道？佛言：淨心守志，可會至道。譬如磨鏡，垢去明存。斷欲無求，當得宿命。" },
         { title: "第十四章：請問善大", text: "沙門問佛：何者為善？何者最大？佛言：行道守真者善。志與道合者大。" },
-        { title: "第十五章：請問力明", text: "沙門問佛：何者多力？何者最明？佛言：忍辱多力，不懷惡故，兼加安健。忍者無惡，必為人尊。心垢滅盡，淨無瑕穢，是為最明。未有天地，逮於今日，十方所有，無有不見，無有不知，無有不聞，得一切智，可謂明矣。" },
+        { title: "第十五章：請問力明", text: "沙門問佛：何者多力？何者最明？佛言：忍辱多力，不懷惡故，兼加安健。忍者無惡，必為人尊。心垢滅盡，淨無瑕穢，是為最明。未自天地，逮於今日，十方所有，無有不見，無有不知，無有不聞，得一切智，可謂明矣。" },
         { title: "第十六章：捨愛得道", text: "佛言：人懷愛欲，不見道者，譬如澄水，致手攪之，眾人共臨，無有睹其影者。人以愛欲交錯，心中濁興，故不見道。汝等沙門，當捨愛欲。愛欲垢盡，道可見矣。" },
         { title: "第十七章：明來暗謝", text: "佛言：夫見道者，譬如持炬，入冥室中，其冥即滅，而明獨存。學道見諦，無明即滅，而明常存矣。" },
-        { title: "第十八章：念等本空", text: "佛言：吾法念無念念，行無行行，言無言言，修無修修。會者近爾，迷者遠乎。言語道斷，非物所拘。差之毫釐，失之須臾。" },
+        { title: "第十八章：念等本空", text: "佛言：吾法念無念念，行無行行，言無言言，修無修修。會者近爾，迷者遠乎。言語道斷，非物所拘。差之毫釐，失之千里。" },
         { title: "第十九章：假真並觀", text: "佛言：觀天地，念非常。觀世界，念非常。觀靈覺，即菩提。如是知識，得道疾矣。" },
         { title: "第二十章：推我本空", text: "佛言：當念身中四大，各自有名，都無我者。我既都無，其如幻耳。" },
-        { title: "第二十一章：名聲喪本", text: "佛言：人隨情欲求於聲名，聲名顯著，身已故矣。貪世常名而不學道，枉功勞形。譬如燒香，雖人聞香，香之燼矣，危身之火而在其後。" },
+        { title: "第二十一章：名聲喪本", text: "佛言：人隨情欲，求於聲名，聲名顯著，身已故矣。貪世常名，而不學道，枉功勞形。譬如燒香，雖人聞香，香之燼矣，危身之火，而在其後。" },
         { title: "第二十二章：財色招苦", text: "佛言：財色於人，人之不捨。譬如刀刃有蜜，不足一餐之美，小兒舐之，則有割舌之患。" },
-        { title: "第二十三章：妻子甚獄", text: "佛言：人繫於妻子舍宅，甚於牢獄。牢獄有散釋之期，妻子無遠離之念。情愛於色，豈憚驅馳？雖有虎口之患，心存甘伏。投泥自溺，故曰凡夫。透得此門，出塵羅漢。" },
+        { title: "第二十三章：妻子甚獄", text: "佛言：人繫於妻子舍宅，甚於牢獄。牢獄有散釋之期，妻子無遠離之念。情愛於色，豈憚驅馳。雖有虎口之患，心存甘伏。投泥自溺，故曰凡夫。透得此門，出塵羅漢。" },
         { title: "第二十四章：色欲障道", text: "佛言：愛欲莫甚於色。色之為欲，其大無外。賴有一矣，若使二同，普天之人，無能為道者矣。" },
         { title: "第二十五章：欲火燒身", text: "佛言：愛欲之人，猶如執炬，逆風而行，必有燒手之患。" },
         { title: "第二十六章：天魔嬈佛", text: "佛言：天神獻玉女於佛，欲壞佛意。佛言：革囊眾穢，爾來何為？去！吾不用。天神愈敬，因問道意。佛為解說，即得須陀洹果。" },
@@ -428,7 +431,7 @@
         { title: "第二十八章：意馬莫縱", text: "佛言：慎勿信汝意，汝意不可信。慎勿與色會，色會即禍生。得阿羅漢已，乃可信汝意。" },
         { title: "第二十九章：正觀敵色", text: "佛言：慎勿視女色，亦莫共言語。若與語者，正心思念：我為沙門，處於濁世，當如蓮華，不為泥污。想其老者如母，長者如姊，少者如妹，稚者如子。生度脫心，息滅惡念。" },
         { title: "第三十章：欲火遠離", text: "佛言：夫為道者，如被乾草，火來須避。道人見欲，必當遠之。" },
-        { title: "第三十一章：心寂欲除", text: "佛言：有人患淫不止，欲自斷陰。佛謂之曰：若斷其陰，不如斷心。心如功曹，功曹若止，從者都息。邪心不止，斷陰何益？佛為說偈：欲生於汝意，意以思想生，二心各寂靜，非色亦非行。佛言：此偈是迦葉佛說。" },
+        { title: "第三十一章：心寂欲除", text: "佛言：有人患淫不止，欲自斷陰。佛謂之曰：若斷其陰，不如斷心。心如功曹，功曹若止，從者都息。邪心不止，斷陰何益？佛為說偈曰：欲生於汝意，意以思想生，二心各寂靜，非色亦非行。佛言：此偈是迦葉佛說。" },
         { title: "第三十二章：我空怖滅", text: "佛言：人從愛欲生憂，從憂生怖。若離於愛，何憂何怖？" },
         { title: "第三十三章：智明破魔", text: "佛言：夫為道者，譬如一人與萬人戰。掛鎧出門，意或怯弱，或半路而退，或格鬥而死，或得勝而還。沙門學道，應當堅持其心，精進勇銳，不畏前境，破滅眾魔，而得道果。" },
         { title: "第三十四章：處中得道", text: "沙門夜誦迦葉佛遺教經，其聲悲緊，思悔欲退。佛問之曰：「汝在家之時，能作何伎？」答曰：「善鼓琴。」佛曰：「弦緩如何？」答曰：「不鳴矣。」「弦急如何？」答曰：「聲絕矣。」「急緩得中如何？」答曰：「諸音普矣。」佛言：「沙門學道亦然。心若調適，道可得矣。於道若暴，暴即身疲。其身若疲，意即生惱。意若生惱，行即退矣。其行既退，罪必加矣。但清淨安樂，道不失矣。」" },
@@ -444,7 +447,6 @@
 
     class Game {
         constructor() {
-            // 修改：改為讀取已完成的關卡陣列，而非單一進度數字
             try { 
                 const stored = localStorage.getItem('monk_completed_levels');
                 this.completedLevels = stored ? JSON.parse(stored) : [];
@@ -471,7 +473,7 @@
 
         goToMenu() { 
             // 回首頁時還原預設背景
-            document.getElementById('bg-img').src = "https://jamiejenjen0305.github.io/MED/42_0_1.png";
+            document.getElementById('bg-img').src = "https://jamiejenjen0305.github.io/MED/42_1_1.png";
             this.switchScreen('menu'); 
         }
         
@@ -489,14 +491,12 @@
                 const btn = document.createElement('div');
                 btn.className = 'level-node';
                 
-                // 修改：判斷該關卡是否在已完成清單中
                 const isCompleted = this.completedLevels.includes(i);
 
-                // 移除 locked 樣式，只保留 completed
                 if (isCompleted) btn.classList.add('completed');
                 
                 const num = i === 0 ? '序' : i;
-                const chapterTitle = d.title.split('：')[1] || d.title; // 取得冒號後的章節名
+                const chapterTitle = d.title.split('：')[1] || d.title;
                 const displayTitle = chapterTitle.length > 4 ? chapterTitle.substring(0,4) + "..." : chapterTitle;
                 
                 btn.innerHTML = `
@@ -507,7 +507,7 @@
                 btn.style.animationDelay = `${i * 0.05}s`;
 
                 btn.onclick = () => {
-                    // 2.回復過關後的關卡，直接秀出經文
+                    // 已過關卡 -> 閱經模式；未過關卡 -> 開始遊戲
                     if (isCompleted) {
                         this.showReview(i);
                     } else {
@@ -518,7 +518,6 @@
             });
         }
 
-        // 閱經模式 (顯示全文 + 重新修行按鈕)
         showReview(idx, autoPlay = false) {
             this.currentLevel = idx;
             this.applyTheme(idx);
@@ -622,7 +621,6 @@
 
         renderHearts() {
             let html = '';
-            // 使用實心愛心(❤)和空心愛心(♡)來明確顯示血量
             for(let i=0; i<3; i++) {
                 if (i < this.lives) {
                      html += `<span class="heart-life active">❤</span>`;
@@ -634,24 +632,20 @@
         }
 
         generatePuzzle(text) {
-            // Split including punctuation but separating them
             const parts = text.split(/([，。：？、！；「」\s\n\r]+)/);
             let html = '';
             let answers = [];
             let options = [];
             
-            // Helper to check candidate
             const isCandidate = (str) => {
                 return !str.match(/[，。：？、！；「」\s\n\r]+/) && str.trim().length >= 1;
             };
 
-            // First pass: Random generation
             parts.forEach(part => {
                 if (!isCandidate(part)) {
                     const displayPart = part.replace(/\n/g, '<br>');
                     html += `<span>${displayPart}</span>`;
                 } else {
-                    // Logic: random pick, max 5 blanks
                     if (answers.length < 5 && part.length > 1 && Math.random() > 0.3) { 
                         const idx = answers.length;
                         html += `<div class="blank-space" id="slot-${idx}"></div>`;
@@ -662,7 +656,6 @@
                 }
             });
 
-            // If no answers generated, force generate
             if (answers.length === 0) {
                 html = '';
                 answers = [];
@@ -678,12 +671,10 @@
                     const shuffled = candidateIndices.sort(() => 0.5 - Math.random());
                     for(let i=0; i<count; i++) targetIndices.add(shuffled[i]);
                 } else {
-                    // Extreme case: no text candidates. Auto-win.
                     setTimeout(() => this.segmentWin(), 500);
                     return;
                 }
 
-                // Rebuild HTML
                 parts.forEach((part, index) => {
                     if (!isCandidate(part)) {
                         const displayPart = part.replace(/\n/g, '<br>');
@@ -700,7 +691,6 @@
                 });
             }
 
-            // Options are just the answers (shuffled)
             options = [...answers];
             options.sort(() => Math.random() - 0.5);
 
@@ -775,22 +765,14 @@
             const tip = document.createElement('div');
             tip.id = 'success-tip'; 
             tip.innerText = "過關"; 
-            // 放大蓋章圖式
             tip.style.cssText = `
-                position: absolute; 
-                top: 50%; 
-                left: 50%; 
+                position: absolute; top: 50%; left: 50%; 
                 transform: translate(-50%, -50%) rotate(-15deg) scale(0); 
-                color: #D32F2F; 
-                font-size: 5rem; /* 字體放大 */
-                font-weight: 900; 
-                border: 8px solid #D32F2F; /* 邊框加粗 */
-                padding: 15px 30px; 
-                border-radius: 10px; 
+                color: #D32F2F; font-size: 5rem; font-weight: 900; 
+                border: 8px solid #D32F2F; padding: 15px 30px; border-radius: 10px; 
                 background: rgba(255, 255, 255, 0.8); 
                 box-shadow: 0 0 20px rgba(211, 47, 47, 0.5);
-                z-index: 100;
-                pointer-events: none;
+                z-index: 100; pointer-events: none;
                 font-family: 'Ma Shan Zheng', cursive, serif;
                 letter-spacing: 5px;
                 animation: stampIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -819,7 +801,6 @@
                     this.loadSegment();
                 }, 1500);
             } else {
-                // 修改：記錄已完成的關卡到陣列
                 if (!this.completedLevels.includes(this.currentLevel)) {
                     this.completedLevels.push(this.currentLevel);
                     try { 
@@ -832,7 +813,6 @@
 
                 setTimeout(() => {
                     cleanup(); 
-                    // 自動進入閱經模式
                     this.showReview(this.currentLevel, false); 
                 }, 1000);
             }
