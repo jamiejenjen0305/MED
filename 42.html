@@ -125,6 +125,7 @@
             background: rgba(255,255,255,0.8); color: #3E2723; border: 1px solid #3E2723; 
             width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
             display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
+            /* 確保按鈕有背景色，避免在複雜背景下看不見 */
         }
         .btn-back:hover { background: #3E2723; color: #fff; }
 
@@ -145,7 +146,7 @@
         .level-node.locked::after { content: '🔒'; font-size: 1.5rem; opacity: 0.5; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; }
         .level-node.locked span.lvl-num { display: block !important; opacity: 0.3; filter: blur(0.5px); color: #555; z-index: 0; }
         
-        /* 過關紅色大花印章 */
+        /* 1. 過關回復紅色圈圈處要有紅色小花(要大) */
         .level-node.completed { background: rgba(255,255,255,0.85); border-color: #D32F2F; box-shadow: 0 5px 15px rgba(211, 47, 47, 0.2); }
         .level-node.completed::after {
             content: '❀'; /* 實心花朵 */
@@ -165,13 +166,19 @@
         .lvl-name { font-size: 0.9rem; color: #5D4037; text-align: center; margin-top: 5px; font-weight: bold; }
 
         #game-screen { padding: 0; display: flex; flex-direction: column; background: transparent; }
+        
+        /* 修改：增加左側 Padding 給音樂按鈕 */
         .game-top-bar {
             width: 100%; padding: 10px 20px 10px 60px; /* 左側留空 */
             background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 30; flex-shrink: 0;
         }
-        .level-tag { font-size: 1.1rem; font-weight: 900; color: #3E2723; letter-spacing: 1px; font-family: 'Noto Serif TC', serif; }
+        .level-tag { 
+            font-size: 1.1rem; font-weight: 900; color: #3E2723; 
+            letter-spacing: 1px; font-family: 'Noto Serif TC', serif;
+            flex-shrink: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+        }
         .hearts-bar { display: flex; gap: 8px; margin: 0 10px; }
         .heart-life { font-size: 1.2rem; color: rgba(62,39,35,0.2); transition: transform 0.2s; }
         .heart-life.active { color: #C62828; transform: scale(1.1); text-shadow: 0 0 2px rgba(198,40,40,0.5); }
@@ -232,6 +239,7 @@
         .shake-anim { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
+        /* 修改：音樂按鈕移至左上角，避免擋住關閉按鈕 */
         #music-btn {
             position: absolute; top: 15px; left: 15px; width: 36px; height: 36px;
             background: rgba(255,255,255,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.8);
@@ -280,6 +288,7 @@
         <div class="game-top-bar">
             <div class="level-tag" id="level-title">第一章</div>
             <div class="hearts-bar" id="hearts-display"></div>
+            <!-- 確保關閉按鈕有背景 -->
             <button class="btn-back" style="background:rgba(255,255,255,0.6); font-size:1.2rem; border:1px solid #3E2723;" onclick="window.game.quitLevel()">✕</button>
         </div>
         <div class="time-wrapper"><div class="time-fill" id="time-bar"></div></div>
@@ -464,7 +473,7 @@
 
         goToMenu() { 
             // 回首頁時還原預設背景
-            document.getElementById('bg-img').src = "https://jamiejenjen0305.github.io/MED/42_0_1.png";
+            document.getElementById('bg-img').src = "https://jamiejenjen0305.github.io/MED/42_1_1.png";
             this.switchScreen('menu'); 
         }
         
@@ -482,14 +491,12 @@
                 const btn = document.createElement('div');
                 btn.className = 'level-node';
                 
-                // 修改：判斷該關卡是否在已完成清單中
                 const isCompleted = this.completedLevels.includes(i);
 
-                // 移除 locked 樣式，只保留 completed
                 if (isCompleted) btn.classList.add('completed');
                 
                 const num = i === 0 ? '序' : i;
-                const chapterTitle = d.title.split('：')[1] || d.title; // 取得冒號後的章節名
+                const chapterTitle = d.title.split('：')[1] || d.title;
                 const displayTitle = chapterTitle.length > 4 ? chapterTitle.substring(0,4) + "..." : chapterTitle;
                 
                 btn.innerHTML = `
@@ -500,7 +507,7 @@
                 btn.style.animationDelay = `${i * 0.05}s`;
 
                 btn.onclick = () => {
-                    // 2.回復過關後的關卡，直接秀出經文
+                    // 已過關卡 -> 閱經模式；未過關卡 -> 開始遊戲
                     if (isCompleted) {
                         this.showReview(i);
                     } else {
@@ -511,7 +518,6 @@
             });
         }
 
-        // 閱經模式 (顯示全文 + 重新修行按鈕)
         showReview(idx, autoPlay = false) {
             this.currentLevel = idx;
             this.applyTheme(idx);
@@ -615,7 +621,6 @@
 
         renderHearts() {
             let html = '';
-            // 使用實心愛心(❤)和空心愛心(♡)來明確顯示血量
             for(let i=0; i<3; i++) {
                 if (i < this.lives) {
                      html += `<span class="heart-life active">❤</span>`;
@@ -627,24 +632,20 @@
         }
 
         generatePuzzle(text) {
-            // Split including punctuation but separating them
             const parts = text.split(/([，。：？、！；「」\s\n\r]+)/);
             let html = '';
             let answers = [];
             let options = [];
             
-            // Helper to check candidate
             const isCandidate = (str) => {
                 return !str.match(/[，。：？、！；「」\s\n\r]+/) && str.trim().length >= 1;
             };
 
-            // First pass: Random generation
             parts.forEach(part => {
                 if (!isCandidate(part)) {
                     const displayPart = part.replace(/\n/g, '<br>');
                     html += `<span>${displayPart}</span>`;
                 } else {
-                    // Logic: random pick, max 5 blanks
                     if (answers.length < 5 && part.length > 1 && Math.random() > 0.3) { 
                         const idx = answers.length;
                         html += `<div class="blank-space" id="slot-${idx}"></div>`;
@@ -655,7 +656,6 @@
                 }
             });
 
-            // If no answers generated, force generate
             if (answers.length === 0) {
                 html = '';
                 answers = [];
@@ -671,12 +671,10 @@
                     const shuffled = candidateIndices.sort(() => 0.5 - Math.random());
                     for(let i=0; i<count; i++) targetIndices.add(shuffled[i]);
                 } else {
-                    // Extreme case: no text candidates. Auto-win.
                     setTimeout(() => this.segmentWin(), 500);
                     return;
                 }
 
-                // Rebuild HTML
                 parts.forEach((part, index) => {
                     if (!isCandidate(part)) {
                         const displayPart = part.replace(/\n/g, '<br>');
@@ -693,7 +691,6 @@
                 });
             }
 
-            // Options are just the answers (shuffled)
             options = [...answers];
             options.sort(() => Math.random() - 0.5);
 
@@ -768,22 +765,14 @@
             const tip = document.createElement('div');
             tip.id = 'success-tip'; 
             tip.innerText = "過關"; 
-            // 放大蓋章圖式
             tip.style.cssText = `
-                position: absolute; 
-                top: 50%; 
-                left: 50%; 
+                position: absolute; top: 50%; left: 50%; 
                 transform: translate(-50%, -50%) rotate(-15deg) scale(0); 
-                color: #D32F2F; 
-                font-size: 5rem; /* 字體放大 */
-                font-weight: 900; 
-                border: 8px solid #D32F2F; /* 邊框加粗 */
-                padding: 15px 30px; 
-                border-radius: 10px; 
+                color: #D32F2F; font-size: 5rem; font-weight: 900; 
+                border: 8px solid #D32F2F; padding: 15px 30px; border-radius: 10px; 
                 background: rgba(255, 255, 255, 0.8); 
                 box-shadow: 0 0 20px rgba(211, 47, 47, 0.5);
-                z-index: 100;
-                pointer-events: none;
+                z-index: 100; pointer-events: none;
                 font-family: 'Ma Shan Zheng', cursive, serif;
                 letter-spacing: 5px;
                 animation: stampIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -812,7 +801,6 @@
                     this.loadSegment();
                 }, 1500);
             } else {
-                // 修改：記錄已完成的關卡到陣列
                 if (!this.completedLevels.includes(this.currentLevel)) {
                     this.completedLevels.push(this.currentLevel);
                     try { 
@@ -825,7 +813,6 @@
 
                 setTimeout(() => {
                     cleanup(); 
-                    // 自動進入閱經模式
                     this.showReview(this.currentLevel, false); 
                 }, 1000);
             }
