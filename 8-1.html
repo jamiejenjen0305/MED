@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -122,7 +123,7 @@
         const speakText = (text, onEnd) => {
             window.speechSynthesis.cancel();
             // 修正讀音邏輯：透過替換同音字「勒」來確保「大樂」、「世樂」讀作 lè
-            const processedText = text.replace(/大樂/g, '大勒').replace(/世樂/g, '世勒');
+            const processedText = text.replace(/大樂/g, '大勒').replace(/世樂/g, '世勒').replace(/為得多求/g, '為德多求').replace(/梵行高遠/g, '梵絎高遠').replace(/發大乘心/g, '發大聖心'.replace(/覺生死苦/g, '決生死苦').replace(/進趣菩提/g, '進區菩提');
             const utterance = new SpeechSynthesisUtterance(processedText);
             utterance.lang = 'zh-TW';
             utterance.rate = 0.8;
