@@ -407,6 +407,8 @@
             spokenText = spokenText.replace(/還從己墮/g, "環從己墮");
             spokenText = spokenText.replace(/譬如磨鏡/g, "譬如模鏡");
             spokenText = spokenText.replace(/心中濁興/g, "心中濁星");
+            spokenText = spokenText.replace(/觀靈覺/g, "觀靈絕");
+            spokenText = spokenText.replace(/人繫於妻子舍宅/g, "人繫於妻子設宅");
             const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
