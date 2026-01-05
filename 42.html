@@ -98,30 +98,16 @@
             border: 2px solid #5D4037; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             margin-bottom: 40px; text-align: center; position: relative;
         }
-        
-        /* 標題字體：宋體 */
-        .title-main { 
-            font-size: 3rem; 
-            font-weight: 900; 
-            color: #3E2723; 
-            margin: 0; 
-            letter-spacing: 5px; 
-            font-family: 'Noto Serif TC', serif; 
-        }
+        .title-main { font-size: 3rem; font-weight: 900; color: #3E2723; margin: 0; letter-spacing: 5px; font-family: 'Ma Shan Zheng', cursive, serif; }
         .title-sub { font-size: 1.1rem; color: #5D4037; font-weight: bold; margin-top: 10px; border-top: 1px solid #8D6E63; display: inline-block; padding-top: 5px; }
         .monk-hero { width: 240px; height: 240px; margin: 10px auto; position: relative; opacity: 0.9; }
         .monk-hero img { width: 100%; height: 100%; object-fit: contain; filter: sepia(0.3) drop-shadow(0 10px 10px rgba(0,0,0,0.2)); animation: float 4s ease-in-out infinite; }
-        
-        /* 按鈕：位置往上調整 */
         .btn-start {
             background: rgba(62, 39, 35, 0.85); width: 200px; height: 70px;
             border-radius: 50px; border: 1px solid rgba(255,255,255,0.3);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             font-size: 1.5rem; font-weight: 500; color: #fff; letter-spacing: 3px;
-            cursor: pointer; 
-            margin-top: -10px; /* 從 40px 改為 -10px，讓按鈕貼近小沙彌，整體上移 */
-            margin-bottom: 50px; /* 增加底部邊距，確保離螢幕底端有距離 */
-            transition: all 0.3s; 
+            cursor: pointer; margin-top: 40px; transition: all 0.3s;
             display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);
         }
         .btn-start:active { transform: scale(0.95); }
@@ -180,13 +166,19 @@
         .lvl-name { font-size: 0.9rem; color: #5D4037; text-align: center; margin-top: 5px; font-weight: bold; }
 
         #game-screen { padding: 0; display: flex; flex-direction: column; background: transparent; }
+        
+        /* 修改：增加左側 Padding 給音樂按鈕 */
         .game-top-bar {
             width: 100%; padding: 10px 20px 10px 60px; /* 左側留空 */
             background: rgba(255,255,255,0.3); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 30; flex-shrink: 0;
         }
-        .level-tag { font-size: 1.1rem; font-weight: 900; color: #3E2723; letter-spacing: 1px; font-family: 'Noto Serif TC', serif; }
+        .level-tag { 
+            font-size: 1.1rem; font-weight: 900; color: #3E2723; 
+            letter-spacing: 1px; font-family: 'Noto Serif TC', serif;
+            flex-shrink: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+        }
         .hearts-bar { display: flex; gap: 8px; margin: 0 10px; }
         .heart-life { font-size: 1.2rem; color: rgba(62,39,35,0.2); transition: transform 0.2s; }
         .heart-life.active { color: #C62828; transform: scale(1.1); text-shadow: 0 0 2px rgba(198,40,40,0.5); }
@@ -239,8 +231,7 @@
             text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #eee;
         }
-        /* 這裡也一併套用標楷體 */
-        .modal-title { font-size: 1.8rem; color: #3E2723; margin-bottom: 10px; font-family: 'Noto Serif TC', serif; }
+        .modal-title { font-size: 1.8rem; color: #3E2723; margin-bottom: 10px; font-family: 'Ma Shan Zheng'; }
         .modal-text { font-size: 1.1rem; color: #757575; margin-bottom: 30px; }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
@@ -396,22 +387,12 @@
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
             let spokenText = text;
-            spokenText = spokenText.replace(/佛為解說/g, "佛為味說");
             spokenText = spokenText.replace(/為/g, "維"); 
             spokenText = spokenText.replace(/度憍陳如/g, "度橋陳如");
             spokenText = spokenText.replace(/一上一還/g, "一上一環");
             spokenText = spokenText.replace(/降諸魔道/g, "祥諸魔道");
             spokenText = spokenText.replace(/四真道行/g, "四真道橫");
             spokenText = spokenText.replace(/難/g, "南");
-            spokenText = spokenText.replace(/逮於今日/g, "帶於今日");
-            spokenText = spokenText.replace(/當如蓮華/g, "當如蓮花");
-            spokenText = spokenText.replace(/少者如妹/g, "劭者如妹");
-            spokenText = spokenText.replace(/如被乾草/g, "如批乾草");
-            spokenText = spokenText.replace(/非色亦非行/g, "非色亦非形");
-            spokenText = spokenText.replace(/此偈是迦葉佛說/g, "此偈是迦社佛說");
-            spokenText = spokenText.replace(/或得勝而還/g, "或得勝而環");
-            spokenText = spokenText.replace(/夫為道者/g, "符為道者");
-            spokenText = spokenText.replace(/是尊教敕/g, "是尊叫敕");
             const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
@@ -492,7 +473,7 @@
 
         goToMenu() { 
             // 回首頁時還原預設背景
-            document.getElementById('bg-img').src = "https://jamiejenjen0305.github.io/MED/42_0_1.png";
+            document.getElementById('bg-img').src = "https://jamiejenjen0305.github.io/MED/42_1_1.png";
             this.switchScreen('menu'); 
         }
         
@@ -510,14 +491,12 @@
                 const btn = document.createElement('div');
                 btn.className = 'level-node';
                 
-                // 修改：判斷該關卡是否在已完成清單中
                 const isCompleted = this.completedLevels.includes(i);
 
-                // 移除 locked 樣式，只保留 completed
                 if (isCompleted) btn.classList.add('completed');
                 
                 const num = i === 0 ? '序' : i;
-                const chapterTitle = d.title.split('：')[1] || d.title; // 取得冒號後的章節名
+                const chapterTitle = d.title.split('：')[1] || d.title;
                 const displayTitle = chapterTitle.length > 4 ? chapterTitle.substring(0,4) + "..." : chapterTitle;
                 
                 btn.innerHTML = `
@@ -528,7 +507,7 @@
                 btn.style.animationDelay = `${i * 0.05}s`;
 
                 btn.onclick = () => {
-                    // 2.回復過關後的關卡，直接秀出經文
+                    // 已過關卡 -> 閱經模式；未過關卡 -> 開始遊戲
                     if (isCompleted) {
                         this.showReview(i);
                     } else {
@@ -539,7 +518,6 @@
             });
         }
 
-        // 閱經模式 (顯示全文 + 重新修行按鈕)
         showReview(idx, autoPlay = false) {
             this.currentLevel = idx;
             this.applyTheme(idx);
@@ -643,7 +621,6 @@
 
         renderHearts() {
             let html = '';
-            // 使用實心愛心(❤)和空心愛心(♡)來明確顯示血量
             for(let i=0; i<3; i++) {
                 if (i < this.lives) {
                      html += `<span class="heart-life active">❤</span>`;
@@ -655,24 +632,20 @@
         }
 
         generatePuzzle(text) {
-            // Split including punctuation but separating them
             const parts = text.split(/([，。：？、！；「」\s\n\r]+)/);
             let html = '';
             let answers = [];
             let options = [];
             
-            // Helper to check candidate
             const isCandidate = (str) => {
                 return !str.match(/[，。：？、！；「」\s\n\r]+/) && str.trim().length >= 1;
             };
 
-            // First pass: Random generation
             parts.forEach(part => {
                 if (!isCandidate(part)) {
                     const displayPart = part.replace(/\n/g, '<br>');
                     html += `<span>${displayPart}</span>`;
                 } else {
-                    // Logic: random pick, max 5 blanks
                     if (answers.length < 5 && part.length > 1 && Math.random() > 0.3) { 
                         const idx = answers.length;
                         html += `<div class="blank-space" id="slot-${idx}"></div>`;
@@ -683,7 +656,6 @@
                 }
             });
 
-            // If no answers generated, force generate
             if (answers.length === 0) {
                 html = '';
                 answers = [];
@@ -699,12 +671,10 @@
                     const shuffled = candidateIndices.sort(() => 0.5 - Math.random());
                     for(let i=0; i<count; i++) targetIndices.add(shuffled[i]);
                 } else {
-                    // Extreme case: no text candidates. Auto-win.
                     setTimeout(() => this.segmentWin(), 500);
                     return;
                 }
 
-                // Rebuild HTML
                 parts.forEach((part, index) => {
                     if (!isCandidate(part)) {
                         const displayPart = part.replace(/\n/g, '<br>');
@@ -721,7 +691,6 @@
                 });
             }
 
-            // Options are just the answers (shuffled)
             options = [...answers];
             options.sort(() => Math.random() - 0.5);
 
@@ -796,7 +765,6 @@
             const tip = document.createElement('div');
             tip.id = 'success-tip'; 
             tip.innerText = "過關"; 
-            // 放大蓋章圖式
             tip.style.cssText = `
                 position: absolute; top: 50%; left: 50%; 
                 transform: translate(-50%, -50%) rotate(-15deg) scale(0); 
@@ -805,7 +773,7 @@
                 background: rgba(255, 255, 255, 0.8); 
                 box-shadow: 0 0 20px rgba(211, 47, 47, 0.5);
                 z-index: 100; pointer-events: none;
-                font-family: 'Noto Serif TC', cursive, serif;
+                font-family: 'Ma Shan Zheng', cursive, serif;
                 letter-spacing: 5px;
                 animation: stampIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             `;
@@ -833,7 +801,6 @@
                     this.loadSegment();
                 }, 1500);
             } else {
-                // 修改：記錄已完成的關卡到陣列
                 if (!this.completedLevels.includes(this.currentLevel)) {
                     this.completedLevels.push(this.currentLevel);
                     try { 
@@ -846,7 +813,6 @@
 
                 setTimeout(() => {
                     cleanup(); 
-                    // 自動進入閱經模式
                     this.showReview(this.currentLevel, false); 
                 }, 1000);
             }
