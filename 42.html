@@ -413,7 +413,10 @@
             spokenText = spokenText.replace(/當如蓮華/g, "當如蓮花");
             spokenText = spokenText.replace(/佛為說偈/g, "佛為說季");
             spokenText = spokenText.replace(/此偈是迦葉佛說/g, "此季是迦葉佛說");
-            spokenText = spokenText.replace(/沙門夜誦迦葉佛遺教經/g, "沙門夜誦迦設佛遺教經");            
+            spokenText = spokenText.replace(/沙門夜誦迦葉佛遺教經/g, "沙門夜誦迦設佛遺教經");
+            spokenText = spokenText.replace(/無如磨牛/g, "無如模牛");
+            spokenText = spokenText.replace(/視無上乘/g, "視無上勝");
+            spokenText = spokenText.replace(/如眼前華/g, "如眼前花");            
                         const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
@@ -459,7 +462,7 @@
         { title: "第三十五章：垢淨明存", text: "佛言：如人鍛鐵，去滓成器，器即精好。學道之人，去心垢染，行即清淨矣。" },
         { title: "第三十六章：展轉獲勝", text: "佛言：人離惡道，得為人難。既得為人，去女即男難。既得為男，六根完具難。六根既具，生中國難。既生中國，值佛世難。既值佛世，遇道者難。既得遇道，興信心難。既興信心，發菩提心難。既發菩提心，無修無證難。" },
         { title: "第三十七章：念戒近道", text: "佛言：佛子離吾數千里，憶念吾戒，必得道果。在吾左右，雖常見吾，不順吾戒，終不得道。" },
-        { title: "第三十八章：生即有滅", text: "佛問沙門：人命在幾間？對曰：「數日間。佛言：子未知道。復問一沙門：人命在幾間？對曰：飯食間。佛言：子未知道。復問一沙門：人命在幾間？對曰：呼吸間。佛言：善哉！子知道矣。" },
+        { title: "第三十八章：生即有滅", text: "佛問沙門：人命在幾間？對曰：數日間。佛言：子未知道。復問一沙門：人命在幾間？對曰：飯食間。佛言：子未知道。復問一沙門：人命在幾間？對曰：呼吸間。佛言：善哉！子知道矣。" },
         { title: "第三十九章：教誨無差", text: "佛言：學佛道者，佛所言說，皆應信順。譬如食蜜，中邊皆甜，吾經亦爾。" },
         { title: "第四十章：行道在心", text: "佛言：沙門行道，無如磨牛，身雖行道，心道不行。心道若行，何用行道。" },
         { title: "第四十一章：直心出欲", text: "佛言：夫為道者，如牛負重，行深泥中，疲極不敢左右顧視。出離淤泥，乃可蘇息。沙門當觀情欲，甚於淤泥。直心念道，可免苦矣。" },
