@@ -388,7 +388,8 @@
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
             let spokenText = text;
-            spokenText = spokenText.replace(/為/g, "維"); 
+             spokenText = spokenText.replace(/佛為解說/g, "佛胃解說"); 
+             spokenText = spokenText.replace(/為/g, "維"); 
             spokenText = spokenText.replace(/度憍陳如/g, "度橋陳如");
             spokenText = spokenText.replace(/一上一還/g, "一上一環");
              spokenText = spokenText.replace(/樹下一宿/g, "樹下一素");
@@ -409,7 +410,7 @@
             spokenText = spokenText.replace(/心中濁興/g, "心中濁星");
             spokenText = spokenText.replace(/觀靈覺/g, "觀靈絕");
             spokenText = spokenText.replace(/人繫於妻子舍宅/g, "人繫於妻子設宅");
-            const utterance = new SpeechSynthesisUtterance(spokenText);
+                        const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
         }
