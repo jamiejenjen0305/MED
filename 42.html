@@ -410,6 +410,7 @@
             spokenText = spokenText.replace(/心中濁興/g, "心中濁星");
             spokenText = spokenText.replace(/觀靈覺/g, "觀靈絕");
             spokenText = spokenText.replace(/人繫於妻子舍宅/g, "人繫於妻子設宅");
+            spokenText = spokenText.replace(/當如蓮華/g, "當如蓮花");
                         const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
