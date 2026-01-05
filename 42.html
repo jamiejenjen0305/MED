@@ -217,7 +217,9 @@
 
         #game-footer {
             width: 100%; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px);
-            padding: 20px 20px 50px 20px; flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.3);
+            /* 修改：大幅增加底部內距 (padding-bottom)，將選項按鈕往上推 */
+            padding: 20px 20px 120px 20px; 
+            flex-shrink: 0; border-top: 1px solid rgba(255,255,255,0.3);
             display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; z-index: 40;
         }
         .option-brick {
@@ -396,12 +398,21 @@
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
             let spokenText = text;
+            spokenText = spokenText.replace(/佛為解說/g, "佛為味說");
             spokenText = spokenText.replace(/為/g, "維"); 
             spokenText = spokenText.replace(/度憍陳如/g, "度橋陳如");
             spokenText = spokenText.replace(/一上一還/g, "一上一環");
             spokenText = spokenText.replace(/降諸魔道/g, "祥諸魔道");
             spokenText = spokenText.replace(/四真道行/g, "四真道橫");
             spokenText = spokenText.replace(/難/g, "南");
+            spokenText = spokenText.replace(/逮於今日/g, "帶於今日");
+            spokenText = spokenText.replace(/當如蓮華/g, "當如蓮花");
+            spokenText = spokenText.replace(/少者如妹/g, "劭者如妹");
+            spokenText = spokenText.replace(/如被乾草/g, "如批乾草");
+            spokenText = spokenText.replace(/非色亦非行/g, "非色亦非形");
+            spokenText = spokenText.replace(/此偈是迦葉佛說/g, "此偈是迦社佛說");
+            spokenText = spokenText.replace(/或得勝而還/g, "或得勝而環");
+            spokenText = spokenText.replace(/夫為道者/g, "符為道者");
             const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
@@ -411,7 +422,7 @@
     const sutraData = [
         { title: "經序", text: "世尊成道已，作是思惟：離欲寂靜，是最為勝。住大禪定，降諸魔道。於鹿野苑中，轉四諦法輪，度憍陳如等五人而證道果。復有比丘所說諸疑，求佛進止。世尊教敕，一一開悟。合掌敬諾，而順尊敕。" },
         { title: "第一章：出家證果", text: "佛言：辭親出家，識心達本，解無為法，名曰沙門。常行二百五十戒，進止清淨，為四真道行，成阿羅漢。阿羅漢者，能飛行變化，曠劫壽命，住動天地。次為阿那含。阿那含者，壽終靈神上十九天，證阿羅漢。次為斯陀含。斯陀含者，一上一還，即得阿羅漢。次為須陀洹。須陀洹者，七死七生，便證阿羅漢。愛欲斷者，如四肢斷，不復用之。" },
-        { title: "第二章：斷欲絕求", text: "佛言：出家沙門者，斷欲去愛，識自心源，達佛深理，悟無為法。內無所得，外無所求。心不繫道，亦不結業。無念無作，非修非證。不歷位次而自崇最，名之為道。" },
+        { title: "第二章：斷欲絕求", text: "佛言：出家沙門者，斷欲去愛，識自心源，達佛深理，悟無為法。內無所得，外無所求。心不繫道，亦不結業。無念無作，非修非證。不歷諸位而自崇最，名之為道。" },
         { title: "第三章：割愛去貪", text: "佛言：剃除鬚髮，而為沙門。受道法者，去世資財，乞求取足。日中一食，樹下一宿，慎勿再矣。使人愚蔽者，愛與欲也。" },
         { title: "第四章：善惡並明", text: "佛言：眾生以十事為善，亦以十事為惡。何等為十？身三、口四、意三。身三者：殺、盜、淫。口四者：兩舌、惡口、妄言、綺語。意三者：嫉、恚、癡。不信三尊，以邪為真。優婆塞行五戒，不懈退者，十事決斷，便得道也。" },
         { title: "第五章：轉重令輕", text: "佛言：人有眾過，而不自悔，頓息其心，罪來赴身，如水歸海，漸成深廣。若人有過，自解知非，改惡行善，罪自消滅，如病得汗，漸有痊損耳。" },
