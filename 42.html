@@ -391,6 +391,7 @@
             spokenText = spokenText.replace(/為/g, "維"); 
             spokenText = spokenText.replace(/度憍陳如/g, "度橋陳如");
             spokenText = spokenText.replace(/一上一還/g, "一上一環");
+             spokenText = spokenText.replace(/樹下一宿/g, "樹下一素");
             spokenText = spokenText.replace(/降諸魔道/g, "祥諸魔道");
             spokenText = spokenText.replace(/四真道行/g, "四真道橫");
             spokenText = spokenText.replace(/難/g, "南");
@@ -403,6 +404,9 @@
             spokenText = spokenText.replace(/或得勝而還/g, "或得勝而環");
             spokenText = spokenText.replace(/夫為道者/g, "符為道者");
             spokenText = spokenText.replace(/世尊教敕/g, "世尊叫敕");
+            spokenText = spokenText.replace(/還從己墮/g, "環從己墮");
+            spokenText = spokenText.replace(/譬如磨鏡/g, "譬如模鏡");
+            spokenText = spokenText.replace(/心中濁興/g, "心中濁星");
             const utterance = new SpeechSynthesisUtterance(spokenText);
             utterance.lang = 'zh-TW'; utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
