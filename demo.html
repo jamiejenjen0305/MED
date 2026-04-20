@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>覺智。禪 | 佛法與 AI - 中台禪寺 普真精舍</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zen: {
+                            base: '#121212',
+                            paper: '#F5F5F0',
+                            gold: '#C5A059',
+                            darkGold: '#8C6A34',
+                            moss: '#3E4A3D',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 全域雜訊紋理 */
+        .grain-bg::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* 自訂游標 */
+        #custom-cursor {
+            width: 20px; height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            top: 0; left: 0;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease-out;
+        }
+
+        /* 1px 邊框光束 */
+        .beam-border {
+            position: relative;
+            overflow: hidden;
+        }
+        .beam-border::after {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, #C5A059, transparent);
+            animation: beam 4s infinite linear;
+        }
+        @keyframes beam {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* 垂直參考線 */
+        .v-line {
+            position: fixed;
+            top: 0; height: 100%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .text-reveal {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+
+<body class="bg-zen-base text-zen-paper font-sans selection:bg-zen-gold selection:text-zen-base grain-bg">
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"></div>
+
+    <!-- Background Lines -->
+    <div class="v-line" style="left: 10%;"></div>
+    <div class="v-line" style="left: 30%;"></div>
+    <div class="v-line" style="left: 70%;"></div>
+    <div class="v-line" style="left: 90%;"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-8 mix-blend-difference text-left text-white">
+        <div class="flex items-center gap-2">
+            <iconify-icon icon="solar:lotus-bold-duotone" class="text-3xl text-zen-gold"></iconify-icon>
+            <span class="font-serif text-xl tracking-widest font-bold">普真精舍</span>
+        </div>
+        <div class="hidden md:flex gap-10 text-sm tracking-widest font-medium opacity-80">
+            <a href="#vision" class="hover:text-zen-gold transition-colors">核心理念</a>
+            <a href="#ai-results" class="hover:text-zen-gold transition-colors">AI 成果</a>
+            <a href="#how-to" class="hover:text-zen-gold transition-colors">AI 運用</a>
+        </div>
+        <div class="w-10 h-10 md:hidden flex items-center justify-center">
+            <iconify-icon icon="solar:hamburger-menu-linear" class="text-2xl"></iconify-icon>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+        <!-- Background Imagery: 修正為清淨禪意竹林 -->
+        <div class="absolute inset-0 z-0 bg-zen-base">
+            <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&q=80&w=2000" 
+                 class="w-full h-full object-cover opacity-50 brightness-[0.7] scale-105" 
+                 alt="清淨禪意竹林背景">
+            <!-- 漸層覆蓋確保氛圍感與文字可讀性 -->
+            <div class="absolute inset-0 bg-gradient-to-t from-zen-base via-transparent to-black/40"></div>
+        </div>
+
+        <div class="relative z-10 text-center max-w-4xl">
+            <div class="mb-6 inline-flex items-center gap-2 text-zen-gold text-sm tracking-[0.3em] font-medium reveal-up">
+                <span class="w-12 h-[1px] bg-zen-gold"></span>
+                覺性。智啟未來
+            </div>
+            <h1 class="text-5xl md:text-8xl font-serif leading-tight mb-8 reveal-up font-bold drop-shadow-2xl">
+                當佛法遇見 <br>
+                <span class="italic text-zen-gold">人工智慧</span>
+            </h1>
+            <p class="text-lg md:text-xl font-light text-zen-paper/90 mb-12 max-w-2xl mx-auto leading-relaxed reveal-up drop-shadow-lg">
+                在矽晶圓的微光中，照見自性。普真精舍引領科技潮流，以 AI 為載體，轉化法音，讓智慧普潤數位時代。
+            </p>
+            <div class="flex flex-col md:flex-row gap-6 justify-center items-center reveal-up">
+                <button class="magnetic-btn bg-zen-gold text-zen-base px-10 py-4 rounded-full font-bold tracking-widest hover:scale-105 transition-transform text-xs uppercase shadow-2xl shadow-zen-gold/40">
+                    啟程：智慧覺醒
+                </button>
+                <button class="flex items-center gap-3 text-sm tracking-widest group">
+                    <span class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                        <iconify-icon icon="solar:play-bold"></iconify-icon>
+                    </span>
+                    觀看專題影像
+                </button>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+            <span class="text-[10px] tracking-[0.5em] text-white/40 uppercase">Scroll</span>
+            <div class="w-[1px] h-12 bg-gradient-to-b from-zen-gold to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- Vision: Core Values -->
+    <section id="vision" class="py-24 px-6 md:px-12 bg-white text-zen-base">
+        <div class="max-w-7xl mx-auto text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-end mb-24">
+                <div>
+                    <span class="text-zen-gold font-bold tracking-tighter text-6xl opacity-20 block mb-4">01.</span>
+                    <h2 class="text-4xl md:text-6xl font-serif leading-tight font-bold text-slate-900">
+                        數位時代的<br>慈悲傳承
+                    </h2>
+                </div>
+                <p class="text-lg text-slate-600 leading-relaxed pb-2 border-l-2 border-zen-gold pl-6 font-light">
+                    我們相信，工具雖新，其用不變。AI 是現代的「指月之指」，透過機器學習，我們能更精準地將法要傳遞給每一個需要的靈魂。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Value 1 -->
+                <div class="p-8 border border-slate-100 rounded-2xl hover:bg-zen-paper transition-colors group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <iconify-icon icon="solar:brain-bold" class="text-9xl"></iconify-icon>
+                    </div>
+                    <iconify-icon icon="solar:lightbulb-bolt-bold-duotone" class="text-4xl text-zen-gold mb-6"></iconify-icon>
+                    <h3 class="text-2xl font-serif mb-4 font-bold text-slate-800">智慧化導</h3>
+                    <p class="text-slate-500 leading-relaxed font-light text-sm">利用自然語言處理 (NLP) 整理浩瀚經藏，提供最即時、精準的佛法諮詢服務。</p>
+                </div>
+                <!-- Value 2 -->
+                <div class="p-8 border border-slate-100 rounded-2xl hover:bg-zen-paper transition-colors group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <iconify-icon icon="solar:asteroid-bold" class="text-9xl"></iconify-icon>
+                    </div>
+                    <iconify-icon icon="solar:meditation-bold-duotone" class="text-4xl text-zen-gold mb-6"></iconify-icon>
+                    <h3 class="text-2xl font-serif mb-4 font-bold text-slate-800">科技禪修</h3>
+                    <p class="text-slate-500 leading-relaxed font-light text-sm">融合 AI 數據分析，幫助學員掌握定力與覺察力的細微變化，輔助日常定課。</p>
+                </div>
+                <!-- Value 3 -->
+                <div class="p-8 border border-slate-100 rounded-2xl hover:bg-zen-paper transition-colors group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <iconify-icon icon="solar:global-bold" class="text-9xl"></iconify-icon>
+                    </div>
+                    <iconify-icon icon="solar:cloud-share-bold-duotone" class="text-4xl text-zen-gold mb-6"></iconify-icon>
+                    <h3 class="text-2xl font-serif mb-4 font-bold text-slate-800">無礙普傳</h3>
+                    <p class="text-slate-500 leading-relaxed font-light text-sm">打破語言與形式障礙，透過 AI 翻譯與多媒體生成，讓佛法無遠弗屆。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Results: The Showcase -->
+    <section id="ai-results" class="py-24 px-6 md:px-12 bg-zen-base overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-6xl font-serif mb-6 text-white font-bold">AI 智慧實踐成果</h2>
+                <p class="text-zen-gold/60 tracking-[0.3em] uppercase text-xs">Digital Transformation Milestones</p>
+                <div class="w-24 h-1 bg-zen-gold mx-auto mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-white text-left text-sm">
+                <!-- Category 1: 影像生成 -->
+                <div class="beam-border bg-white/5 rounded-3xl p-8 border border-white/10 group">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 rounded-2xl bg-zen-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-zen-gold/20 transition-colors text-zen-gold">
+                            <iconify-icon icon="solar:gallery-bold-duotone" class="text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif mb-3 font-bold">影像生成應用</h4>
+                            <p class="text-white/40 leading-relaxed mb-4 font-light">主要運用 **ChatGPT (DALL-E 3)** 與 **Google Gemini (Imagen)**。將佛經中的莊嚴意境精確轉化為高畫質影像與藝術圖案，用於禪修教材與視覺設計。</p>
+                            <div class="flex gap-3 text-[10px] uppercase tracking-widest opacity-60">
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">DALL-E 3</span>
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">Imagen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 2: 般若問答 -->
+                <div class="beam-border bg-white/5 rounded-3xl p-8 border border-white/10 group">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 rounded-2xl bg-zen-moss/10 flex items-center justify-center flex-shrink-0 group-hover:bg-zen-moss/20 transition-colors text-zen-gold">
+                            <iconify-icon icon="solar:chat-round-dots-bold-duotone" class="text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif mb-3 font-bold">般若問答系統</h4>
+                            <p class="text-white/40 leading-relaxed mb-4 font-light">基於 **ChatGPT** 與 **Gemini** 的大型語言模型。餵入中台法要庫，提供信眾不間斷的佛學諮詢，確保回應符合正知正見。</p>
+                            <div class="flex gap-3 text-[10px] uppercase tracking-widest opacity-60">
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">RAG Knowledge</span>
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">GPT-4o</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 3: 線上遊戲 -->
+                <div class="beam-border bg-white/5 rounded-3xl p-8 border border-white/10 group">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 rounded-2xl bg-zen-gold/10 flex items-center justify-center flex-shrink-0 group-hover:bg-zen-gold/20 transition-colors text-zen-gold">
+                            <iconify-icon icon="solar:gamepad-bold-duotone" class="text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif mb-3 font-bold">線上禪修遊戲</h4>
+                            <p class="text-white/40 leading-relaxed mb-4 font-light">協同 **ChatGPT** 進行邏輯開發。開發互動遊戲將修行概念轉為關卡，以新穎形式引導大眾接觸佛法，開發智慧。</p>
+                            <div class="flex gap-3 text-[10px] uppercase tracking-widest opacity-60">
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">Gamification</span>
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">Web Interaction</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 4: 影音弘法 -->
+                <div class="beam-border bg-white/5 rounded-3xl p-8 border border-white/10 group">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 rounded-2xl bg-zen-moss/10 flex items-center justify-center flex-shrink-0 group-hover:bg-zen-moss/20 transition-colors text-zen-gold">
+                            <iconify-icon icon="solar:videocamera-record-bold-duotone" class="text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-serif mb-3 font-bold">影音弘法影片</h4>
+                            <p class="text-white/40 leading-relaxed mb-4 font-light">整合 **NotebookLM** 進行龐大開示摘要，配合 AI 語音與剪輯。將長篇法音化為精簡短片，利於社群媒體廣傳。</p>
+                            <div class="flex gap-3 text-[10px] uppercase tracking-widest opacity-60">
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">NotebookLM</span>
+                                <span class="px-2 py-1 bg-white/10 rounded border border-white/5">Short Video AI</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How To Use -->
+    <section id="how-to" class="py-24 px-6 md:px-12 bg-zen-paper text-zen-base relative">
+        <div class="max-w-4xl mx-auto text-left">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-serif mb-4 font-bold text-slate-900">如何運用 AI</h2>
+                <p class="text-slate-500 tracking-widest font-light">分享普真精舍數位弘法之實務經驗，供各大精舍參考效法</p>
+            </div>
+            
+            <div class="space-y-12">
+                <!-- Item 1 -->
+                <div class="flex gap-8 items-start step-item">
+                    <div class="w-12 h-12 rounded-full bg-zen-gold text-zen-base flex items-center justify-center font-bold flex-shrink-0 shadow-lg shadow-zen-gold/20">1</div>
+                    <div>
+                        <h4 class="text-2xl font-serif mb-3 font-bold text-slate-800">AI 賦能教學資源</h4>
+                        <p class="text-slate-600 leading-relaxed font-light text-sm">利用 AI 快速整理浩瀚經藏資訊，自動生成課程大綱、講義與測驗題庫，大幅提升備課效率。</p>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="flex gap-8 items-start step-item">
+                    <div class="w-12 h-12 rounded-full bg-zen-gold text-zen-base flex items-center justify-center font-bold flex-shrink-0 shadow-lg shadow-zen-gold/20">2</div>
+                    <div>
+                        <h4 class="text-2xl font-serif mb-3 font-bold text-slate-800">智慧化招生宣傳</h4>
+                        <p class="text-slate-600 leading-relaxed font-light text-sm">運用 AI 寫作工具生成吸引大眾的宣傳文案，並結合視覺 AI 製作高品質海報與社群素材。</p>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div class="flex gap-8 items-start step-item">
+                    <div class="w-12 h-12 rounded-full bg-zen-gold text-zen-base flex items-center justify-center font-bold flex-shrink-0 shadow-lg shadow-zen-gold/20">3</div>
+                    <div>
+                        <h4 class="text-2xl font-serif mb-3 font-bold text-slate-800">影音製作轉型</h4>
+                        <p class="text-slate-600 leading-relaxed font-light text-sm">透過 AI 字幕、語音與虛擬技術，將傳統文字開示轉化為精湛影音作品，擴大法音傳播效力。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-20 p-12 bg-zen-base text-zen-paper rounded-[3rem] text-center overflow-hidden relative">
+                <div class="relative z-10">
+                    <h3 class="text-3xl font-serif mb-6 font-bold text-white">想了解更多數位弘法技術嗎？</h3>
+                    <p class="text-white/50 mb-8 max-w-lg mx-auto text-sm font-light">普真精舍願與各大精舍交流分享，攜手在 AI 時代開展弘法新氣象。</p>
+                    <button class="magnetic-btn bg-zen-gold text-zen-base px-10 py-4 rounded-full font-bold tracking-widest hover:scale-105 transition-all text-xs uppercase">
+                        下載：精舍 AI 實作指南
+                    </button>
+                </div>
+                <iconify-icon icon="solar:folder-share-bold" class="absolute -bottom-10 -right-10 text-[15rem] text-white/5"></iconify-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-16 px-6 md:px-12 border-t border-white/5 relative z-10 text-left">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-white">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-6">
+                    <iconify-icon icon="solar:lotus-bold-duotone" class="text-4xl text-zen-gold"></iconify-icon>
+                    <span class="font-serif text-2xl tracking-widest font-bold text-white">普真精舍</span>
+                </div>
+                <p class="text-white/40 leading-relaxed max-w-sm mb-8 font-light text-sm text-left">
+                    中台禪寺普真精舍致力於推廣禪宗心法，結合現代科技，引領十方信眾明心見性。
+                </p>
+                <div class="flex gap-4">
+                    <a href="https://www.ctworld.org.tw/108/puzhen1/index.htm" target="_blank" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-zen-gold hover:text-zen-base transition-all text-white">
+                        <iconify-icon icon="solar:global-bold-duotone"></iconify-icon>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-zen-gold hover:text-zen-base transition-all text-white">
+                        <iconify-icon icon="simple-icons:facebook"></iconify-icon>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-zen-gold hover:text-zen-base transition-all text-white">
+                        <iconify-icon icon="simple-icons:line"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h5 class="font-serif text-lg mb-6 text-zen-gold font-bold">聯絡資訊</h5>
+                <ul class="text-white/40 space-y-4 text-xs font-light text-left">
+                    <li class="flex items-start gap-3">
+                        <iconify-icon icon="solar:map-point-bold-duotone" class="text-zen-gold mt-1"></iconify-icon>
+                        <span>407台中市西屯區河南路一段170號7樓<br><span class="text-xs opacity-60">(文華高中後門正對面)</span></span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <iconify-icon icon="solar:phone-bold-duotone" class="text-zen-gold"></iconify-icon>
+                        (04) 2312-4898
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <iconify-icon icon="solar:printer-bold-duotone" class="text-zen-gold"></iconify-icon>
+                        傳真：(04) 2312-1492
+                    </li>
+                    <li class="flex items-center gap-3 text-left">
+                        <iconify-icon icon="solar:link-bold-duotone" class="text-zen-gold"></iconify-icon>
+                        <a href="https://www.ctworld.org.tw/108/puzhen1/index.htm" target="_blank" class="hover:text-zen-gold underline decoration-zen-gold/30">官方網站</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-serif text-lg mb-6 text-zen-gold font-bold">數位法寶</h5>
+                <ul class="text-white/40 space-y-4 text-xs font-light text-left">
+                    <li><a href="#how-to" class="hover:text-zen-gold transition-colors">精舍 AI 實作指南</a></li>
+                    <li><a href="#" class="hover:text-zen-gold transition-colors">弘法影片素材庫</a></li>
+                    <li><a href="#" class="hover:text-zen-gold transition-colors">報名禪修班</a></li>
+                    <li><a href="#" class="hover:text-zen-gold transition-colors">精舍公告</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] tracking-[0.2em] text-white/20 uppercase font-medium">
+            <p>&copy; 2026 Puzhen Zen Temple. All Rights Reserved.</p>
+            <p>Designed with Enlightenment & AI</p>
+        </div>
+    </footer>
+
+    <script>
+        // Custom Cursor Logic
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX - 10,
+                y: e.clientY - 10,
+                duration: 0.1
+            });
+        });
+
+        // Cursor scaling on interactive items
+        const interactiveElements = document.querySelectorAll('button, a, .magnetic-btn');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(cursor, { scale: 4, opacity: 0.3, duration: 0.3 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(cursor, { scale: 1, opacity: 1, duration: 0.3 });
+            });
+        });
+
+        // Magnetic Button
+        const magneticBtns = document.querySelectorAll('.magnetic-btn');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                gsap.to(btn, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+            });
+        });
+
+        // Animations
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.reveal-up').forEach((elem) => {
+            gsap.from(elem, {
+                y: 60,
+                opacity: 0,
+                duration: 1.2,
+                ease: "power4.out",
+                stagger: 0.2
+            });
+        });
+
+        gsap.utils.toArray('section').forEach((section) => {
+            const children = section.querySelectorAll('h2, p, .step-item, .beam-border');
+            if(children.length > 0) {
+                gsap.from(children, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 85%",
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                    stagger: 0.1,
+                    ease: "power3.out"
+                });
+            }
+        });
+    </script>
+</body>
+</html>
