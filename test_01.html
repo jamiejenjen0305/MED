@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福田小測驗 - 專業版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f7f3f0; /* 暖灰底色 */
+        }
+        .form-paper {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+        .form-paper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #b91c1c; /* 頂部裝飾紅條 */
+            border-radius: 8px 8px 0 0;
+        }
+        .input-underline {
+            border-bottom: 1px solid #9ca3af;
+            transition: all 0.3s ease;
+        }
+        .input-underline:focus {
+            border-bottom: 2px solid #b91c1c;
+            background-color: #fffaf0;
+        }
+        .label-style {
+            color: #4b5563;
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+        }
+        .case-card {
+            border-left: 6px solid #b91c1c;
+            background: #ffffff;
+        }
+        /* 隱藏原生卷軸但保有功能 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-10">
+
+    <div id="app" class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-gray-800 tracking-tight mb-3">
+                福田<span class="text-red-700">小測驗</span>
+            </h1>
+            <div class="h-1 w-20 bg-red-700 mx-auto rounded-full mb-4"></div>
+            <p class="text-gray-500 font-medium">模擬實務填單作業 · 精進福田執事專業</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="quiz-container" class="space-y-8">
+            <!-- Content will be injected here -->
+        </main>
+
+        <!-- Feedback Modal -->
+        <div id="feedback-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 id="feedback-title" class="text-lg font-bold text-gray-800"></h2>
+                    <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded">正確範本</span>
+                </div>
+                <div id="feedback-content" class="p-6 custom-scroll overflow-y-auto max-h-[70vh]">
+                    <!-- Answer details will be injected here -->
+                </div>
+                <div class="p-4 bg-gray-50 border-t border-gray-100">
+                    <button onclick="closeModal()" class="w-full bg-gray-800 text-white py-3 rounded-xl font-bold hover:bg-gray-900 transition-colors">
+                        我已確認，進入下一題
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cases = [
+            {
+                id: 1,
+                title: "實務案例 1",
+                desc: "夜研二艾布施居士發心：(1)中台藥師法會如意 10000 (2)供養三寶3000。收據以母親尤慈心名義開立，收據編號FN114101200091。",
+                answer: {
+                    name: "艾布施/夜研二",
+                    amount: "13000 #0091",
+                    remarks: "中台藥師-如意 10000\n供養三寶3000",
+                    title: "尤慈心/母",
+                    contact: "",
+                    address: "",
+                    handler: "XXX",
+                    date: "10/15"
+                }
+            },
+            {
+                id: 2,
+                title: "實務案例 2",
+                desc: "夜中班艾布施居士發心：(1)地藏永久牌位 40000 (2)地藏作七 2000。收據開以父親艾發心名義開立，收據編號FN114101200066。",
+                answer: {
+                    name: "艾布施/夜中班",
+                    amount: "42000 #0066",
+                    remarks: "地藏永久牌位 40000\n地藏平日牌位2000",
+                    title: "艾發心/父(開2000)",
+                    contact: "",
+                    address: "",
+                    handler: "XXX",
+                    date: "10/15"
+                }
+            },
+            {
+                id: 3,
+                title: "實務案例 3",
+                desc: "日初班艾布施居士發心：(1)金剛法會 10000 隨喜牌位。不開收據。",
+                answer: {
+                    name: "艾布施/日初班",
+                    amount: "10000",
+                    remarks: "金剛寶懺-隨牌",
+                    title: "X",
+                    contact: "",
+                    address: "",
+                    handler: "XXX",
+                    date: "10/15"
+                }
+            },
+            {
+                id: 4,
+                title: "實務案例 4",
+                desc: "夜研二艾布施居士發心：(1)三昧水懺吉祥50000 (2)三昧水懺打齋5000 (3)收據開公司「福田有限公司」。本身是公司負責人同修，收據號0051。",
+                answer: {
+                    name: "艾布施/夜研二",
+                    amount: "55000 #0051",
+                    remarks: "三昧水懺-吉祥 50000\n三昧水懺-打齋 5000",
+                    title: "福田有限公司(負責人同修)",
+                    contact: "",
+                    address: "",
+                    handler: "XXX",
+                    date: "10/15"
+                }
+            },
+            {
+                id: 5,
+                title: "實務案例 5",
+                desc: "日初李小明的朋友(非學員)艾布施居士發心：(1)供養三寶 600。不開收據。",
+                answer: {
+                    name: "艾布施",
+                    amount: "600",
+                    remarks: "供養三寶",
+                    title: "X",
+                    contact: "日初/李小明",
+                    address: "",
+                    handler: "XXX",
+                    date: "10/15"
+                }
+            }
+        ];
+
+        const tfQuestions = [
+            { id: 1, text: "地藏永久牌位不開立收據，但天祥永久牌位可以。", explanation: "皆不開立" },
+            { id: 2, text: "學員來發心永久牌位，只要收功德金、填寫小單即可。", explanation: "需另外填寫資料表" },
+            { id: 3, text: "當收據已開立，需填寫右下角收據填號在福田小單。", explanation: "應填寫收據之「右上角」編號" },
+            { id: 4, text: "學員不需要收據，可鼓勵他開收據抵稅。", explanation: "尊重個人意願，不應勉強" }
+        ];
+
+        let currentStep = 0; 
+
+        function render() {
+            const container = document.getElementById('quiz-container');
+            
+            if (currentStep < 5) {
+                const c = cases[currentStep];
+                container.innerHTML = `
+                    <div class="case-card p-6 shadow-sm rounded-r-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="bg-red-700 text-white text-xs font-bold px-2 py-1 rounded">案例 ${c.id}</span>
+                            <h3 class="font-bold text-gray-800 text-lg">${c.title}</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed">${c.desc}</p>
+                    </div>
+
+                    <div class="form-paper rounded-xl p-8 md:p-10">
+                        <div class="text-center mb-8">
+                            <h4 class="text-xl font-bold text-gray-400 border-b-2 border-dashed border-gray-200 pb-2 inline-block px-4">福田小單模擬填寫</h4>
+                        </div>
+                        
+                        <div class="space-y-6 max-w-md mx-auto">
+                            <div class="flex items-center gap-4">
+                                <label class="label-style w-20 flex-shrink-0">姓　名：</label>
+                                <input type="text" id="q_name" class="input-underline flex-grow py-1 px-2 focus:outline-none" placeholder="學員姓名/班別">
+                            </div>
+                            
+                            <div class="flex items-center gap-4">
+                                <label class="label-style w-20 flex-shrink-0">金　額：</label>
+                                <input type="text" id="q_amount" class="input-underline flex-grow py-1 px-2 focus:outline-none" placeholder="總金額 #收據末四碼">
+                            </div>
+                            
+                            <div class="flex flex-col gap-2">
+                                <label class="label-style">備　註：</label>
+                                <textarea id="q_remarks" rows="3" class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-100 transition-all" placeholder="請列出各項發心明細..."></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                                <div class="flex items-center gap-4">
+                                    <label class="label-style w-16 flex-shrink-0 text-sm">抬　頭：</label>
+                                    <input type="text" id="q_title" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm" placeholder="收據名義">
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <label class="label-style w-16 flex-shrink-0 text-sm">聯絡人：</label>
+                                    <input type="text" id="q_contact" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <label class="label-style w-20 flex-shrink-0 text-sm">地　址：</label>
+                                <input type="text" id="q_address" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="flex items-center gap-4">
+                                    <label class="label-style w-16 flex-shrink-0 text-xs">經手人：</label>
+                                    <input type="text" id="q_handler" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <label class="label-style w-16 flex-shrink-0 text-xs text-right">日　期：</label>
+                                    <input type="text" id="q_date" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm" placeholder="MM/DD">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-4 pt-4">
+                        <button onclick="checkCase()" class="btn-primary w-full max-w-sm text-white font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 transition-all text-lg">
+                            提交並查看範本
+                        </button>
+                        <div class="flex gap-2">
+                            ${[0, 1, 2, 3, 4].map(i => `<div class="h-1.5 w-8 rounded-full ${i <= currentStep ? 'bg-red-700' : 'bg-gray-200'}"></div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (currentStep === 5) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 text-center mb-8 flex items-center justify-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-red-100 text-red-700 text-sm flex items-center justify-center italic">?</span>
+                            福田知見是非題
+                        </h3>
+                        <div class="space-y-8">
+                            ${tfQuestions.map(q => `
+                                <div class="relative pl-10 border-b border-gray-100 pb-6 last:border-0">
+                                    <span class="absolute left-0 top-0 text-2xl font-black text-gray-200">${q.id}</span>
+                                    <p class="text-gray-700 font-medium mb-4 leading-relaxed">${q.text}</p>
+                                    <div class="flex gap-4">
+                                        <button onclick="answerTF(${q.id}, true)" class="px-6 py-2 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:text-green-600 font-bold transition-all flex items-center gap-2">
+                                            <span class="text-xl">○</span> 正確
+                                        </button>
+                                        <button onclick="answerTF(${q.id}, false)" class="px-6 py-2 border-2 border-gray-200 rounded-xl hover:border-red-500 hover:text-red-600 font-bold transition-all flex items-center gap-2">
+                                            <span class="text-xl">×</span> 錯誤
+                                        </button>
+                                    </div>
+                                    <div id="tf-feedback-${q.id}" class="mt-4 p-4 rounded-xl hidden transform transition-all scale-95 origin-top">
+                                        <div id="tf-status-${q.id}" class="font-bold flex items-center gap-2 mb-1"></div>
+                                        <div class="text-gray-600 text-sm bg-white/50 p-2 rounded">
+                                            <span class="font-bold text-gray-800">【觀念指引】：</span>${q.explanation}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <button id="finish-btn" onclick="finishQuiz()" class="btn-primary w-full text-white font-bold py-4 rounded-2xl shadow-xl hidden animate-bounce">
+                        完成所有測驗
+                    </button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="text-center py-20 bg-white rounded-3xl shadow-sm">
+                        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">法喜充滿！練習完成</h2>
+                        <p class="text-gray-500 max-w-xs mx-auto mb-10 leading-relaxed">恭喜您完成福田小單填寫練習，願此發心增長執事專業。</p>
+                        <button onclick="location.reload()" class="bg-gray-800 text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all shadow-lg">
+                            再次練習
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function checkCase() {
+            const current = cases[currentStep];
+            showModal("填寫範本對照", `
+                <div class="bg-white border-2 border-red-50 rounded-xl p-6 relative">
+                    <div class="absolute -top-3 -right-3 bg-red-700 text-white text-[10px] px-2 py-1 rounded-full shadow-md font-bold">SAMPLE</div>
+                    <div class="space-y-4">
+                        <div class="flex border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 text-xs w-16">姓名</span>
+                            <span class="font-bold text-blue-900">${current.answer.name}</span>
+                        </div>
+                        <div class="flex border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 text-xs w-16">金額</span>
+                            <span class="font-bold text-red-700">${current.answer.amount}</span>
+                        </div>
+                        <div class="flex flex-col border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 text-xs mb-1">備註</span>
+                            <span class="text-blue-900 text-sm leading-relaxed whitespace-pre-line">${current.answer.remarks}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col">
+                                <span class="text-gray-400 text-[10px]">抬頭</span>
+                                <span class="font-medium text-gray-800 text-sm">${current.answer.title}</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-gray-400 text-[10px]">聯絡人</span>
+                                <span class="font-medium text-gray-800 text-sm">${current.answer.contact || '--'}</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end pt-4 opacity-60">
+                            <span class="text-[10px] text-gray-400">經手人: ${current.answer.handler}</span>
+                            <span class="text-[10px] text-gray-400">日期: ${current.answer.date}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 bg-amber-50 p-4 rounded-xl border border-amber-100">
+                    <p class="text-amber-800 text-xs leading-relaxed">
+                        <span class="font-bold mr-1">💡 小提醒：</span>
+                        核對時請注意「金額後四碼」的寫法、金額加總以及備註欄位是否清晰易讀。
+                    </p>
+                </div>
+            `);
+        }
+
+        function answerTF(id, userChoice) {
+            const feedbackEl = document.getElementById(`tf-feedback-${id}`);
+            const statusEl = document.getElementById(`tf-status-${id}`);
+            feedbackEl.classList.remove('hidden');
+            feedbackEl.classList.add('scale-100');
+            
+            // Per instructions: All TF answers are FALSE
+            if (userChoice === false) {
+                statusEl.innerHTML = `<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z" clip-rule="evenodd"></path></svg> 正確！這項描述是錯誤的。`;
+                feedbackEl.className = "mt-4 p-4 rounded-xl bg-green-50 border border-green-100 transform transition-all scale-100 origin-top";
+                statusEl.className = "font-bold text-green-700 flex items-center gap-2 mb-1";
+            } else {
+                statusEl.innerHTML = `<svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg> 觀念有誤。正確答案應選【× 錯誤】。`;
+                feedbackEl.className = "mt-4 p-4 rounded-xl bg-red-50 border border-red-100 transform transition-all scale-100 origin-top";
+                statusEl.className = "font-bold text-red-700 flex items-center gap-2 mb-1";
+            }
+
+            const answeredCount = document.querySelectorAll('[id^="tf-feedback-"]:not(.hidden)').length;
+            if (answeredCount === 4) {
+                const btn = document.getElementById('finish-btn');
+                btn.classList.remove('hidden');
+                btn.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function showModal(title, content) {
+            document.getElementById('feedback-title').innerText = title;
+            document.getElementById('feedback-content').innerHTML = content;
+            document.getElementById('feedback-modal').classList.remove('hidden');
+            // 小動畫
+            const modalBox = document.querySelector('#feedback-modal > div');
+            modalBox.classList.add('scale-100', 'opacity-100');
+            modalBox.classList.remove('scale-95', 'opacity-0');
+        }
+
+        function closeModal() {
+            const modalBox = document.querySelector('#feedback-modal > div');
+            modalBox.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('feedback-modal').classList.add('hidden');
+                currentStep++;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 150);
+        }
+
+        function finishQuiz() {
+            currentStep++;
+            render();
+        }
+
+        // Init
+        render();
+    </script>
+</body>
+</html>
