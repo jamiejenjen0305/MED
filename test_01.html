@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福田小測驗 - 專業版</title>
+    <title>福田小測驗 - 尊長清晰版</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #f7f3f0;
+            line-height: 1.6;
         }
         .form-paper {
             background-color: #ffffff;
-            background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
-            background-size: 20px 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 30px 30px;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.15);
+            border: 1px solid #d1d5db;
             position: relative;
         }
         .form-paper::before {
@@ -25,73 +26,82 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 6px;
             background: #b91c1c;
-            border-radius: 8px 8px 0 0;
+            border-radius: 12px 12px 0 0;
         }
         .input-underline {
-            border-bottom: 1px solid #9ca3af;
+            border-bottom: 2px solid #9ca3af;
             border-radius: 0;
             transition: all 0.3s ease;
+            font-size: 1.25rem; /* 放大輸入文字 */
+            padding: 8px 4px;
         }
         .input-underline:focus {
-            border-bottom: 2px solid #b91c1c;
+            border-bottom: 3px solid #b91c1c;
             background-color: #fffaf0;
             outline: none;
         }
         .label-style {
-            color: #4b5563;
-            font-weight: 500;
-            font-size: 0.95rem;
+            color: #1f2937; /* 加深顏色提高對比 */
+            font-weight: 700;
+            font-size: 1.25rem; /* 標籤放大 */
             letter-spacing: 0.05em;
             white-space: nowrap;
         }
         .btn-primary {
             background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+            font-size: 1.5rem; /* 按鈕文字放大 */
         }
         .case-card {
-            border-left: 6px solid #b91c1c;
+            border-left: 10px solid #b91c1c; /* 加粗側條 */
             background: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         .custom-scroll::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: #d1d5db;
+            background: #9ca3af;
             border-radius: 10px;
+        }
+        /* 放大 Placeholder */
+        ::placeholder {
+            font-size: 1.1rem;
+            color: #9ca3af;
         }
     </style>
 </head>
-<body class="min-h-screen p-3 sm:p-6 md:p-10">
+<body class="min-h-screen p-4 sm:p-8 md:p-12">
 
-    <div id="app" class="max-w-2xl mx-auto">
+    <div id="app" class="max-w-3xl mx-auto">
         <!-- Header -->
-        <header class="text-center mb-6 sm:mb-10">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight mb-2">
+        <header class="text-center mb-8 sm:mb-14">
+            <h1 class="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-4">
                 福田<span class="text-red-700">小測驗</span>
             </h1>
-            <div class="h-1 w-16 bg-red-700 mx-auto rounded-full mb-3"></div>
-            <p class="text-sm sm:text-base text-gray-500 font-medium">模擬實務填單 · 精進福田執事專業</p>
+            <div class="h-1.5 w-24 bg-red-700 mx-auto rounded-full mb-4"></div>
+            <p class="text-xl sm:text-2xl text-gray-600 font-bold italic">精進執事專業 · 法喜充滿</p>
         </header>
 
         <!-- Main Content Area -->
-        <main id="quiz-container" class="space-y-6 sm:space-y-8">
+        <main id="quiz-container" class="space-y-8 sm:space-y-12">
             <!-- Content will be injected here -->
         </main>
 
         <!-- Feedback Modal -->
-        <div id="feedback-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                    <h2 id="feedback-title" class="text-lg font-bold text-gray-800"></h2>
-                    <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded">正確範本</span>
+        <div id="feedback-modal" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full overflow-hidden transform transition-all">
+                <div class="bg-gray-100 px-8 py-5 border-b border-gray-200 flex justify-between items-center">
+                    <h2 id="feedback-title" class="text-2xl font-black text-gray-800"></h2>
+                    <span class="text-sm font-black text-white bg-red-700 px-3 py-1.5 rounded-lg">正確範本</span>
                 </div>
-                <div id="feedback-content" class="p-4 sm:p-6 custom-scroll overflow-y-auto max-h-[70vh]">
+                <div id="feedback-content" class="p-6 sm:p-10 custom-scroll overflow-y-auto max-h-[75vh]">
                     <!-- Answer details will be injected here -->
                 </div>
-                <div class="p-4 bg-gray-50 border-t border-gray-100">
-                    <button onclick="closeModal()" class="w-full bg-gray-800 text-white py-3 rounded-xl font-bold hover:bg-gray-900 transition-colors">
-                        我已確認，進入下一題
+                <div class="p-6 bg-gray-100 border-t border-gray-200">
+                    <button onclick="closeModal()" class="w-full bg-red-700 text-white py-4 rounded-2xl font-black text-2xl hover:bg-red-800 transition-colors shadow-lg">
+                        我已確認，下一題
                     </button>
                 </div>
             </div>
@@ -192,115 +202,117 @@
             if (currentStep < 5) {
                 const c = cases[currentStep];
                 container.innerHTML = `
-                    <div class="case-card p-4 sm:p-6 shadow-sm rounded-r-xl">
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="bg-red-700 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded uppercase">案例 ${c.id}</span>
-                            <h3 class="font-bold text-gray-800 text-base sm:text-lg">${c.title}</h3>
+                    <div class="case-card p-6 sm:p-8 rounded-r-2xl">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="bg-red-700 text-white text-base sm:text-lg font-black px-4 py-1.5 rounded-full uppercase">案例 ${c.id}</span>
+                            <h3 class="font-black text-gray-900 text-2xl sm:text-3xl">${c.title}</h3>
                         </div>
-                        <p class="text-gray-600 text-sm sm:text-base leading-relaxed">${c.desc}</p>
+                        <p class="text-gray-800 text-xl sm:text-2xl leading-relaxed font-medium bg-gray-50 p-4 rounded-xl border border-gray-100">${c.desc}</p>
                     </div>
 
-                    <div class="form-paper rounded-xl p-5 sm:p-8 md:p-10">
-                        <div class="text-center mb-6">
-                            <h4 class="text-lg font-bold text-gray-400 border-b-2 border-dashed border-gray-100 pb-2 inline-block px-4">福田小單模擬填寫</h4>
+                    <div class="form-paper rounded-3xl p-6 sm:p-12 md:p-14">
+                        <div class="text-center mb-10">
+                            <h4 class="text-2xl font-black text-gray-400 border-b-4 border-dotted border-gray-100 pb-3 inline-block px-6 tracking-widest">福田小單模擬填寫</h4>
                         </div>
                         
-                        <div class="space-y-5 sm:space-y-6 max-w-md mx-auto">
-                            <div class="flex items-baseline gap-2">
-                                <label class="label-style w-16 sm:w-20 shrink-0">姓　名：</label>
-                                <input type="text" id="q_name" class="input-underline grow py-1 px-1 text-sm sm:text-base bg-transparent" placeholder="學員姓名/班別">
+                        <div class="space-y-8 max-w-xl mx-auto">
+                            <div class="flex items-baseline gap-4">
+                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">姓　名：</label>
+                                <input type="text" id="q_name" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="學員姓名/班別">
                             </div>
                             
-                            <div class="flex items-baseline gap-2">
-                                <label class="label-style w-16 sm:w-20 shrink-0">金　額：</label>
-                                <input type="text" id="q_amount" class="input-underline grow py-1 px-1 text-sm sm:text-base bg-transparent" placeholder="總金額 #收據末四碼">
+                            <div class="flex items-baseline gap-4">
+                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">金　額：</label>
+                                <input type="text" id="q_amount" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="總額 #收據末四碼">
                             </div>
                             
-                            <div class="flex flex-col gap-2">
-                                <label class="label-style">備　註：</label>
-                                <textarea id="q_remarks" rows="3" class="w-full p-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-100 transition-all bg-white" placeholder="請列出各項發心明細..."></textarea>
+                            <div class="flex flex-col gap-3">
+                                <label class="label-style text-2xl">備　註：</label>
+                                <textarea id="q_remarks" rows="3" class="w-full p-4 border-2 border-gray-200 rounded-2xl text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-red-100 transition-all bg-white" placeholder="請詳細列出明細..."></textarea>
                             </div>
                             
-                            <div class="flex items-baseline gap-2">
-                                <label class="label-style w-16 sm:w-20 shrink-0">抬　頭：</label>
-                                <input type="text" id="q_title" class="input-underline grow py-1 px-1 text-sm bg-transparent" placeholder="收據名義">
+                            <div class="flex items-baseline gap-4">
+                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">抬　頭：</label>
+                                <input type="text" id="q_title" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="收據開立名義">
                             </div>
 
-                            <div class="flex items-baseline gap-2">
-                                <label class="label-style w-16 sm:w-20 shrink-0">聯絡人：</label>
-                                <input type="text" id="q_contact" class="input-underline grow py-1 px-1 text-sm bg-transparent">
+                            <div class="flex items-baseline gap-4">
+                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">聯絡人：</label>
+                                <input type="text" id="q_contact" class="input-underline grow text-2xl font-bold bg-transparent">
                             </div>
 
-                            <div class="flex items-baseline gap-2">
-                                <label class="label-style w-16 sm:w-20 shrink-0">地　址：</label>
-                                <input type="text" id="q_address" class="input-underline grow py-1 px-1 text-sm bg-transparent">
+                            <div class="flex items-baseline gap-4">
+                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">地　址：</label>
+                                <input type="text" id="q_address" class="input-underline grow text-2xl font-bold bg-transparent">
                             </div>
 
-                            <div class="pt-4 border-t border-gray-100 space-y-4 sm:space-y-0 sm:flex sm:gap-4">
-                                <div class="flex items-baseline gap-2 sm:w-1/2">
-                                    <label class="label-style shrink-0 text-sm">經手人：</label>
-                                    <input type="text" id="q_handler" class="input-underline grow py-1 px-1 text-sm bg-transparent">
+                            <!-- 底部欄位大字體優化 -->
+                            <div class="pt-8 border-t-2 border-gray-100 space-y-6 sm:space-y-0 sm:flex sm:gap-10">
+                                <div class="flex items-baseline gap-4 sm:w-1/2">
+                                    <label class="label-style shrink-0 text-xl">經手人：</label>
+                                    <input type="text" id="q_handler" class="input-underline grow text-xl font-bold bg-transparent">
                                 </div>
-                                <div class="flex items-baseline gap-2 sm:w-1/2">
-                                    <label class="label-style shrink-0 text-sm">日　期：</label>
-                                    <input type="text" id="q_date" class="input-underline grow py-1 px-1 text-sm bg-transparent" placeholder="MM/DD">
+                                <div class="flex items-baseline gap-4 sm:w-1/2">
+                                    <label class="label-style shrink-0 text-xl">日　期：</label>
+                                    <input type="text" id="q_date" class="input-underline grow text-xl font-bold bg-transparent" placeholder="MM/DD">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-center gap-4 pt-4">
-                        <button onclick="checkCase()" class="btn-primary w-full max-w-sm text-white font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all text-lg">
-                            提交並查看範本
+                    <div class="flex flex-col items-center gap-6 pt-6">
+                        <button onclick="checkCase()" class="btn-primary w-full max-w-lg text-white font-black py-5 rounded-3xl shadow-2xl hover:opacity-90 active:scale-95 transition-all">
+                            提交並查看正確範本
                         </button>
-                        <div class="flex gap-2">
-                            ${[0, 1, 2, 3, 4].map(i => `<div class="h-1.5 w-6 sm:w-8 rounded-full ${i <= currentStep ? 'bg-red-700' : 'bg-gray-200'}"></div>`).join('')}
+                        <div class="flex gap-3">
+                            ${[0, 1, 2, 3, 4].map(i => `<div class="h-2 w-10 sm:w-12 rounded-full ${i <= currentStep ? 'bg-red-700' : 'bg-gray-200'} shadow-sm"></div>`).join('')}
                         </div>
                     </div>
                 `;
             } else if (currentStep === 5) {
                 container.innerHTML = `
-                    <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm mb-8 border border-gray-100">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-8 flex items-center justify-center gap-3">
-                            <span class="w-8 h-8 rounded-full bg-red-100 text-red-700 text-sm flex items-center justify-center italic">?</span>
+                    <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl mb-8 border-2 border-red-50">
+                        <h3 class="text-3xl sm:text-4xl font-black text-gray-900 text-center mb-12 flex items-center justify-center gap-4">
+                            <span class="w-12 h-12 rounded-full bg-red-100 text-red-700 text-2xl flex items-center justify-center italic font-black shadow-inner">?</span>
                             福田知見是非題
                         </h3>
-                        <div class="space-y-8">
+                        <div class="space-y-12">
                             ${tfQuestions.map(q => `
-                                <div class="relative pl-8 border-b border-gray-50 pb-6 last:border-0">
-                                    <span class="absolute left-0 top-0 text-xl font-black text-gray-100">${q.id}</span>
-                                    <p class="text-gray-700 font-medium mb-4 leading-relaxed text-sm sm:text-base">${q.text}</p>
-                                    <div class="flex gap-3">
-                                        <button onclick="answerTF(${q.id}, true)" class="flex-1 py-2.5 border-2 border-gray-100 rounded-xl hover:border-green-500 hover:text-green-600 font-bold transition-all flex items-center justify-center gap-2 text-sm">
-                                            <span>○</span> 正確
+                                <div class="relative pl-12 border-b-2 border-gray-50 pb-8 last:border-0">
+                                    <span class="absolute left-0 top-0 text-3xl font-black text-gray-100">${q.id}</span>
+                                    <p class="text-gray-800 font-bold mb-6 leading-relaxed text-2xl sm:text-3xl">${q.text}</p>
+                                    <div class="flex gap-5">
+                                        <button onclick="answerTF(${q.id}, true)" class="flex-1 py-4 border-4 border-gray-100 rounded-2xl hover:border-green-500 hover:text-green-700 font-black transition-all flex items-center justify-center gap-3 text-2xl">
+                                            <span class="text-3xl">○</span> 正確
                                         </button>
-                                        <button onclick="answerTF(${q.id}, false)" class="flex-1 py-2.5 border-2 border-gray-100 rounded-xl hover:border-red-500 hover:text-red-600 font-bold transition-all flex items-center justify-center gap-2 text-sm">
-                                            <span>×</span> 錯誤
+                                        <button onclick="answerTF(${q.id}, false)" class="flex-1 py-4 border-4 border-gray-100 rounded-2xl hover:border-red-500 hover:text-red-700 font-black transition-all flex items-center justify-center gap-3 text-2xl">
+                                            <span class="text-3xl">×</span> 錯誤
                                         </button>
                                     </div>
-                                    <div id="tf-feedback-${q.id}" class="mt-4 p-4 rounded-xl hidden transform transition-all scale-95 origin-top">
-                                        <div id="tf-status-${q.id}" class="font-bold flex items-center gap-2 mb-1 text-sm"></div>
-                                        <div class="text-gray-600 text-xs bg-white/50 p-2 rounded">
-                                            <span class="font-bold text-gray-800">【觀念指引】：</span>${q.explanation}
+                                    <div id="tf-feedback-${q.id}" class="mt-6 p-6 rounded-2xl hidden transform transition-all scale-95 origin-top block">
+                                        <div id="tf-status-${q.id}" class="font-black flex items-center gap-3 mb-3 text-2xl"></div>
+                                        <div class="text-gray-700 text-xl bg-white/80 p-4 rounded-xl shadow-inner border border-gray-100">
+                                            <span class="font-black text-gray-900 text-2xl block mb-2 underline decoration-red-500 decoration-4">觀念指引：</span>
+                                            ${q.explanation}
                                         </div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
-                    <button id="finish-btn" onclick="finishQuiz()" class="btn-primary w-full text-white font-bold py-4 rounded-2xl shadow-xl hidden animate-bounce">
+                    <button id="finish-btn" onclick="finishQuiz()" class="btn-primary w-full text-white font-black py-6 rounded-3xl shadow-2xl hidden animate-bounce text-3xl">
                         完成所有測驗
                     </button>
                 `;
             } else {
                 container.innerHTML = `
-                    <div class="text-center py-16 bg-white rounded-3xl shadow-sm border border-gray-100">
-                        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    <div class="text-center py-24 bg-white rounded-[3rem] shadow-2xl border-4 border-green-50">
+                        <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                            <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800 mb-3">法喜充滿！練習完成</h2>
-                        <p class="text-gray-500 max-w-[200px] mx-auto mb-10 text-sm leading-relaxed">恭喜您完成福田小單填寫練習，願此發心增長執事專業。</p>
-                        <button onclick="location.reload()" class="bg-gray-800 text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all shadow-lg active:scale-95">
+                        <h2 class="text-4xl sm:text-5xl font-black text-gray-900 mb-6">法喜充滿！練習完成</h2>
+                        <p class="text-gray-600 max-w-md mx-auto mb-14 text-2xl font-bold leading-relaxed">隨喜大眾發心功德，願此執事練習增長您的智慧與定力。</p>
+                        <button onclick="location.reload()" class="bg-gray-900 text-white px-16 py-6 rounded-[2rem] font-black text-3xl hover:bg-black transition-all shadow-2xl active:scale-95">
                             再次練習
                         </button>
                     </div>
@@ -311,43 +323,43 @@
         function checkCase() {
             const current = cases[currentStep];
             showModal("填寫範本對照", `
-                <div class="bg-white border-2 border-red-50 rounded-xl p-5 relative">
-                    <div class="absolute -top-2 -right-2 bg-red-700 text-white text-[8px] px-2 py-0.5 rounded-full shadow-md font-bold">範本</div>
-                    <div class="space-y-4">
-                        <div class="flex border-b border-gray-50 pb-2">
-                            <span class="text-gray-400 text-[10px] w-14 shrink-0">姓名</span>
-                            <span class="font-bold text-blue-900 text-sm">${current.answer.name}</span>
+                <div class="bg-white border-4 border-red-50 rounded-3xl p-8 relative shadow-inner">
+                    <div class="absolute -top-4 -right-4 bg-red-700 text-white text-sm px-4 py-1.5 rounded-full shadow-lg font-black">標準範本</div>
+                    <div class="space-y-6">
+                        <div class="flex border-b-2 border-gray-100 pb-3">
+                            <span class="text-gray-400 text-base font-bold w-20 shrink-0">姓名</span>
+                            <span class="font-black text-blue-900 text-2xl">${current.answer.name}</span>
                         </div>
-                        <div class="flex border-b border-gray-50 pb-2">
-                            <span class="text-gray-400 text-[10px] w-14 shrink-0">金額</span>
-                            <span class="font-bold text-red-700 text-sm">${current.answer.amount}</span>
+                        <div class="flex border-b-2 border-gray-100 pb-3">
+                            <span class="text-gray-400 text-base font-bold w-20 shrink-0">金額</span>
+                            <span class="font-black text-red-700 text-2xl underline decoration-red-200">${current.answer.amount}</span>
                         </div>
-                        <div class="flex flex-col border-b border-gray-50 pb-2">
-                            <span class="text-gray-400 text-[10px] mb-1">備註</span>
-                            <span class="text-blue-900 text-xs leading-relaxed whitespace-pre-line">${current.answer.remarks}</span>
+                        <div class="flex flex-col border-b-2 border-gray-100 pb-3">
+                            <span class="text-gray-400 text-base font-bold mb-2">備註項目</span>
+                            <span class="text-blue-900 text-2xl font-black leading-relaxed whitespace-pre-line">${current.answer.remarks}</span>
                         </div>
-                        <div class="flex border-b border-gray-50 pb-2">
-                            <span class="text-gray-400 text-[10px] w-14 shrink-0">抬頭</span>
-                            <span class="font-medium text-gray-800 text-xs">${current.answer.title}</span>
+                        <div class="flex border-b-2 border-gray-100 pb-3">
+                            <span class="text-gray-400 text-base font-bold w-20 shrink-0">抬頭</span>
+                            <span class="font-black text-gray-800 text-2xl">${current.answer.title}</span>
                         </div>
-                        <div class="flex border-b border-gray-50 pb-2">
-                            <span class="text-gray-400 text-[10px] w-14 shrink-0">聯絡人</span>
-                            <span class="font-medium text-gray-800 text-xs">${current.answer.contact || ''}</span>
+                        <div class="flex border-b-2 border-gray-100 pb-3">
+                            <span class="text-gray-400 text-base font-bold w-20 shrink-0">聯絡人</span>
+                            <span class="font-black text-gray-800 text-2xl">${current.answer.contact || '（空）'}</span>
                         </div>
-                        <div class="flex border-b border-gray-50 pb-2">
-                            <span class="text-gray-400 text-[10px] w-14 shrink-0">地址</span>
-                            <span class="font-medium text-gray-800 text-xs">${current.answer.address || ''}</span>
+                        <div class="flex border-b-2 border-gray-100 pb-3">
+                            <span class="text-gray-400 text-base font-bold w-20 shrink-0">地址</span>
+                            <span class="font-black text-gray-800 text-2xl">${current.answer.address || '（空）'}</span>
                         </div>
-                        <div class="flex justify-between items-end pt-3 opacity-60">
-                            <span class="text-[9px] text-gray-400">經手人: ${current.answer.handler}</span>
-                            <span class="text-[9px] text-gray-400">日期: ${current.answer.date}</span>
+                        <div class="flex justify-between items-end pt-6 opacity-80">
+                            <span class="text-lg font-bold text-gray-500">經手：${current.answer.handler}</span>
+                            <span class="text-lg font-bold text-gray-500">日期：${current.answer.date}</span>
                         </div>
                     </div>
                 </div>
-                <div class="mt-5 bg-amber-50 p-4 rounded-xl border border-amber-100">
-                    <p class="text-amber-800 text-[11px] leading-relaxed">
-                        <span class="font-bold mr-1">💡 小提醒：</span>
-                        核對時請注意捐款人資料是否正確、金額與點收金額一致、功德項目、經手人均要填寫正確。
+                <div class="mt-8 bg-amber-50 p-6 rounded-2xl border-2 border-amber-100 shadow-sm">
+                    <p class="text-amber-900 text-xl font-bold leading-relaxed">
+                        <span class="font-black text-2xl mr-2">💡 核對要點：</span><br>
+                        請務必確認捐款人資料正確、金額與點收一致、功德項目、經手人均要填寫正確無誤。
                     </p>
                 </div>
             `);
@@ -359,13 +371,13 @@
             feedbackEl.classList.remove('hidden');
             
             if (userChoice === false) {
-                statusEl.innerHTML = `<svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z" clip-rule="evenodd"></path></svg> 正確！這項描述是錯誤的。`;
-                feedbackEl.className = "mt-4 p-4 rounded-xl bg-green-50 border border-green-100 transform transition-all scale-100 origin-top block";
-                statusEl.className = "font-bold text-green-700 flex items-center gap-2 mb-1 text-sm";
+                statusEl.innerHTML = `<svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z" clip-rule="evenodd"></path></svg> 正確！此描述為錯誤。`;
+                feedbackEl.className = "mt-6 p-6 rounded-2xl bg-green-50 border-2 border-green-200 transform transition-all scale-100 origin-top block shadow-md";
+                statusEl.className = "font-black text-green-700 flex items-center gap-3 mb-3 text-2xl";
             } else {
-                statusEl.innerHTML = `<svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg> 觀念有誤。正確答案應選【× 錯誤】。`;
-                feedbackEl.className = "mt-4 p-4 rounded-xl bg-red-50 border border-red-100 transform transition-all scale-100 origin-top block";
-                statusEl.className = "font-bold text-red-700 flex items-center gap-2 mb-1 text-sm";
+                statusEl.innerHTML = `<svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg> 觀念有誤！請參考下方正確解答。`;
+                feedbackEl.className = "mt-6 p-6 rounded-2xl bg-red-50 border-2 border-red-200 transform transition-all scale-100 origin-top block shadow-md";
+                statusEl.className = "font-black text-red-700 flex items-center gap-3 mb-3 text-2xl";
             }
 
             const answeredCount = document.querySelectorAll('[id^="tf-feedback-"]:not(.hidden)').length;
