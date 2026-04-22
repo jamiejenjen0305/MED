@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福田小測驗 - 尊長清晰版</title>
+    <title>福田小測驗 - 專業清晰版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -34,7 +34,7 @@
             border-bottom: 2px solid #9ca3af;
             border-radius: 0;
             transition: all 0.3s ease;
-            font-size: 1.25rem; /* 放大輸入文字 */
+            font-size: 1.25rem;
             padding: 8px 4px;
         }
         .input-underline:focus {
@@ -43,18 +43,18 @@
             outline: none;
         }
         .label-style {
-            color: #1f2937; /* 加深顏色提高對比 */
+            color: #1f2937;
             font-weight: 700;
-            font-size: 1.25rem; /* 標籤放大 */
+            font-size: 1.25rem;
             letter-spacing: 0.05em;
             white-space: nowrap;
         }
         .btn-primary {
             background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
-            font-size: 1.5rem; /* 按鈕文字放大 */
+            font-size: 1.5rem;
         }
         .case-card {
-            border-left: 10px solid #b91c1c; /* 加粗側條 */
+            border-left: 10px solid #b91c1c;
             background: #ffffff;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
@@ -65,23 +65,26 @@
             background: #9ca3af;
             border-radius: 10px;
         }
-        /* 放大 Placeholder */
-        ::placeholder {
+        .warning-text {
+            font-weight: 900;
             font-size: 1.1rem;
-            color: #9ca3af;
+            margin-top: 4px;
+            display: none;
         }
+        .warning-red { color: #ef4444; }
+        .warning-orange { color: #d97706; }
     </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8 md:p-12">
+<body class="min-h-screen p-3 sm:p-6 md:p-10">
 
-    <div id="app" class="max-w-3xl mx-auto">
+    <div id="app" class="max-w-2xl mx-auto">
         <!-- Header -->
         <header class="text-center mb-8 sm:mb-14">
             <h1 class="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-4">
                 福田<span class="text-red-700">小測驗</span>
             </h1>
             <div class="h-1.5 w-24 bg-red-700 mx-auto rounded-full mb-4"></div>
-            <p class="text-xl sm:text-2xl text-gray-600 font-bold italic">精進執事專業 · 法喜充滿</p>
+            <p class="text-xl text-gray-600 font-bold italic">精進執事專業 · 法喜充滿</p>
         </header>
 
         <!-- Main Content Area -->
@@ -216,24 +219,38 @@
                         </div>
                         
                         <div class="space-y-8 max-w-xl mx-auto">
-                            <div class="flex items-baseline gap-4">
-                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">姓　名：</label>
-                                <input type="text" id="q_name" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="學員姓名/班別">
+                            <!-- 姓名欄位 -->
+                            <div class="flex flex-col">
+                                <div class="flex items-baseline gap-4">
+                                    <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">姓　名：</label>
+                                    <input type="text" id="q_name" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="姓名/班別">
+                                </div>
+                                <div id="q_name-warning" class="warning-text ml-24 sm:ml-28"></div>
                             </div>
                             
-                            <div class="flex items-baseline gap-4">
-                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">金　額：</label>
-                                <input type="text" id="q_amount" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="總額 #收據末四碼">
+                            <!-- 金額欄位 -->
+                            <div class="flex flex-col">
+                                <div class="flex items-baseline gap-4">
+                                    <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">金　額：</label>
+                                    <input type="text" id="q_amount" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="總額 #末四碼">
+                                </div>
+                                <div id="q_amount-warning" class="warning-text ml-24 sm:ml-28"></div>
                             </div>
                             
+                            <!-- 備註欄位 -->
                             <div class="flex flex-col gap-3">
                                 <label class="label-style text-2xl">備　註：</label>
-                                <textarea id="q_remarks" rows="3" class="w-full p-4 border-2 border-gray-200 rounded-2xl text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-red-100 transition-all bg-white" placeholder="請詳細列出明細..."></textarea>
+                                <textarea id="q_remarks" rows="3" class="w-full p-4 border-2 border-gray-200 rounded-2xl text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-red-100 transition-all bg-white" placeholder="詳細列出明細..."></textarea>
+                                <div id="q_remarks-warning" class="warning-text"></div>
                             </div>
                             
-                            <div class="flex items-baseline gap-4">
-                                <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">抬　頭：</label>
-                                <input type="text" id="q_title" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="收據開立名義">
+                            <!-- 抬頭欄位 -->
+                            <div class="flex flex-col">
+                                <div class="flex items-baseline gap-4">
+                                    <label class="label-style w-24 sm:w-28 shrink-0 text-2xl">抬　頭：</label>
+                                    <input type="text" id="q_title" class="input-underline grow text-2xl font-bold bg-transparent" placeholder="收據開立名義">
+                                </div>
+                                <div id="q_title-warning" class="warning-text ml-24 sm:ml-28"></div>
                             </div>
 
                             <div class="flex items-baseline gap-4">
@@ -246,15 +263,21 @@
                                 <input type="text" id="q_address" class="input-underline grow text-2xl font-bold bg-transparent">
                             </div>
 
-                            <!-- 底部欄位大字體優化 -->
+                            <!-- 底部欄位 -->
                             <div class="pt-8 border-t-2 border-gray-100 space-y-6 sm:space-y-0 sm:flex sm:gap-10">
-                                <div class="flex items-baseline gap-4 sm:w-1/2">
-                                    <label class="label-style shrink-0 text-xl">經手人：</label>
-                                    <input type="text" id="q_handler" class="input-underline grow text-xl font-bold bg-transparent">
+                                <div class="flex flex-col sm:w-1/2">
+                                    <div class="flex items-baseline gap-4">
+                                        <label class="label-style shrink-0 text-xl">經手人：</label>
+                                        <input type="text" id="q_handler" class="input-underline grow text-xl font-bold bg-transparent">
+                                    </div>
+                                    <div id="q_handler-warning" class="warning-text"></div>
                                 </div>
-                                <div class="flex items-baseline gap-4 sm:w-1/2">
-                                    <label class="label-style shrink-0 text-xl">日　期：</label>
-                                    <input type="text" id="q_date" class="input-underline grow text-xl font-bold bg-transparent" placeholder="MM/DD">
+                                <div class="flex flex-col sm:w-1/2">
+                                    <div class="flex items-baseline gap-4">
+                                        <label class="label-style shrink-0 text-xl">日　期：</label>
+                                        <input type="text" id="q_date" class="input-underline grow text-xl font-bold bg-transparent" placeholder="MM/DD">
+                                    </div>
+                                    <div id="q_date-warning" class="warning-text"></div>
                                 </div>
                             </div>
                         </div>
@@ -262,7 +285,7 @@
 
                     <div class="flex flex-col items-center gap-6 pt-6">
                         <button onclick="checkCase()" class="btn-primary w-full max-w-lg text-white font-black py-5 rounded-3xl shadow-2xl hover:opacity-90 active:scale-95 transition-all">
-                            提交並查看正確範本
+                            提交並查看範本
                         </button>
                         <div class="flex gap-3">
                             ${[0, 1, 2, 3, 4].map(i => `<div class="h-2 w-10 sm:w-12 rounded-full ${i <= currentStep ? 'bg-red-700' : 'bg-gray-200'} shadow-sm"></div>`).join('')}
@@ -270,58 +293,59 @@
                     </div>
                 `;
             } else if (currentStep === 5) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl mb-8 border-2 border-red-50">
-                        <h3 class="text-3xl sm:text-4xl font-black text-gray-900 text-center mb-12 flex items-center justify-center gap-4">
-                            <span class="w-12 h-12 rounded-full bg-red-100 text-red-700 text-2xl flex items-center justify-center italic font-black shadow-inner">?</span>
-                            福田知見是非題
-                        </h3>
-                        <div class="space-y-12">
-                            ${tfQuestions.map(q => `
-                                <div class="relative pl-12 border-b-2 border-gray-50 pb-8 last:border-0">
-                                    <span class="absolute left-0 top-0 text-3xl font-black text-gray-100">${q.id}</span>
-                                    <p class="text-gray-800 font-bold mb-6 leading-relaxed text-2xl sm:text-3xl">${q.text}</p>
-                                    <div class="flex gap-5">
-                                        <button onclick="answerTF(${q.id}, true)" class="flex-1 py-4 border-4 border-gray-100 rounded-2xl hover:border-green-500 hover:text-green-700 font-black transition-all flex items-center justify-center gap-3 text-2xl">
-                                            <span class="text-3xl">○</span> 正確
-                                        </button>
-                                        <button onclick="answerTF(${q.id}, false)" class="flex-1 py-4 border-4 border-gray-100 rounded-2xl hover:border-red-500 hover:text-red-700 font-black transition-all flex items-center justify-center gap-3 text-2xl">
-                                            <span class="text-3xl">×</span> 錯誤
-                                        </button>
-                                    </div>
-                                    <div id="tf-feedback-${q.id}" class="mt-6 p-6 rounded-2xl hidden transform transition-all scale-95 origin-top block">
-                                        <div id="tf-status-${q.id}" class="font-black flex items-center gap-3 mb-3 text-2xl"></div>
-                                        <div class="text-gray-700 text-xl bg-white/80 p-4 rounded-xl shadow-inner border border-gray-100">
-                                            <span class="font-black text-gray-900 text-2xl block mb-2 underline decoration-red-500 decoration-4">觀念指引：</span>
-                                            ${q.explanation}
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <button id="finish-btn" onclick="finishQuiz()" class="btn-primary w-full text-white font-black py-6 rounded-3xl shadow-2xl hidden animate-bounce text-3xl">
-                        完成所有測驗
-                    </button>
-                `;
+                renderTFSection(container);
             } else {
-                container.innerHTML = `
-                    <div class="text-center py-24 bg-white rounded-[3rem] shadow-2xl border-4 border-green-50">
-                        <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
-                            <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
-                        </div>
-                        <h2 class="text-4xl sm:text-5xl font-black text-gray-900 mb-6">法喜充滿！練習完成</h2>
-                        <p class="text-gray-600 max-w-md mx-auto mb-14 text-2xl font-bold leading-relaxed">隨喜大眾發心功德，願此執事練習增長您的智慧與定力。</p>
-                        <button onclick="location.reload()" class="bg-gray-900 text-white px-16 py-6 rounded-[2rem] font-black text-3xl hover:bg-black transition-all shadow-2xl active:scale-95">
-                            再次練習
-                        </button>
-                    </div>
-                `;
+                renderFinishSection(container);
             }
+        }
+
+        function normalize(str) {
+            return str.replace(/\s+/g, '').toLowerCase();
         }
 
         function checkCase() {
             const current = cases[currentStep];
+            const checkFields = [
+                { id: 'q_name', label: '姓名', ans: current.answer.name },
+                { id: 'q_amount', label: '金額', ans: current.answer.amount },
+                { id: 'q_remarks', label: '備註', ans: current.answer.remarks },
+                { id: 'q_title', label: '抬頭', ans: current.answer.title },
+                { id: 'q_handler', label: '經手人', ans: current.answer.handler },
+                { id: 'q_date', label: '日期', ans: current.answer.date }
+            ];
+
+            let hasEmptyError = false;
+            let firstErrorElement = null;
+
+            checkFields.forEach(f => {
+                const input = document.getElementById(f.id);
+                const warning = document.getElementById(f.id + '-warning');
+                const val = input.value.trim();
+                const ans = f.ans.trim();
+
+                if (!val) {
+                    warning.innerHTML = `⚠️ ${f.label}不可空白，請務必填寫`;
+                    warning.classList.add('warning-red');
+                    warning.classList.remove('warning-orange');
+                    warning.style.display = 'block';
+                    hasEmptyError = true;
+                    if (!firstErrorElement) firstErrorElement = input;
+                } else if (normalize(val) !== normalize(ans)) {
+                    warning.innerHTML = `💡 請檢查${f.label}內容是否與範本完全一致`;
+                    warning.classList.add('warning-orange');
+                    warning.classList.remove('warning-red');
+                    warning.style.display = 'block';
+                } else {
+                    warning.style.display = 'none';
+                }
+            });
+
+            if (hasEmptyError) {
+                firstErrorElement.focus();
+                return; 
+            }
+
+            // 全部填寫後顯示範本彈窗
             showModal("填寫範本對照", `
                 <div class="bg-white border-4 border-red-50 rounded-3xl p-8 relative shadow-inner">
                     <div class="absolute -top-4 -right-4 bg-red-700 text-white text-sm px-4 py-1.5 rounded-full shadow-lg font-black">標準範本</div>
@@ -344,11 +368,11 @@
                         </div>
                         <div class="flex border-b-2 border-gray-100 pb-3">
                             <span class="text-gray-400 text-base font-bold w-20 shrink-0">聯絡人</span>
-                            <span class="font-black text-gray-800 text-2xl">${current.answer.contact || '（空）'}</span>
+                            <span class="font-black text-gray-800 text-2xl">${current.answer.contact || '（無資料）'}</span>
                         </div>
                         <div class="flex border-b-2 border-gray-100 pb-3">
                             <span class="text-gray-400 text-base font-bold w-20 shrink-0">地址</span>
-                            <span class="font-black text-gray-800 text-2xl">${current.answer.address || '（空）'}</span>
+                            <span class="font-black text-gray-800 text-2xl">${current.answer.address || '（無資料）'}</span>
                         </div>
                         <div class="flex justify-between items-end pt-6 opacity-80">
                             <span class="text-lg font-bold text-gray-500">經手：${current.answer.handler}</span>
@@ -363,6 +387,58 @@
                     </p>
                 </div>
             `);
+        }
+
+        function renderTFSection(container) {
+            container.innerHTML = `
+                <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl mb-8 border-2 border-red-50">
+                    <h3 class="text-3xl sm:text-4xl font-black text-gray-800 text-center mb-12 flex items-center justify-center gap-4">
+                        <span class="w-12 h-12 rounded-full bg-red-100 text-red-700 text-2xl flex items-center justify-center italic font-black shadow-inner">?</span>
+                        福田知見是非題
+                    </h3>
+                    <div class="space-y-12">
+                        ${tfQuestions.map(q => `
+                            <div class="relative pl-12 border-b-2 border-gray-50 pb-8 last:border-0">
+                                <span class="absolute left-0 top-0 text-3xl font-black text-gray-100">${q.id}</span>
+                                <p class="text-gray-800 font-bold mb-6 leading-relaxed text-2xl sm:text-3xl">${q.text}</p>
+                                <div class="flex gap-5">
+                                    <button onclick="answerTF(${q.id}, true)" class="flex-1 py-4 border-4 border-gray-100 rounded-2xl hover:border-green-500 hover:text-green-700 font-black transition-all flex items-center justify-center gap-3 text-2xl text-nowrap">
+                                        <span class="text-3xl">○</span> 正確
+                                    </button>
+                                    <button onclick="answerTF(${q.id}, false)" class="flex-1 py-4 border-4 border-gray-100 rounded-2xl hover:border-red-500 hover:text-red-700 font-black transition-all flex items-center justify-center gap-3 text-2xl text-nowrap">
+                                        <span class="text-3xl">×</span> 錯誤
+                                    </button>
+                                </div>
+                                <div id="tf-feedback-${q.id}" class="mt-6 p-6 rounded-2xl hidden transform transition-all scale-100 origin-top block shadow-md">
+                                    <div id="tf-status-${q.id}" class="font-black flex items-center gap-3 mb-3 text-2xl"></div>
+                                    <div class="text-gray-700 text-xl bg-white/80 p-4 rounded-xl shadow-inner border border-gray-100">
+                                        <span class="font-black text-gray-900 text-2xl block mb-2 underline decoration-red-500 decoration-4">觀念指引：</span>
+                                        ${q.explanation}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <button id="finish-btn" onclick="finishQuiz()" class="btn-primary w-full text-white font-black py-6 rounded-3xl shadow-2xl hidden animate-bounce text-3xl">
+                    完成所有測驗
+                </button>
+            `;
+        }
+
+        function renderFinishSection(container) {
+            container.innerHTML = `
+                <div class="text-center py-24 bg-white rounded-[3rem] shadow-2xl border-4 border-green-50">
+                    <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                        <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-4xl sm:text-5xl font-black text-gray-900 mb-6">法喜充滿！練習完成</h2>
+                    <p class="text-gray-600 max-w-md mx-auto mb-14 text-2xl font-bold leading-relaxed">隨喜大眾發心功德，願此執事練習增長您的智慧與定力。</p>
+                    <button onclick="location.reload()" class="bg-gray-900 text-white px-16 py-6 rounded-[2rem] font-black text-3xl hover:bg-black transition-all shadow-2xl active:scale-95">
+                        再次練習
+                    </button>
+                </div>
+            `;
         }
 
         function answerTF(id, userChoice) {
