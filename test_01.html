@@ -222,28 +222,27 @@
                                 <input type="text" id="q_amount" class="input-underline flex-grow py-1 px-2 focus:outline-none" placeholder="總金額 #收據末四碼">
                             </div>
                             
-                            <div class="flex flex-col gap-2">
+                            <div class="flex flex-col gap-2 pb-2">
                                 <label class="label-style">備　註：</label>
                                 <textarea id="q_remarks" rows="3" class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-100 transition-all" placeholder="請列出各項發心明細..."></textarea>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                                <div class="flex items-center gap-4">
-                                    <label class="label-style w-16 flex-shrink-0 text-sm">抬　頭：</label>
-                                    <input type="text" id="q_title" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm" placeholder="收據名義">
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <label class="label-style w-16 flex-shrink-0 text-sm">聯絡人：</label>
-                                    <input type="text" id="q_contact" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
-                                </div>
+                            <div class="flex items-center gap-4">
+                                <label class="label-style w-20 flex-shrink-0">抬　頭：</label>
+                                <input type="text" id="q_title" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm" placeholder="收據名義">
                             </div>
 
                             <div class="flex items-center gap-4">
-                                <label class="label-style w-20 flex-shrink-0 text-sm">地　址：</label>
+                                <label class="label-style w-20 flex-shrink-0">聯絡人：</label>
+                                <input type="text" id="q_contact" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <label class="label-style w-20 flex-shrink-0">地　址：</label>
                                 <input type="text" id="q_address" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-6">
+                            <div class="grid grid-cols-2 gap-6 pt-4 border-t border-gray-100">
                                 <div class="flex items-center gap-4">
                                     <label class="label-style w-16 flex-shrink-0 text-xs">經手人：</label>
                                     <input type="text" id="q_handler" class="input-underline flex-grow py-1 px-2 focus:outline-none text-sm">
@@ -333,15 +332,17 @@
                             <span class="text-gray-400 text-xs mb-1">備註</span>
                             <span class="text-blue-900 text-sm leading-relaxed whitespace-pre-line">${current.answer.remarks}</span>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px]">抬頭</span>
-                                <span class="font-medium text-gray-800 text-sm">${current.answer.title}</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-gray-400 text-[10px]">聯絡人</span>
-                                <span class="font-medium text-gray-800 text-sm">${current.answer.contact || '--'}</span>
-                            </div>
+                        <div class="flex flex-col border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 text-[10px] mb-1">抬頭</span>
+                            <span class="font-medium text-gray-800 text-sm">${current.answer.title}</span>
+                        </div>
+                        <div class="flex flex-col border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 text-[10px] mb-1">聯絡人</span>
+                            <span class="font-medium text-gray-800 text-sm">${current.answer.contact || '(空白)'}</span>
+                        </div>
+                        <div class="flex flex-col border-b border-gray-100 pb-2">
+                            <span class="text-gray-400 text-[10px] mb-1">地址</span>
+                            <span class="font-medium text-gray-800 text-sm">${current.answer.address || '(空白)'}</span>
                         </div>
                         <div class="flex justify-between items-end pt-4 opacity-60">
                             <span class="text-[10px] text-gray-400">經手人: ${current.answer.handler}</span>
@@ -352,7 +353,7 @@
                 <div class="mt-6 bg-amber-50 p-4 rounded-xl border border-amber-100">
                     <p class="text-amber-800 text-xs leading-relaxed">
                         <span class="font-bold mr-1">💡 小提醒：</span>
-                        核對時請注意「金額後四碼」的寫法、金額加總以及備註欄位是否清晰易讀。
+                        核對時請注意欄位的上下順序，「聯絡人」應在「抬頭」下方，「地址」則緊隨其後。
                     </p>
                 </div>
             `);
@@ -364,7 +365,6 @@
             feedbackEl.classList.remove('hidden');
             feedbackEl.classList.add('scale-100');
             
-            // Per instructions: All TF answers are FALSE
             if (userChoice === false) {
                 statusEl.innerHTML = `<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5z" clip-rule="evenodd"></path></svg> 正確！這項描述是錯誤的。`;
                 feedbackEl.className = "mt-4 p-4 rounded-xl bg-green-50 border border-green-100 transform transition-all scale-100 origin-top";
@@ -387,7 +387,6 @@
             document.getElementById('feedback-title').innerText = title;
             document.getElementById('feedback-content').innerHTML = content;
             document.getElementById('feedback-modal').classList.remove('hidden');
-            // 小動畫
             const modalBox = document.querySelector('#feedback-modal > div');
             modalBox.classList.add('scale-100', 'opacity-100');
             modalBox.classList.remove('scale-95', 'opacity-0');
@@ -409,7 +408,6 @@
             render();
         }
 
-        // Init
         render();
     </script>
 </body>
