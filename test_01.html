@@ -373,11 +373,11 @@
                         </div>
                         <div class="flex border-b-2 border-gray-100 pb-4">
                             <span class="text-gray-400 text-xl font-bold w-24 shrink-0">聯絡人</span>
-                            <span class="font-black text-gray-800 text-3xl">${current.answer.contact || '（空）'}</span>
+                            <span class="font-black text-gray-800 text-3xl">${current.answer.contact || ''}</span>
                         </div>
                         <div class="flex border-b-2 border-gray-100 pb-4">
                             <span class="text-gray-400 text-xl font-bold w-24 shrink-0">地址</span>
-                            <span class="font-black text-gray-800 text-3xl">${current.answer.address || '（空）'}</span>
+                            <span class="font-black text-gray-800 text-3xl">${current.answer.address || ''}</span>
                         </div>
                         <div class="flex justify-between items-end pt-10 opacity-80">
                             <span class="text-xl font-bold text-gray-500">經手人：${current.answer.handler}</span>
@@ -426,7 +426,7 @@
                     </div>
                 </div>
                 <button id="finish-btn" onclick="finishQuiz()" class="btn-primary w-full text-white font-black py-8 rounded-[2.5rem] shadow-2xl hidden animate-bounce text-4xl mb-10">
-                    完成所有執事練習
+                    完成所有練習
                 </button>
             `;
         }
@@ -438,7 +438,7 @@
                         <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
                     </div>
                     <h2 class="text-5xl sm:text-6xl font-black text-gray-900 mb-8">法喜充滿！練習完成</h2>
-                    <p class="text-gray-600 max-w-xl mx-auto mb-16 text-3xl font-bold leading-relaxed">隨喜大眾發心功德，願此執事練習增長您的智慧與定力。</p>
+                    <p class="text-gray-600 max-w-xl mx-auto mb-16 text-3xl font-bold leading-relaxed">隨喜大眾發心功德，願此增長您的智慧與定力。</p>
                     <button onclick="location.reload()" class="bg-gray-900 text-white px-20 py-8 rounded-[3rem] font-black text-4xl hover:bg-black transition-all shadow-2xl active:scale-95">
                         再次練習
                     </button>
